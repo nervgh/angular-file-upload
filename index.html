@@ -1,0 +1,166 @@
+﻿<!DOCTYPE HTML>
+<!-- 1. ng-file-drop -->
+<html id="ng-app" ng-app="app" ng-file-drop> <!-- id="ng-app" IE<8 -->
+
+    <head>
+        <link rel="stylesheet" href="/css/style.css" />
+        <!--[if lte IE 7]>
+        <script src="/js/json3.min.js"></script>
+        <![endif]-->
+
+        <!-- Fix for old browsers -->
+        <script src="/js/es5-shim.min.js"></script>
+
+        <!-- Fix for IE<9 -->
+        <script src="/js/jquery/jquery-1.8.3.min.js"></script>
+
+        <script src="/js/angular/angular-1.1.5.min.js"></script>
+        <script src="/js/angular/modules/observer.js"></script>
+        <script src="/js/angular/modules/files.js"></script>
+        <script src="/js/angular/functions.js"></script>
+        <script src="/js/angular/config.js"></script>
+
+        <script>
+            // The example of the full functionality
+            app.controller( 'MainController', function( $scope, $fileUploader ) {
+                $scope.model = {
+                    progress: 0,
+                    items: []
+                };
+
+                // user filter (example1)
+                $scope.filter1 = function( item ) {
+                    console.log( 'filter1' );
+                    return true;
+                };
+
+                // user filter (example2)
+                $scope.filter2 = function( item ) {
+                    console.log( 'filter2' );
+                    return true;
+                };
+
+                // callback
+                $scope.afterAddingFile = function( item ) {
+                    console.log( item );
+                };
+
+                // callback
+                $scope.afterAddingAll = function( items ) {
+                    $scope.model.items = $fileUploader.queue;
+                    $scope.$apply();
+                };
+
+                // callback
+                $scope.beforeUpload = function( item ) {
+                    console.log( item );
+                };
+
+                // callback
+                $scope.changedQueue = function( items ) {
+                    $scope.model.progress = $fileUploader.getTotalProgress();
+                };
+
+                // callback: progress for item
+                $scope.progress = function( event, item, progress ) {
+                    console.log( 'Progress: ' + progress );
+                };
+
+                // callback: success for item
+                $scope.success = function( xhr, item ) {
+                    console.log( 'Success: ' + xhr.response );
+                };
+
+                // callback: complete for item
+                $scope.complete = function( xhr ) {
+                    console.log( 'Complete: ' + xhr.response );
+                    $scope.$apply();
+                };
+
+                // callback: progress for queue
+                $scope.progressAll = function( progress ) {
+                    $scope.model.progress = progress;
+                    $scope.$apply();
+                };
+
+                // callback: complete for queue
+                $scope.completeAll = function() {
+                    console.log( 'All files are transferred' );
+                };
+
+                // queue control
+                $scope.uploadAll = function() {
+                    $fileUploader.uploadAll();
+                };
+
+                // queue control
+                $scope.removeAll = function() {
+                    $fileUploader.clearQueue();
+                };
+
+                // the number of not uploaded files
+                $scope.notUploadedCount = function() {
+                    return $fileUploader.getNotUploadedItems().length;
+                };
+
+                $fileUploader.url = '/upload.php';
+
+                // add filters
+                $fileUploader.filters.push( $scope.filter1 );
+                $fileUploader.filters.push( $scope.filter2 );
+
+                // register handlers
+                $fileUploader.bind( 'afteraddingfile', $scope.afterAddingFile );
+                $fileUploader.bind( 'afteraddingall', $scope.afterAddingAll );
+                $fileUploader.bind( 'beforeupload', $scope.beforeUpload );
+                $fileUploader.bind( 'changedqueue', $scope.changedQueue );
+                $fileUploader.bind( 'progress', $scope.progress );
+                $fileUploader.bind( 'success', $scope.success );
+                $fileUploader.bind( 'complete', $scope.complete );
+                $fileUploader.bind( 'progressall', $scope.progressAll );
+                $fileUploader.bind( 'completeall', $scope.completeAll );
+            });
+        </script>
+
+    </head>
+    <body ng-controller="MainController">
+
+        <h1>Test page</h1>
+
+        <!-- 3. ng-file-over or ng-file-over="className" -->
+        <div class="over" ng-file-over></div>
+
+        <!-- 2. ng-file-select -->
+        <input type="file" multiple ng-file-select />
+
+        <h2>The queue. Length: {{ model.items.length }}</h2>
+        <ul>
+            <li ng-repeat="item in model.items">
+                <div>Name: {{ item.file.name }}</div>
+                <div>Size: {{ item.file.size }}</div>
+                <div>
+                    Progress: {{ item.progress }}
+                    <div class="item-progress-box">
+                        <div class="item-progress" ng-style="{ 'width': item.progress + '%' }"></div>
+                    </div>
+                </div>
+                <div>Uploaded: {{ item.isUploaded }}</div>
+                <div>
+                    <a ng-href="#" ng-click="item.upload()" ng-hide="item.isUploaded" >upload</a>
+                    <a ng-href="#" ng-click="item.remove()">delete</a>
+                </div>
+            </li>
+        </ul>
+        <div ng-show="model.items.length">
+            <div>
+                Total progress: {{ model.progress }}
+                <div class="total-progress-box">
+                    <div class="total-progress" ng-style="{ 'width': model.progress + '%' }"></div>
+                </div>
+            </div>
+            <a ng-href="#" ng-show="notUploadedCount()" ng-click="uploadAll()">upload all</a>
+            <a ng-href="#" ng-click="removeAll()">delete all</a>
+        </div>
+
+    </body>
+</html>
