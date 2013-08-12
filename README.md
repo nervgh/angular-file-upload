@@ -23,24 +23,24 @@ Sorry for my english : )
 
 # Rus
 
-##About
+##About / О модуле
 **file.upload** - модуль загрузки файлов (html5 + iframe) для фреймворка [angularjs](http://angularjs.org/). Поддерживает drag-n-drop загрузку, индикацию прогресса загрузки, очередь. В старых браузерах деградирует до iframe загрузчика.
+В общих чертах работа модуля выглядит так: directives -> filters -> add to queue -> items. Директивы "ловят" файлы и добавляют их в очередь, если те прошли фильтры, после чего "загрузчик файлов" может ими (элементами очереди) манипулировать.
 
-## Требует
+## Requires / Требует
 - [angularjs](https://github.com/angular/angular.js) фреймворк
 - модуль [observer](https://github.com/nervgh/angular-file-upload/blob/master/js/angular/modules/observer.js) (реализация шаблона "наблюдатель", он же "подписчик/издатель")
 
-## Включает
-### Директивы
+## Includes / Включает
+### Directives / Директивы
 - **ngFileSelect** - применяется к`<input type="file" />`. Выбранные файлы добавляются в очередь загрузки, если они прошли фильтры.
 - **ngFileDrop** - задает область сброса файлов / элемент, который будет ловить файлы. Как правило, применяется ко всему документу. Пойманные файлы добавляются в очередь загрузки, если они прошли фильтры.
 - **ngFileOver** - применяется к элементу, который будет реагировать (менять класс), когда файлы находятся над областью сброса. По умолчанию добавляется класс `ng-file-over`. Другой класс можно задать в параметре атрибута `ng-file-over="className"`.
 
-### Сервис
+### Service / Сервис
 - **$fileUploader** - управляет очередью и загрузкой файлов
 
 ### The $fileUploader API:
-
 #### Properties / Свойства
 - **url** `{String}` - путь на сервере, по которому будут загружаться файлы
 - **alias** `{String}` - псевдоним файла
@@ -64,7 +64,6 @@ Sorry for my english : )
 - **uploadAll** `function() {` - загружает все незагруженные элементы
 
 ### The Item API (элемента очереди):
-
 #### Properties / Свойства
 - **url** `{String}` - путь на сервере, по которому будет загружен файл
 - **alias** `{String}` - псевдоним файла
@@ -77,6 +76,20 @@ Sorry for my english : )
 #### Methods / Методы
 - **remove** `function() {` - удаляет элемент
 - **upload** `function() {` - загружает элемент
+
+## Filters / Фильтры
+### Add filter / Добавить фильтр
+```javascript
+$fileUploader.filters.push( function( item ) { /* code */ return {Boolean}; } );
+```
+
+### Standard filter / Стандартный фильтр
+По умолчанию в массиве фильтров уже присутствует один фильтр, который имеет вид:
+```javascript
+function( item ) { 
+	return angular.isElement( item ) ? true : !!item.size;
+}
+```
 
 ## Events / События
 ### Events list / Список событий
