@@ -16,12 +16,12 @@
 
         <script src="/js/angular/angular-1.1.5.min.js"></script>
         <script src="/js/angular/modules/observer.js"></script>
-        <script src="/js/angular/modules/files.js"></script>
+        <script src="/js/angular/modules/file.upload.js"></script>
         <script src="/js/angular/functions.js"></script>
 
         <script>
             angular
-                .module( 'app', [ 'observer', 'files' ])
+                .module( 'app', [ 'observer', 'file.upload' ])
 
                 // The example of the full functionality
                 .controller( 'MainController', function( $scope, $fileUploader ) {

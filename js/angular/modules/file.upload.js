@@ -38,7 +38,7 @@ angular
 
             /**
              * Add files to the queue
-             * @param {FileList|File} files
+             * @param {FileList|File|Input} items
              */
             addToQueue: function( items ) {
                 var length = this.queue.length;
@@ -118,7 +118,7 @@ angular
 
             /**
              * Upload a item from the queue
-             * @param {Object|Number} value
+             * @param {Item|Number} value
              */
             uploadItem: function( value ) {
                 if ( this._isUploading ) {
