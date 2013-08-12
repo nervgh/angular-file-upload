@@ -362,7 +362,7 @@ angular
 
 
     // It is attached to <input type="file" /> element
-    .directive( 'ngFileSelect', [ '$fileUploader', function( $fileUploader ) {
+    .directive( 'ngFileSelect', function() {
         return {
             link: function( $scope, $element ) {
                 if ( !window.File || !window.FormData ) {
@@ -374,4 +374,4 @@ angular
                 });
             }
         }
-    }]);
+    });
