@@ -2,7 +2,7 @@
 
 ##About
 **file.upload** is upload module files (html5 + iframe) to the [angularjs](http://angularjs.org/) framework. Supports drag-n-drop upload, upload progress, queue. In older browsers degraded to iframe uploader.
-Live [demo](http://learn.javascript.ru/play/CgV4n)
+Live [demo](http://learn.javascript.ru/play/CTpiQb)
 
 ## Requires
 - the [angularjs](https://github.com/angular/angular.js) framework
@@ -27,7 +27,7 @@ Sorry for my english : )
 ##About / О модуле
 **file.upload** - модуль загрузки файлов (html5 + iframe) для фреймворка [angularjs](http://angularjs.org/). Поддерживает drag-n-drop загрузку, индикацию прогресса загрузки, очередь. В старых браузерах деградирует до iframe загрузчика.
 В общих чертах работа модуля выглядит так: directives -> filters -> add to queue -> items. Директивы "ловят" файлы и добавляют их в очередь, если те прошли фильтры, после чего "загрузчик файлов" может ими (элементами очереди) манипулировать.
-Live [demo](http://learn.javascript.ru/play/CgV4n)
+Live [demo](http://learn.javascript.ru/play/CTpiQb)
 
 ## Requires / Требует
 - [angularjs](https://github.com/angular/angular.js) фреймворк
