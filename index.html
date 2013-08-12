@@ -4,24 +4,20 @@
 
     <head>
         <link rel="stylesheet" href="/css/style.css" />
-        <!--[if lte IE 7]>
-        <script src="/js/json3.min.js"></script>
-        <![endif]-->
 
         <!-- Fix for old browsers -->
         <script src="/js/es5-shim.min.js"></script>
 
-        <!-- Fix for IE<9 -->
+        <!-- Fix for IE<9 in iframe mode -->
         <!--<script src="/js/jquery/jquery-1.8.3.min.js"></script>-->
 
         <script src="/js/angular/angular-1.1.5.min.js"></script>
         <script src="/js/angular/functions.js"></script>
-        <script src="/js/angular/modules/observer.js"></script>
         <script src="/js/angular/modules/files.js"></script>
         <script src="/js/angular/controllers.js"></script>
 
     </head>
-    <body ng-controller="MainController">
+    <body ng-controller="TestController">
 
         <h1>Test page</h1>
 
@@ -31,9 +27,9 @@
         <!-- 2. ng-file-select -->
         <input type="file" multiple ng-file-select />
 
-        <h2>The queue. Length: {{ model.items.length }}</h2>
+        <h2>The queue. Length: {{ uploader.queue.length }}</h2>
         <ul>
-            <li ng-repeat="item in model.items">
+            <li ng-repeat="item in uploader.queue">
                 <div>Name: {{ item.file.name }}</div>
                 <div>Size: {{ item.file.size }}</div>
                 <div>
@@ -49,15 +45,15 @@
                 </div>
             </li>
         </ul>
-        <div ng-show="model.items.length">
+        <div ng-show="uploader.queue.length">
             <div>
-                Total progress: {{ model.progress }}
+                Total progress: {{ uploader.progress }}
                 <div class="total-progress-box">
-                    <div class="total-progress" ng-style="{ 'width': model.progress + '%' }"></div>
+                    <div class="total-progress" ng-style="{ 'width': uploader.progress + '%' }"></div>
                 </div>
             </div>
-            <a ng-href="#" ng-show="notUploadedCount()" ng-click="uploadAll()">upload all</a>
-            <a ng-href="#" ng-click="removeAll()">delete all</a>
+            <a ng-href="#" ng-click="uploader.uploadAll()" ng-show="uploader.getNotUploadedItems().length">upload all</a>
+            <a ng-href="#" ng-click="uploader.clearQueue()">delete all</a>
         </div>
 
     </body>

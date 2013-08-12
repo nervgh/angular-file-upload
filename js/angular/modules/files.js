@@ -3,43 +3,60 @@
 
 angular
     .module( 'files', [])
+    .service( '$fileUploader', [ '$compile', '$rootScope', function( $compile, $rootScope ) {
 
+        function Uploader( params ) {
+            angular.extend( this, {
+                url: '/',
+                alias: 'file',
+                queue: [],
+                headers: {},
+                progress: null,
+                autoUpload: false,
+                removeAfterUpload: false,
+                filters: [],
+                isUploading: false,
+                _uploadNext: false,
+                _scope: $rootScope.$new( true )
+            }, params );
 
-    .service( '$fileUploader', [ '$observer', '$compile', '$rootScope', function( $observer, $compile, $rootScope ) {
-        var observer = $observer.create();
+            // add the base filter
+            this.filters.unshift( this._filter );
 
-        var uploader = {
+            $rootScope.$on( 'file:add', function( event, items ) {
+                this.addToQueue( items );
+            }.bind( this ));
 
-            url: '/',
-            alias: 'file',
-            queue: [],
-            headers: {},
-            autoUpload: false,
-            removeAfterUpload: false,
+            this._scope.$on( 'beforeupload', Item.prototype._beforeupload );
+            this._scope.$on( 'in:progress', Item.prototype._progress );
+            this._scope.$on( 'in:success', Item.prototype._success );
+            this._scope.$on( 'in:error', Item.prototype._error );
+            this._scope.$on( 'in:complete', Item.prototype._complete );
 
-            bind: function( event, handler ) {
-                observer.on( event, handler );
-            },
+            this._scope.$on( 'changedqueue', this._changedQueue.bind( this ) );
+            this._scope.$on( 'in:progress', this._progress.bind( this ) );
+            this._scope.$on( 'in:complete', this._complete.bind( this ) );
+        }
 
-            unbind: function( event, handler ) {
-                observer.off( event, handler );
-            },
-
-            hasHTML5: function() {
-                return window.File && window.FormData;
-            },
+        Uploader.prototype = {
 
             /**
              * The base filter. If returns "true" an item will be added to the queue
              * @param {Object} item
              * @returns {boolean}
              */
-            filters: [ function( item ) { return angular.isElement( item ) ? true : !!item.size; } ],
+            _filter: function( item ) {
+                return angular.isElement( item ) ? true : !!item.size;
+            },
 
-            /**
-             * Add files to the queue
-             * @param {FileList|File|Input} items
-             */
+            bind: function( event, handler ) {
+                this._scope.$on( event, handler.bind( this ) );
+            },
+
+            hasHTML5: function() {
+                return window.File && window.FormData;
+            },
+
             addToQueue: function( items ) {
                 var length = this.queue.length;
 
@@ -49,15 +66,23 @@ angular
                     }, this ).length;
 
                     if ( isValid ) {
-                        item = new Item({ file: item });
+                        item = new Item({
+                            url: this.url,
+                            alias: this.alias,
+                            headers: angular.extend({}, this.headers ),
+                            removeAfterUpload: this.removeAfterUpload,
+                            uploader: this,
+                            file: item
+                        });
+
                         this.queue.push( item );
-                        observer.fire( 'afteraddingfile', [ item ], this );
+                        this._scope.$emit( 'afteraddingfile', item );
                     }
                 }, this );
 
                 if ( this.queue.length !== length ) {
-                    observer.fire( 'afteraddingall', [ this.queue ], this );
-                    observer.fire( 'changedqueue', [ this.queue ], this );
+                    this._scope.$emit( 'afteraddingall', this.queue );
+                    this._scope.$emit( 'changedqueue', this.queue );
                 }
                 this.autoUpload && this.uploadAll();
             },
@@ -70,7 +95,7 @@ angular
                 var index = angular.isObject( value ) ? this.getIndexOfItem( value ) : value;
                 var item = this.queue.splice( index, 1 )[ 0 ];
                 item.file._form && item.file._form.remove();
-                observer.fire( 'changedqueue', [ item ], this );
+                this._scope.$emit( 'changedqueue', item );
             },
 
             clearQueue: function() {
@@ -78,7 +103,7 @@ angular
                     item.file._form && item.file._form.remove();
                 }, this );
                 this.queue.length = 0;
-                observer.fire( 'changedqueue', [ this.queue ], this );
+                this._scope.$emit( 'changedqueue', this.queue );
             },
 
             /**
@@ -99,11 +124,33 @@ angular
             },
 
             /**
+             * Upload a item from the queue
+             * @param {Item|Number} value
+             */
+            uploadItem: function( value ) {
+                if ( this.isUploading ) {
+                    return;
+                }
+
+                var index = angular.isObject( value ) ? this.getIndexOfItem( value ) : value;
+                var item = this.queue[ index ];
+                var transport = item.file._form ? '_iframeTransport' : '_xhrTransport';
+                this.isUploading = true;
+                this[ transport ]( item );
+            },
+
+            uploadAll: function() {
+                var item = this.getNotUploadedItems()[ 0 ];
+                this._uploadNext = !!item;
+                this._uploadNext && this.uploadItem( item );
+            },
+
+            /**
              * Returns the total progress
              * @param {Number} [value]
              * @returns {Number}
              */
-            getTotalProgress: function( value ) {
+            _getTotalProgress: function( value ) {
                 if ( this.removeAfterUpload ) {
                     return value || 0;
                 }
@@ -116,40 +163,20 @@ angular
                 return Math.round( uploaded * ratio + current );
             },
 
-            /**
-             * Upload a item from the queue
-             * @param {Item|Number} value
-             */
-            uploadItem: function( value ) {
-                if ( this._isUploading ) {
-                    return;
-                }
-
-                var index = angular.isObject( value ) ? this.getIndexOfItem( value ) : value;
-                var item = this.queue[ index ];
-                var transport = item.file._form ? '_iframeTransport' : '_xhrTransport';
-                this._isUploading = true;
-                this[ transport ]( item );
-            },
-
-            uploadAll: function() {
-                var item = this.getNotUploadedItems()[ 0 ];
-                this._uploadNext = !!item;
-                this._uploadNext && this.uploadItem( item );
-            },
-
-            _uploadNext: false,
-            _isUploading: false,
-
             _progress: function( event, item, progress ) {
-                var result = this.getTotalProgress( progress );
-                observer.fire( 'progressall', [ result ], this );
+                var result = this._getTotalProgress( progress );
+                this.progress = result;
+                this._scope.$emit( 'progressall', result );
             },
 
             _complete: function() {
-                this._isUploading = false;
+                this.isUploading = false;
                 this._uploadNext && this.uploadAll();
-                this._uploadNext || observer.fire( 'completeall', [ this.queue ], this );
+                this._uploadNext || this._scope.$emit( 'completeall', this.queue );
+            },
+
+            _changedQueue: function() {
+                this.progress = this._getTotalProgress();
             },
 
             _xhrTransport: function( item ) {
@@ -165,25 +192,25 @@ angular
 
                 xhr.upload.addEventListener( 'progress', function( event ) {
                     var progress = event.lengthComputable ? event.loaded * 100 / event.total : 0;
-                    observer.fire( 'in:progress', [ event, item, Math.round( progress ) ], that );
+                    that._scope.$emit( 'in:progress', item, Math.round( progress ) );
                 }, false );
 
                 xhr.addEventListener( 'load', function() {
-                    xhr.status === 200 && observer.fire( 'in:success', [ xhr, item ], that );
-                    xhr.status !== 200 && observer.fire( 'in:error', [ xhr, item ], that );
-                    observer.fire( 'in:complete', [ xhr, item ], that );
+                    xhr.status === 200 && that._scope.$emit( 'in:success', xhr, item );
+                    xhr.status !== 200 && that._scope.$emit( 'in:error', xhr, item );
+                    that._scope.$emit( 'in:complete', xhr, item );
                 }, false );
 
                 xhr.addEventListener( 'error', function() {
-                    observer.fire( 'in:error', [ xhr, item ], that );
-                    observer.fire( 'in:complete', [ xhr, item ], that );
+                    that._scope.$emit( 'in:error', xhr, item );
+                    that._scope.$emit( 'in:complete', xhr, item );
                 }, false );
 
                 xhr.addEventListener( 'abort', function() {
-                    observer.fire( 'in:complete', [ xhr, item ], that );
+                    that._scope.$emit( 'in:complete', xhr, item );
                 }, false );
 
-                observer.fire( 'beforeupload', [ item ], this );
+                this._scope.$emit( 'beforeupload', item );
 
                 xhr.open( 'POST', item.url, true );
                 xhr.send( form );
@@ -207,10 +234,10 @@ angular
 
                 iframe.bind( 'load', function() {
                     var xhr = { response: iframe.contents(), status: 200, dummy: true };
-                    observer.fire( 'in:complete', [ xhr, item ], that );
+                    that._scope.$emit( 'in:complete', xhr, item );
                 });
 
-                observer.fire( 'beforeupload', [ item ], this );
+                this._scope.$emit( 'beforeupload', item );
 
                 form[ 0 ].submit();
             }
@@ -219,13 +246,12 @@ angular
 
         // item of queue
         function Item( params ) {
-
             // fix for old browsers
             if ( angular.isElement( params.file ) ) {
                 var input = angular.element( params.file );
                 var clone = $compile( input.clone() )( $rootScope.$new( true ) );
                 var form = angular.element( '<form style="display: none;" />' );
-                var iframe = angular.element( '<iframe name="iframeTransport' + +new Date() + '" />' );
+                var iframe = angular.element( '<iframe name="iframeTransport' + +new Date() + '">' );
                 var value = input.val();
 
                 params.file = {
@@ -241,10 +267,6 @@ angular
             }
 
             angular.extend( this, {
-                url: uploader.url,
-                alias: uploader.alias,
-                headers: angular.extend({}, uploader.headers ),
-                removeAfterUpload: uploader.removeAfterUpload,
                 progress: null,
                 isUploading: false,
                 isUploaded: false
@@ -253,10 +275,10 @@ angular
 
         Item.prototype = {
             remove: function() {
-                uploader.removeFromQueue( this );
+                this.uploader.removeFromQueue( this );
             },
             upload: function() {
-                uploader.uploadItem( this );
+                this.uploader.uploadItem( this );
             },
             _beforeupload: function( item ) {
                 item.isUploaded = false;
@@ -265,34 +287,29 @@ angular
             },
             _progress: function( event, item, progress ) {
                 item.progress = progress;
-                observer.fire( 'progress', [ event, item, progress ], uploader );
+                item.uploader._scope.$emit( 'progress', item, progress );
             },
-            _success: function( xhr, item ) {
+            _success: function( event, xhr, item ) {
                 item.isUploaded = true;
                 item.isUploading = false;
-                observer.fire( 'success', [ xhr, item ], uploader );
+                item.uploader._scope.$emit( 'success', xhr, item );
             },
-            _error: function( xhr, item ) {
+            _error: function( event, xhr, item ) {
                 item.isUploading = false;
-                observer.fire( 'error', [ xhr, item ], uploader );
+                item.uploader._scope.$emit( 'error', xhr, item );
             },
-            _complete: function( xhr, item ) {
+            _complete: function( event, xhr, item ) {
                 item.isUploaded = xhr.status === 200;
-                observer.fire( 'complete', [ xhr, item ], uploader );
+                item.uploader._scope.$emit( 'complete', xhr, item );
                 item.removeAfterUpload && item.remove();
             }
         };
 
-        observer.on( 'beforeupload', Item.prototype._beforeupload );
-        observer.on( 'in:progress', Item.prototype._progress );
-        observer.on( 'in:success', Item.prototype._success );
-        observer.on( 'in:error', Item.prototype._error );
-        observer.on( 'in:complete', Item.prototype._complete );
-
-        observer.on( 'in:progress', uploader._progress );
-        observer.on( 'in:complete', uploader._complete );
-
-        return uploader;
+        return {
+            create: function( params ) {
+                return new Uploader( params );
+            }
+        };
     }])
 
 
@@ -300,10 +317,10 @@ angular
     .directive( 'ngFileOver', function() {
         return {
             link: function( $scope, $element, $attrs ) {
-                $scope.$on( 'addfileoverclass', function() {
+                $scope.$on( 'file:addoverclass', function() {
                     $element.addClass( $attrs.ngFileOver || 'ng-file-over' );
                 })
-                $scope.$on( 'removefileoverclass', function() {
+                $scope.$on( 'file:removeoverclass', function() {
                     $element.removeClass( $attrs.ngFileOver || 'ng-file-over' );
                 });
             }
@@ -312,7 +329,7 @@ angular
 
 
     // It is attached to an element that catches the event drop file
-    .directive( 'ngFileDrop', [ '$fileUploader', function( $fileUploader ) {
+    .directive( 'ngFileDrop', function() {
         return {
             // don't use drag-n-drop files in IE9, because not File API support
             link: !window.File ? angular.noop : function( $scope, $element ) {
@@ -320,33 +337,33 @@ angular
                     .bind( 'drop', function( event ) {
                         var dataTransfer = event.dataTransfer ? event.dataTransfer : event.originalEvent.dataTransfer; // jQuery fix;
                         event.preventDefault();
-                        $scope.$broadcast( 'removefileoverclass' );
-                        $fileUploader.addToQueue( dataTransfer.files );
+                        $scope.$broadcast( 'file:removeoverclass' );
+                        $scope.$emit( 'file:add', dataTransfer.files );
                     })
                     .bind( 'dragover', function( event ) {
                         var dataTransfer = event.dataTransfer ? event.dataTransfer : event.originalEvent.dataTransfer; // jQuery fix;
                         event.preventDefault();
                         dataTransfer.dropEffect = 'copy';
-                        $scope.$broadcast( 'addfileoverclass' );
+                        $scope.$broadcast( 'file:addoverclass' );
                     })
                     .bind( 'dragleave', function() {
-                        $scope.$broadcast( 'removefileoverclass' );
+                        $scope.$broadcast( 'file:removeoverclass' );
                     });
             }
         };
-    }])
+    })
 
 
     // It is attached to <input type="file" /> element
     .directive( 'ngFileSelect', [ '$fileUploader', function( $fileUploader ) {
         return {
             link: function( $scope, $element ) {
-                if ( !$fileUploader.hasHTML5() ) {
+                if ( !window.File || !window.FormData ) {
                     $element.removeAttr( 'multiple' );
                 }
 
                 $element.bind( 'change', function() {
-                    $fileUploader.addToQueue( this.files ? this.files : this );
+                    $scope.$emit( 'file:add', this.files ? this.files : this );
                 });
             }
         }
