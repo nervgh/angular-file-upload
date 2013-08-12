@@ -240,7 +240,7 @@ angular
                 form.append( input ).append( iframe );
             }
 
-            angular.extend( this, params, {
+            angular.extend( this, {
                 url: uploader.url,
                 alias: uploader.alias,
                 headers: angular.extend({}, uploader.headers ),
@@ -248,7 +248,7 @@ angular
                 progress: null,
                 isUploading: false,
                 isUploaded: false
-            });
+            }, params );
         }
 
         Item.prototype = {
