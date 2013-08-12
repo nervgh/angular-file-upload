@@ -42,6 +42,7 @@ angular
         // callback
         $scope.changedQueue = function( items ) {
             $scope.model.progress = $fileUploader.getTotalProgress();
+            $scope.$$phase || $scope.$apply();
         };
 
         // callback: progress for item
