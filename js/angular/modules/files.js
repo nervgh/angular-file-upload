@@ -1,3 +1,10 @@
+/**
+ * The angular file upload module
+ * @author: nerv
+ * @version: 0.2, 2012-08-12
+ */
+
+
 'use strict';
 
 
