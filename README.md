@@ -31,7 +31,7 @@ Live [demo](http://learn.javascript.ru/play/GrHRE).
 
 ## Requires / Требует
 - [angularjs](https://github.com/angular/angular.js) фреймворк
-- модуль [observer](https://github.com/nervgh/angular-file-upload/blob/master/js/angular/modules/observer.js) (реализация шаблона "наблюдатель", он же "подписчик/издатель")
+- es5 (Array.indexOf, Array.filter, Function.bind)
 
 ## Includes / Включает
 ### Directives / Директивы
