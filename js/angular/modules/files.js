@@ -287,7 +287,7 @@ angular
             upload: function() {
                 this.uploader.uploadItem( this );
             },
-            _beforeupload: function( item ) {
+            _beforeupload: function( event, item ) {
                 item.isUploaded = false;
                 item.isUploading = true;
                 item.progress = null;
