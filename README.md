@@ -95,6 +95,7 @@ var uploader = $fileUploader.create({
 // second user filter
 uploader.filters.push(function( item ) {
     console.log( 'filter2' );
+    return true;
 });
 ```
 
