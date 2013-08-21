@@ -67,7 +67,7 @@ angular
             addToQueue: function( items ) {
                 var length = this.queue.length;
 
-                angular.forEach( angular.isArrayLikeObject( items ) ? items : [ items ], function( item ) {
+                angular.forEach( 'length' in items ? items : [ items ], function( item ) {
                     var isValid = !this.filters.length ? true : !!this.filters.filter(function( filter ) {
                         return filter.apply( this, [ item ]);
                     }, this ).length;
