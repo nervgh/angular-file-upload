@@ -9,6 +9,7 @@ angular
 
         // create a uploader with options
         var uploader = $fileUploader.create({
+            scope: $scope,                          // to automatically update the html
             url: '/upload.php',
             filters: [
                 function( item ) {                    // first user filter
@@ -35,8 +36,8 @@ angular
             console.log( 'After adding all files', items );
         });
 
-        uploader.bind( 'changedqueue', function( items ) {
-            $scope.$$phase || $scope.$apply();
+        uploader.bind( 'changedqueue', function( event, items ) {
+            console.log( 'Changed queue', items );
         });
 
         uploader.bind( 'beforeupload', function( event, item ) {
@@ -57,12 +58,10 @@ angular
 
         uploader.bind( 'progressall', function( event, progress ) {
             console.log( 'Total progress: ' + progress );
-            $scope.$$phase || $scope.$apply();
         });
 
         uploader.bind( 'completeall', function( event, items ) {
             console.log( 'All files are transferred' );
-            $scope.$$phase || $scope.$apply();
         });
 
         $scope.uploader = uploader;

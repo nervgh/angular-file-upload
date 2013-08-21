@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.1, 2012-08-15
+ * @version: 0.2.4, 2012-08-22
  */
 
 
@@ -14,6 +14,7 @@ angular
 
         function Uploader( params ) {
             angular.extend( this, {
+                scope: $rootScope.$new( true ),
                 url: '/',
                 alias: 'file',
                 queue: [],
@@ -24,7 +25,7 @@ angular
                 filters: [],
                 isUploading: false,
                 _uploadNext: false,
-                _scope: $rootScope.$new( true )
+                _observer: $rootScope.$new( true )
             }, params );
 
             // add the base filter
@@ -34,15 +35,15 @@ angular
                 this.addToQueue( items );
             }.bind( this ));
 
-            this._scope.$on( 'beforeupload', Item.prototype._beforeupload );
-            this._scope.$on( 'in:progress', Item.prototype._progress );
-            this._scope.$on( 'in:success', Item.prototype._success );
-            this._scope.$on( 'in:error', Item.prototype._error );
-            this._scope.$on( 'in:complete', Item.prototype._complete );
+            this._observer.$on( 'beforeupload', Item.prototype._beforeupload );
+            this._observer.$on( 'in:progress', Item.prototype._progress );
+            this._observer.$on( 'in:success', Item.prototype._success );
+            this._observer.$on( 'in:error', Item.prototype._error );
+            this._observer.$on( 'in:complete', Item.prototype._complete );
 
-            this._scope.$on( 'changedqueue', this._changedQueue.bind( this ) );
-            this._scope.$on( 'in:progress', this._progress.bind( this ) );
-            this._scope.$on( 'in:complete', this._complete.bind( this ) );
+            this._observer.$on( 'changedqueue', this._changedQueue.bind( this ) );
+            this._observer.$on( 'in:progress', this._progress.bind( this ) );
+            this._observer.$on( 'in:complete', this._complete.bind( this ) );
         }
 
         Uploader.prototype = {
@@ -57,7 +58,7 @@ angular
             },
 
             bind: function( event, handler ) {
-                this._scope.$on( event, handler.bind( this ) );
+                this._observer.$on( event, handler.bind( this ) );
             },
 
             hasHTML5: function() {
@@ -83,13 +84,13 @@ angular
                         });
 
                         this.queue.push( item );
-                        this._scope.$emit( 'afteraddingfile', item );
+                        this._observer.$emit( 'afteraddingfile', item );
                     }
                 }, this );
 
                 if ( this.queue.length !== length ) {
-                    this._scope.$emit( 'afteraddingall', this.queue );
-                    this._scope.$emit( 'changedqueue', this.queue );
+                    this._observer.$emit( 'afteraddingall', this.queue );
+                    this._observer.$emit( 'changedqueue', this.queue );
                 }
                 this.autoUpload && this.uploadAll();
             },
@@ -102,7 +103,7 @@ angular
                 var index = angular.isObject( value ) ? this.getIndexOfItem( value ) : value;
                 var item = this.queue.splice( index, 1 )[ 0 ];
                 item.file._form && item.file._form.remove();
-                this._scope.$emit( 'changedqueue', item );
+                this._observer.$emit( 'changedqueue', item );
             },
 
             clearQueue: function() {
@@ -110,7 +111,7 @@ angular
                     item.file._form && item.file._form.remove();
                 }, this );
                 this.queue.length = 0;
-                this._scope.$emit( 'changedqueue', this.queue );
+                this._observer.$emit( 'changedqueue', this.queue );
             },
 
             /**
@@ -173,17 +174,20 @@ angular
             _progress: function( event, item, progress ) {
                 var result = this._getTotalProgress( progress );
                 this.progress = result;
-                this._scope.$emit( 'progressall', result );
+                this._observer.$emit( 'progressall', result );
+                this.scope.$$phase || this.scope.$apply();
             },
 
             _complete: function() {
                 this.isUploading = false;
                 this._uploadNext && this.uploadAll();
-                this._uploadNext || this._scope.$emit( 'completeall', this.queue );
+                this._uploadNext || this._observer.$emit( 'completeall', this.queue );
+                ( this._uploadNext && this.scope.$$phase ) || this.scope.$apply();
             },
 
             _changedQueue: function() {
                 this.progress = this._getTotalProgress();
+                this.scope.$$phase || this.scope.$apply();
             },
 
             _xhrTransport: function( item ) {
@@ -199,25 +203,25 @@ angular
 
                 xhr.upload.addEventListener( 'progress', function( event ) {
                     var progress = event.lengthComputable ? event.loaded * 100 / event.total : 0;
-                    that._scope.$emit( 'in:progress', item, Math.round( progress ) );
+                    that._observer.$emit( 'in:progress', item, Math.round( progress ) );
                 }, false );
 
                 xhr.addEventListener( 'load', function() {
-                    xhr.status === 200 && that._scope.$emit( 'in:success', xhr, item );
-                    xhr.status !== 200 && that._scope.$emit( 'in:error', xhr, item );
-                    that._scope.$emit( 'in:complete', xhr, item );
+                    xhr.status === 200 && that._observer.$emit( 'in:success', xhr, item );
+                    xhr.status !== 200 && that._observer.$emit( 'in:error', xhr, item );
+                    that._observer.$emit( 'in:complete', xhr, item );
                 }, false );
 
                 xhr.addEventListener( 'error', function() {
-                    that._scope.$emit( 'in:error', xhr, item );
-                    that._scope.$emit( 'in:complete', xhr, item );
+                    that._observer.$emit( 'in:error', xhr, item );
+                    that._observer.$emit( 'in:complete', xhr, item );
                 }, false );
 
                 xhr.addEventListener( 'abort', function() {
-                    that._scope.$emit( 'in:complete', xhr, item );
+                    that._observer.$emit( 'in:complete', xhr, item );
                 }, false );
 
-                this._scope.$emit( 'beforeupload', item );
+                this._observer.$emit( 'beforeupload', item );
 
                 xhr.open( 'POST', item.url, true );
                 xhr.send( form );
@@ -241,10 +245,10 @@ angular
 
                 iframe.bind( 'load', function() {
                     var xhr = { response: iframe.contents(), status: 200, dummy: true };
-                    that._scope.$emit( 'in:complete', xhr, item );
+                    that._observer.$emit( 'in:complete', xhr, item );
                 });
 
-                this._scope.$emit( 'beforeupload', item );
+                this._observer.$emit( 'beforeupload', item );
 
                 form[ 0 ].submit();
             }
@@ -294,20 +298,20 @@ angular
             },
             _progress: function( event, item, progress ) {
                 item.progress = progress;
-                item.uploader._scope.$emit( 'progress', item, progress );
+                item.uploader._observer.$emit( 'progress', item, progress );
             },
             _success: function( event, xhr, item ) {
                 item.isUploaded = true;
                 item.isUploading = false;
-                item.uploader._scope.$emit( 'success', xhr, item );
+                item.uploader._observer.$emit( 'success', xhr, item );
             },
             _error: function( event, xhr, item ) {
                 item.isUploading = false;
-                item.uploader._scope.$emit( 'error', xhr, item );
+                item.uploader._observer.$emit( 'error', xhr, item );
             },
             _complete: function( event, xhr, item ) {
                 item.isUploaded = xhr.status === 200;
-                item.uploader._scope.$emit( 'complete', xhr, item );
+                item.uploader._observer.$emit( 'complete', xhr, item );
                 item.removeAfterUpload && item.remove();
             }
         };
