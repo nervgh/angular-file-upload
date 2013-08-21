@@ -6,7 +6,7 @@ Live [demo](http://learn.javascript.ru/play/7z62Pb).
 
 ## Requires
 - the [angularjs](https://github.com/angular/angular.js) framework
-- es5 (Array.indexOf, Array.filter, Function.bind)
+- es5 (Array.indexOf, Array.filter, Array.every, Function.bind)
 
 
 ## Includes
@@ -31,7 +31,7 @@ Live [demo](http://learn.javascript.ru/play/7z62Pb).
 
 ## Requires / Требует
 - [angularjs](https://github.com/angular/angular.js) фреймворк
-- es5 (Array.indexOf, Array.filter, Function.bind)
+- es5 (Array.indexOf, Array.filter, Array.every, Function.bind)
 
 ## Includes / Включает
 ### Directives / Директивы

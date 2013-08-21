@@ -22,6 +22,7 @@ angular
 
         uploader.filters.push(function( item ) { // second user filter
             console.log( 'filter2' );
+            return true;
         });
 
         // REGISTER HANDLERS

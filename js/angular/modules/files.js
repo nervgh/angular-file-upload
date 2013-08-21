@@ -68,9 +68,9 @@ angular
                 var length = this.queue.length;
 
                 angular.forEach( 'length' in items ? items : [ items ], function( item ) {
-                    var isValid = !this.filters.length ? true : !!this.filters.filter(function( filter ) {
-                        return filter.apply( this, [ item ]);
-                    }, this ).length;
+                    var isValid = !this.filters.length ? true : this.filters.every(function( filter ) {
+                        return filter.call( this, item );
+                    }, this );
 
                     if ( isValid ) {
                         item = new Item({
