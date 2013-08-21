@@ -243,7 +243,7 @@ angular
                     encoding: 'multipart/form-data' // old IE
                 });
 
-                iframe.bind( 'load', function() {
+                iframe.unbind( 'load' ).bind( 'load', function() {
                     var xhr = { response: iframe.contents(), status: 200, dummy: true };
                     that._observer.$emit( 'in:complete', xhr, item );
                 });
