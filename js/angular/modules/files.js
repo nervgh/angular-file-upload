@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.4, 2012-08-22
+ * @version: 0.2.4.1, 2012-08-22
  */
 
 
@@ -14,7 +14,7 @@ angular
 
         function Uploader( params ) {
             angular.extend( this, {
-                scope: $rootScope.$new( true ),
+                scope: $rootScope,
                 url: '/',
                 alias: 'file',
                 queue: [],

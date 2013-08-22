@@ -9,7 +9,7 @@ angular
 
         // create a uploader with options
         var uploader = $fileUploader.create({
-            scope: $scope,                          // to automatically update the html
+            scope: $scope,                          // to automatically update the html. Default: $rootScope
             url: '/upload.php',
             filters: [
                 function( item ) {                    // first user filter

@@ -44,7 +44,7 @@ Live [demo](http://learn.javascript.ru/play/QclZ4b).
 
 ### The $fileUploader API:
 #### Properties / Свойства
-- **scope** `{Object}` - ссылка на scope для обновления html
+- **scope** `{Object}` - ссылка на scope для обновления html. Если параметр опущен, используется `$rootScope`
 - **url** `{String}` - путь на сервере, по которому будут загружаться файлы
 - **alias** `{String}` - псевдоним файла
 - **queue** `{Array}`- очередь загрузки
