@@ -1,7 +1,11 @@
-﻿# Eng
+﻿#Angular file upload
+
+---
+
+# Eng
 
 ##About
-**file.upload** is upload module files (html5 + iframe) to the [angularjs](http://angularjs.org/) framework. Supports drag-n-drop upload, upload progress, queue. In older browsers degraded to iframe uploader.<br />
+**File** is upload module files (html5 + iframe) to the [angular](http://angularjs.org/) framework. Supports drag-n-drop upload, upload progress, queue. In older browsers degraded to iframe uploader.<br />
 Live [demo](http://learn.javascript.ru/play/QclZ4b).
 
 ## Requires
