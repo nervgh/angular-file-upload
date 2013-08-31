@@ -62,7 +62,7 @@ Sorry for my english : )
 #### Methods / Методы
 - **bind** `function( event, handler ) {` - регистрирует обработчик события
 - **hasHTML5** `function() { return [Boolean];}` - проверяет, поддерживает ли браузер html5 загрузку
-- **addToQueue** `function( items ) {` - где _items_ [FileList|File|Input]
+- **addToQueue** `function( items, options ) {` - где _items_ [FileList|File|Input], _options_ [Object]
 - **removeFromQueue** `function( value ) {` - где _value_ элемент очереди или его индекс [Item|Index]
 - **clearQueue** `function() {` - удаляет все элементы из очереди
 - **getIndexOfItem** `function( item ) { return [Number]; }` - где _item_ элемент очереди

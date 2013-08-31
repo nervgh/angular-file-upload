@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.5, 2012-08-31
+ * @version: 0.2.5.1, 2012-08-31
  */
 
 
@@ -214,10 +214,6 @@ angular
 
                 form.append( item.alias, item.file );
 
-                angular.forEach( item.headers, function( value, name ) {
-                    xhr.setRequestHeader( name, value );
-                });
-
                 xhr.upload.addEventListener( 'progress', function( event ) {
                     var progress = event.lengthComputable ? event.loaded * 100 / event.total : 0;
                     that._observer.$emit( 'in:progress', item, Math.round( progress ) );
@@ -241,6 +237,11 @@ angular
                 this._observer.$emit( 'beforeupload', item );
 
                 xhr.open( 'POST', item.url, true );
+
+                angular.forEach( item.headers, function( value, name ) {
+                    xhr.setRequestHeader( name, value );
+                });
+
                 xhr.send( form );
             },
 
