@@ -18,11 +18,21 @@ h2 {
     background-color: #FFBEA3;
 }
 
+.other-drop-zone {
+    border: 2px dashed burlywood;
+    padding: 4px;
+    height: 100px;
+}
+
+.other-over-zone {
+    background-color: moccasin;
+}
+
 .bg {
     background-color: lightgreen;
 }
 
-.over {
+.over-zone {
     border: 2px dashed lavender;
     height: 100px;
     padding: 4px;

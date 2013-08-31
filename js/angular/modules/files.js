@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.4.1, 2012-08-22
+ * @version: 0.2.5, 2012-08-31
  */
 
 
@@ -31,8 +31,8 @@ angular
             // add the base filter
             this.filters.unshift( this._filter );
 
-            $rootScope.$on( 'file:add', function( event, items ) {
-                this.addToQueue( items );
+            $rootScope.$on( 'file:add', function( event, items, options ) {
+                this.addToQueue( items, options );
             }.bind( this ));
 
             this._observer.$on( 'beforeupload', Item.prototype._beforeupload );
@@ -50,22 +50,36 @@ angular
 
             /**
              * The base filter. If returns "true" an item will be added to the queue
-             * @param {Object} item
+             * @param {File|Input} item
              * @returns {boolean}
              */
             _filter: function( item ) {
                 return angular.isElement( item ) ? true : !!item.size;
             },
 
+            /**
+             * Registers a event handler
+             * @param {String} event
+             * @param {Function} handler
+             */
             bind: function( event, handler ) {
                 this._observer.$on( event, handler.bind( this ) );
             },
 
+            /**
+             * Checks a support the html5 uploader
+             * @returns {Boolean}
+             */
             hasHTML5: function() {
                 return window.File && window.FormData;
             },
 
-            addToQueue: function( items ) {
+            /**
+             * Adds items to the queue
+             * @param {FileList|File|Input} items
+             * @param {Object} [options]
+             */
+            addToQueue: function( items, options ) {
                 var length = this.queue.length;
 
                 angular.forEach( 'length' in items ? items : [ items ], function( item ) {
@@ -74,14 +88,14 @@ angular
                     }, this );
 
                     if ( isValid ) {
-                        item = new Item({
+                        item = new Item( angular.extend({
                             url: this.url,
                             alias: this.alias,
                             headers: angular.extend({}, this.headers ),
                             removeAfterUpload: this.removeAfterUpload,
                             uploader: this,
                             file: item
-                        });
+                        }, options || {}));
 
                         this.queue.push( item );
                         this._observer.$emit( 'afteraddingfile', item );
@@ -97,7 +111,7 @@ angular
 
             /**
              * Remove items from the queue. Remove last: index = -1
-             * @param {Object|Number} value
+             * @param {Item|Number} value
              */
             removeFromQueue: function( value ) {
                 var index = angular.isObject( value ) ? this.getIndexOfItem( value ) : value;
@@ -106,6 +120,9 @@ angular
                 this._observer.$emit( 'changedqueue', item );
             },
 
+            /**
+             * Clears the queue
+             */
             clearQueue: function() {
                 angular.forEach( this.queue, function( item ) {
                     item.file._form && item.file._form.remove();
@@ -327,12 +344,12 @@ angular
     // It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"
     .directive( 'ngFileOver', function() {
         return {
-            link: function( $scope, $element, $attrs ) {
-                $scope.$on( 'file:addoverclass', function() {
-                    $element.addClass( $attrs.ngFileOver || 'ng-file-over' );
-                })
-                $scope.$on( 'file:removeoverclass', function() {
-                    $element.removeClass( $attrs.ngFileOver || 'ng-file-over' );
+            link: function( scope, element, attributes ) {
+                scope.$on( 'file:addoverclass', function() {
+                    element.addClass( attributes.ngFileOver || 'ng-file-over' );
+                });
+                scope.$on( 'file:removeoverclass', function() {
+                    element.removeClass( attributes.ngFileOver || 'ng-file-over' );
                 });
             }
         };
@@ -343,38 +360,40 @@ angular
     .directive( 'ngFileDrop', function() {
         return {
             // don't use drag-n-drop files in IE9, because not File API support
-            link: !window.File ? angular.noop : function( $scope, $element ) {
-                $element
+            link: !window.File ? angular.noop : function( scope, element, attributes ) {
+                element
                     .bind( 'drop', function( event ) {
                         var dataTransfer = event.dataTransfer ? event.dataTransfer : event.originalEvent.dataTransfer; // jQuery fix;
                         event.preventDefault();
-                        $scope.$broadcast( 'file:removeoverclass' );
-                        $scope.$emit( 'file:add', dataTransfer.files );
+                        event.stopPropagation();
+                        scope.$broadcast( 'file:removeoverclass' );
+                        scope.$emit( 'file:add', dataTransfer.files, scope.$eval( attributes.ngFileDrop ) );
                     })
                     .bind( 'dragover', function( event ) {
                         var dataTransfer = event.dataTransfer ? event.dataTransfer : event.originalEvent.dataTransfer; // jQuery fix;
                         event.preventDefault();
+                        event.stopPropagation();
                         dataTransfer.dropEffect = 'copy';
-                        $scope.$broadcast( 'file:addoverclass' );
+                        scope.$broadcast( 'file:addoverclass' );
                     })
                     .bind( 'dragleave', function() {
-                        $scope.$broadcast( 'file:removeoverclass' );
+                       scope.$broadcast( 'file:removeoverclass' );
                     });
             }
         };
     })
 
 
-    // It is attached to <input type="file" /> element
+    // It is attached to <input type="file"> element like <ng-file-select="options">
     .directive( 'ngFileSelect', function() {
         return {
-            link: function( $scope, $element ) {
+            link: function( scope, element, attributes ) {
                 if ( !window.File || !window.FormData ) {
-                    $element.removeAttr( 'multiple' );
+                    element.removeAttr( 'multiple' );
                 }
 
-                $element.bind( 'change', function() {
-                    $scope.$emit( 'file:add', this.files ? this.files : this );
+                element.bind( 'change', function() {
+                    scope.$emit( 'file:add', this.files ? this.files : this, scope.$eval( attributes.ngFileSelect ) );
                 });
             }
         }
