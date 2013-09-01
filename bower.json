@@ -1,0 +1,11 @@
+{
+  "name": "angular-file-upload",
+  "version": "0.2.5",
+  "main": "angular-file-upload.js",
+  "ignore": [],
+  "dependencies": {
+    "angular": "~1.2.0-rc.1",
+    "es5-shim": "~2.1.0",
+    "jquery": "~2.0.3"
+  }
+}

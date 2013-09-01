@@ -3,17 +3,17 @@
 <html id="ng-app" ng-app="app" ng-file-drop> <!-- id="ng-app" IE<8 -->
 
     <head>
-        <link rel="stylesheet" href="/css/style.css" />
+        <link rel="stylesheet" href="css/style.css" />
 
         <!-- Fix for old browsers -->
-        <script src="/js/es5-shim.min.js"></script>
+        <script src="../bower_components/es5-shim/es5-shim.js"></script>
 
         <!-- Fix for IE<9 in iframe mode -->
         <!--<script src="/js/jquery/jquery-1.8.3.min.js"></script>-->
 
-        <script src="/js/angular/angular-1.1.5.min.js"></script>
-        <script src="/js/angular/modules/files.js"></script>
-        <script src="/js/angular/controllers.js"></script>
+        <script src="../bower_components/angular/angular.js"></script>
+        <script src="../angular-file-upload.js"></script>
+        <script src="js/controllers.js"></script>
 
     </head>
     <body ng-controller="TestController">
