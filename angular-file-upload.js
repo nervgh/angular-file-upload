@@ -91,8 +91,14 @@ app.directive('ngFileSelect', function () {
                 element.removeAttr('multiple');
             }
 
-            element.bind('change', function () {
+            var currElement = element;
+            element.bind('change', function onChange() {
                 scope.$emit('file:add', this.files ? this.files : this, scope.$eval(attributes.ngFileSelect));
+
+                var clone = currElement.clone();
+                currElement.replaceWith(clone);
+                clone.bind('change', onChange);
+                currElement = clone;
             });
         }
     };
@@ -118,15 +124,17 @@ app.service('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
             removeAfterUpload: false,
             filters: [],
             isUploading: false,
-            _uploadNext: false,
-            _observer: $rootScope.$new(true)
+            _uploadNext: false
         }, params);
+
+        this._observer = this.scope.$new(true);
 
         // add the base filter
         this.filters.unshift(this._filter);
 
         $rootScope.$on('file:add', function (event, items, options) {
             this.addToQueue(items, options);
+            event.stopPropagation();
         }.bind(this));
 
         this._observer.$on('beforeupload', Item.prototype._beforeupload);
