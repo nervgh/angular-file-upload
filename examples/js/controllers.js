@@ -5,9 +5,9 @@ angular.module('app', ['angularFileUpload'])
         'use strict';
 
         // create a uploader with options
-        var uploader = $fileUploader.create({
+        var uploader = $scope.uploader = $fileUploader.create({
             scope: $scope,                          // to automatically update the html. Default: $rootScope
-            url: 'upload.php',
+            url: '/examples/upload.php',
             filters: [
                 function (item) {                    // first user filter
                     console.log('filter1');
@@ -61,5 +61,4 @@ angular.module('app', ['angularFileUpload'])
             console.log('All files are transferred');
         });
 
-        $scope.uploader = uploader;
     });

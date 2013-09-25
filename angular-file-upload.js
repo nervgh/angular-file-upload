@@ -10,14 +10,14 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.5.1, 2012-08-31
+ * @version: 0.2.5.2, 2012-09-25
  */
 var app = angular.module('angularFileUpload', []);
 
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.5.1, 2012-08-31
+ * @version: 0.2.5.2, 2012-09-25
  */
 
 // It is attached to an element that catches the event drop file
@@ -57,7 +57,7 @@ app.directive('ngFileDrop', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.5.1, 2012-08-31
+ * @version: 0.2.5.2, 2012-09-25
  */
 
 // It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"
@@ -78,7 +78,7 @@ app.directive('ngFileOver', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.5.1, 2012-08-31
+ * @version: 0.2.5.2, 2012-09-25
  */
 
 // It is attached to <input type="file"> element like <ng-file-select="options">
@@ -100,10 +100,10 @@ app.directive('ngFileSelect', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.5.1, 2012-08-31
+ * @version: 0.2.5.2, 2012-09-25
  */
 
-app.service('$fileUploader', [ '$compile', '$rootScope', function ($compile, $rootScope) {
+app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $rootScope) {
     'use strict';
 
     function Uploader(params) {
@@ -118,14 +118,16 @@ app.service('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
             removeAfterUpload: false,
             filters: [],
             isUploading: false,
-            _uploadNext: false,
-            _observer: $rootScope.$new(true)
+            _uploadNext: false
         }, params);
+
+        this._observer = this.scope.$new(true);
 
         // add the base filter
         this.filters.unshift(this._filter);
 
         $rootScope.$on('file:add', function (event, items, options) {
+            event.stopPropagation();
             this.addToQueue(items, options);
         }.bind(this));
 
@@ -165,7 +167,7 @@ app.service('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
          * @returns {Boolean}
          */
         hasHTML5: function () {
-            return window.File && window.FormData;
+            return !!(window.File && window.FormData);
         },
 
         /**
@@ -185,11 +187,11 @@ app.service('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
                     item = new Item(angular.extend({
                         url: this.url,
                         alias: this.alias,
-                        headers: angular.extend({}, this.headers),
+                        headers: angular.copy(this.headers),
                         removeAfterUpload: this.removeAfterUpload,
                         uploader: this,
                         file: item
-                    }, options || {}));
+                    }, options));
 
                     this.queue.push(item);
                     this._observer.$emit('afteraddingfile', item);
@@ -357,8 +359,8 @@ app.service('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
                 encoding: 'multipart/form-data' // old IE
             });
 
-            iframe.unbind('load').bind('load', function () {
-                var xhr = { response: iframe.contents(), status: 200, dummy: true };
+            iframe.unbind().bind('load', function () {
+                var xhr = { response: iframe.contents()[ 0 ].body.innerHTML, status: 200, dummy: true };
                 that._observer.$emit('in:complete', xhr, item);
             });
 
@@ -374,7 +376,7 @@ app.service('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
         // fix for old browsers
         if (angular.isElement(params.file)) {
             var input = angular.element(params.file);
-            var clone = $compile(input.clone())($rootScope.$new(true));
+            var clone = $compile(input.clone())(params.uploader.scope.$new(true));
             var form = angular.element('<form style="display: none;" />');
             var iframe = angular.element('<iframe name="iframeTransport' + +new Date() + '">');
             var value = input.val();
@@ -420,11 +422,13 @@ app.service('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
             item.uploader._observer.$emit('success', xhr, item);
         },
         _error: function (event, xhr, item) {
+            item.isUploaded = true;
             item.isUploading = false;
             item.uploader._observer.$emit('error', xhr, item);
         },
         _complete: function (event, xhr, item) {
-            item.isUploaded = xhr.status === 200;
+            item.isUploaded = true;
+            item.isUploading = false;
             item.uploader._observer.$emit('complete', xhr, item);
             item.removeAfterUpload && item.remove();
         }
