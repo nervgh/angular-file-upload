@@ -8,6 +8,9 @@ angular.module('app', ['angularFileUpload'])
         var uploader = $scope.uploader = $fileUploader.create({
             scope: $scope,                          // to automatically update the html. Default: $rootScope
             url: '/examples/upload.php',
+            formData: [
+                { key: 'value' }
+            ],
             filters: [
                 function (item) {                    // first user filter
                     console.log('filter1');

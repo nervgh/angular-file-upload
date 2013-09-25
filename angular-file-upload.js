@@ -17,7 +17,7 @@ var app = angular.module('angularFileUpload', []);
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.5.3, 2012-09-25
+ * @version: 0.2.6, 2012-09-26
  */
 
 // It is attached to an element that catches the event drop file
@@ -57,7 +57,7 @@ app.directive('ngFileDrop', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.5.3, 2012-09-25
+ * @version: 0.2.6, 2012-09-26
  */
 
 // It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"
@@ -78,7 +78,7 @@ app.directive('ngFileOver', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.5.3, 2012-09-25
+ * @version: 0.2.6, 2012-09-26
  */
 
 // It is attached to <input type="file"> element like <ng-file-select="options">
@@ -101,7 +101,7 @@ app.directive('ngFileSelect', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.5.3, 2012-09-25
+ * @version: 0.2.6, 2012-09-26
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $rootScope) {
@@ -118,6 +118,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
             autoUpload: false,
             removeAfterUpload: false,
             filters: [],
+            formData: [],
             isUploading: false,
             _uploadNext: false
         }, params);
@@ -189,6 +190,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
                         url: this.url,
                         alias: this.alias,
                         headers: angular.copy(this.headers),
+                        formData: angular.copy(this.formData),
                         removeAfterUpload: this.removeAfterUpload,
                         uploader: this,
                         file: item
@@ -311,6 +313,12 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
             var form = new FormData();
             var that = this;
 
+            angular.forEach(item.formData, function(obj) {
+                angular.forEach(obj, function(value, key) {
+                    form.append(key, value);
+                });
+            });
+
             form.append(item.alias, item.file);
 
             xhr.upload.addEventListener('progress', function (event) {
@@ -350,7 +358,20 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
             var input = form.find('input');
             var that = this;
 
+            // remove all but the INPUT file type
+            angular.forEach(input, function(element) {
+                element.type !== 'file' && element.parentNode.removeChild(element);
+            });
+
             input.prop('name', item.alias);
+
+            angular.forEach(item.formData, function(obj) {
+                angular.forEach(obj, function(value, key) {
+                    form.append(
+                        angular.element('<input type="hidden" name="' + key + '" value="' + value + '" />')
+                    );
+                });
+            });
 
             form.prop({
                 action: item.url,
