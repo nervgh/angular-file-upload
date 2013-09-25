@@ -91,8 +91,14 @@ app.directive('ngFileSelect', function () {
                 element.removeAttr('multiple');
             }
 
-            element.bind('change', function () {
+            var currElement = element;
+            element.bind('change', function onChange() {
                 scope.$emit('file:add', this.files ? this.files : this, scope.$eval(attributes.ngFileSelect));
+
+                var clone = currElement.clone();
+                currElement.replaceWith(clone);
+                clone.bind('change', onChange);
+                currElement = clone;
             });
         }
     };
