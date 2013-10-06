@@ -17,7 +17,7 @@ var app = angular.module('angularFileUpload', []);
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.6, 2012-09-26
+ * @version: 0.2.7, 2012-10-06
  */
 
 // It is attached to an element that catches the event drop file
@@ -57,7 +57,7 @@ app.directive('ngFileDrop', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.6, 2012-09-26
+ * @version: 0.2.7, 2012-10-06
  */
 
 // It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"
@@ -78,7 +78,7 @@ app.directive('ngFileOver', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.6, 2012-09-26
+ * @version: 0.2.7, 2012-10-06
  */
 
 // It is attached to <input type="file"> element like <ng-file-select="options">
@@ -101,7 +101,7 @@ app.directive('ngFileSelect', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.6, 2012-09-26
+ * @version: 0.2.7, 2012-10-06
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $rootScope) {
@@ -120,7 +120,8 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
             filters: [],
             formData: [],
             isUploading: false,
-            _uploadNext: false
+            _uploadNext: false,
+            _timestamp: Date.now()
         }, params);
 
         this._observer = this.scope.$new(true);
@@ -133,15 +134,14 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
             this.addToQueue(items, options);
         }.bind(this));
 
-        this._observer.$on('beforeupload', Item.prototype._beforeupload);
-        this._observer.$on('in:progress', Item.prototype._progress);
-        this._observer.$on('in:success', Item.prototype._success);
-        this._observer.$on('in:error', Item.prototype._error);
-        this._observer.$on('in:complete', Item.prototype._complete);
-
-        this._observer.$on('changedqueue', this._changedQueue.bind(this));
-        this._observer.$on('in:progress', this._progress.bind(this));
-        this._observer.$on('in:complete', this._complete.bind(this));
+        this.bind('beforeupload', Item.prototype._beforeupload);
+        this.bind('in:progress', Item.prototype._progress);
+        this.bind('in:success', Item.prototype._success);
+        this.bind('in:error', Item.prototype._error);
+        this.bind('in:complete', Item.prototype._complete);
+        this.bind('changedqueue', this._changedQueue);
+        this.bind('in:progress', this._progress);
+        this.bind('in:complete', this._complete);
     }
 
     Uploader.prototype = {
@@ -161,7 +161,18 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
          * @param {Function} handler
          */
         bind: function (event, handler) {
-            this._observer.$on(event, handler.bind(this));
+            this._observer.$on(this._timestamp + ':' + event, handler.bind(this));
+        },
+
+        /**
+         * Triggers events
+         * @param {String} event
+         * @param {...*} [some]
+         */
+        trigger: function (event, some) {
+            var params = Array.prototype.slice.call(arguments, 1);
+            params.unshift(this._timestamp + ':' + event);
+            this._observer.$emit.apply(this._observer, params);
         },
 
         /**
@@ -197,13 +208,13 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
                     }, options));
 
                     this.queue.push(item);
-                    this._observer.$emit('afteraddingfile', item);
+                    this.trigger('afteraddingfile', item);
                 }
             }, this);
 
             if (this.queue.length !== length) {
-                this._observer.$emit('afteraddingall', this.queue);
-                this._observer.$emit('changedqueue', this.queue);
+                this.trigger('afteraddingall', this.queue);
+                this.trigger('changedqueue', this.queue);
             }
             this.autoUpload && this.uploadAll();
         },
@@ -216,7 +227,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
             var index = angular.isObject(value) ? this.getIndexOfItem(value) : value;
             var item = this.queue.splice(index, 1)[ 0 ];
             item.file._form && item.file._form.remove();
-            this._observer.$emit('changedqueue', item);
+            this.trigger('changedqueue', item);
         },
 
         /**
@@ -227,7 +238,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
                 item.file._form && item.file._form.remove();
             }, this);
             this.queue.length = 0;
-            this._observer.$emit('changedqueue', this.queue);
+            this.trigger('changedqueue', this.queue);
         },
 
         /**
@@ -292,14 +303,14 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
         _progress: function (event, item, progress) {
             var result = this._getTotalProgress(progress);
             this.progress = result;
-            this._observer.$emit('progressall', result);
+            this.trigger('progressall', result);
             this.scope.$$phase || this.scope.$apply();
         },
 
         _complete: function () {
             this.isUploading = false;
             this._uploadNext && this.uploadAll();
-            this._uploadNext || this._observer.$emit('completeall', this.queue);
+            this._uploadNext || this.trigger('completeall', this.queue);
             ( this._uploadNext && this.scope.$$phase ) || this.scope.$apply();
         },
 
@@ -323,25 +334,25 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
 
             xhr.upload.addEventListener('progress', function (event) {
                 var progress = event.lengthComputable ? event.loaded * 100 / event.total : 0;
-                that._observer.$emit('in:progress', item, Math.round(progress));
+                that.trigger('in:progress', item, Math.round(progress));
             }, false);
 
             xhr.addEventListener('load', function () {
-                xhr.status === 200 && that._observer.$emit('in:success', xhr, item);
-                xhr.status !== 200 && that._observer.$emit('in:error', xhr, item);
-                that._observer.$emit('in:complete', xhr, item);
+                xhr.status === 200 && that.trigger('in:success', xhr, item);
+                xhr.status !== 200 && that.trigger('in:error', xhr, item);
+                that.trigger('in:complete', xhr, item);
             }, false);
 
             xhr.addEventListener('error', function () {
-                that._observer.$emit('in:error', xhr, item);
-                that._observer.$emit('in:complete', xhr, item);
+                that.trigger('in:error', xhr, item);
+                that.trigger('in:complete', xhr, item);
             }, false);
 
             xhr.addEventListener('abort', function () {
-                that._observer.$emit('in:complete', xhr, item);
+                that.trigger('in:complete', xhr, item);
             }, false);
 
-            this._observer.$emit('beforeupload', item);
+            this.trigger('beforeupload', item);
 
             xhr.open('POST', item.url, true);
 
@@ -383,10 +394,10 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
 
             iframe.unbind().bind('load', function () {
                 var xhr = { response: iframe.contents()[ 0 ].body.innerHTML, status: 200, dummy: true };
-                that._observer.$emit('in:complete', xhr, item);
+                that.trigger('in:complete', xhr, item);
             });
 
-            this._observer.$emit('beforeupload', item);
+            this.trigger('beforeupload', item);
 
             form[ 0 ].submit();
         }
@@ -436,22 +447,22 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
         },
         _progress: function (event, item, progress) {
             item.progress = progress;
-            item.uploader._observer.$emit('progress', item, progress);
+            item.uploader.trigger('progress', item, progress);
         },
         _success: function (event, xhr, item) {
             item.isUploaded = true;
             item.isUploading = false;
-            item.uploader._observer.$emit('success', xhr, item);
+            item.uploader.trigger('success', xhr, item);
         },
         _error: function (event, xhr, item) {
             item.isUploaded = true;
             item.isUploading = false;
-            item.uploader._observer.$emit('error', xhr, item);
+            item.uploader.trigger('error', xhr, item);
         },
         _complete: function (event, xhr, item) {
             item.isUploaded = true;
             item.isUploading = false;
-            item.uploader._observer.$emit('complete', xhr, item);
+            item.uploader.trigger('complete', xhr, item);
             item.removeAfterUpload && item.remove();
         }
     };

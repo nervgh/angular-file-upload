@@ -45,15 +45,15 @@ angular.module('app', ['angularFileUpload'])
         });
 
         uploader.bind('progress', function (event, item, progress) {
-            console.log('Progress: ' + progress);
+            console.log('Progress: ' + progress, item);
         });
 
         uploader.bind('success', function (event, xhr, item) {
-            console.log('Success: ' + xhr.response);
+            console.log('Success: ' + xhr.response, item);
         });
 
         uploader.bind('complete', function (event, xhr, item) {
-            console.log('Complete: ' + xhr.response);
+            console.log('Complete: ' + xhr.response, item);
         });
 
         uploader.bind('progressall', function (event, progress) {
@@ -61,7 +61,7 @@ angular.module('app', ['angularFileUpload'])
         });
 
         uploader.bind('completeall', function (event, items) {
-            console.log('All files are transferred');
+            console.log('All files are transferred', items);
         });
 
     });

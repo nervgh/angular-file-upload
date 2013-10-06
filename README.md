@@ -10,7 +10,7 @@
 
 ## Requires
 - the [angularjs](https://github.com/angular/angular.js) framework
-- es5 (Array.indexOf, Array.filter, Array.every, Function.bind)
+- es5 (Array.indexOf, Array.filter, Array.every, Function.bind, Date.now)
 
 
 ## Includes
@@ -35,7 +35,7 @@ Sorry for my english : )
 
 ## Requires / Требует
 - [angularjs](https://github.com/angular/angular.js) фреймворк
-- es5 (Array.indexOf, Array.filter, Array.every, Function.bind)
+- es5 (Array.indexOf, Array.filter, Array.every, Function.bind, Date.now)
 
 ## Includes / Включает
 ### Directives / Директивы
@@ -62,6 +62,7 @@ Sorry for my english : )
 
 #### Methods / Методы
 - **bind** `function( event, handler ) {` - регистрирует обработчик события
+- **trigger** `function( event[, params ]) {` - выполняет все обработчики, связанные с данным событием
 - **hasHTML5** `function() { return [Boolean];}` - проверяет, поддерживает ли браузер html5 загрузку
 - **addToQueue** `function( items, options ) {` - где _items_ [FileList|File|Input], _options_ [Object]
 - **removeFromQueue** `function( value ) {` - где _value_ элемент очереди или его индекс [Item|Index]
