@@ -1,9 +1,10 @@
-﻿<!DOCTYPE HTML>
+﻿<!DOCTYPE html>
+
 <!-- 1. ng-file-drop | ng-file-drop="options" -->
 <html id="ng-app" ng-app="app" ng-file-drop> <!-- id="ng-app" IE<8 -->
 
     <head>
-        <link rel="stylesheet" href="css/style.css" />
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
 
         <!-- Fix for old browsers -->
         <script src="../bower_components/es5-shim/es5-shim.js"></script>
@@ -14,60 +15,109 @@
         <script src="../angular-file-upload.js"></script>
         <script src="js/controllers.js"></script>
 
+		<style>
+			.my-drop-zone { border: dotted 3px lightgray; }
+			.ng-file-over { border: dotted 3px red; } /* Default class applied to drop zones on over */
+			.another-file-over-class { border: dotted 3px green; }
+		</style>
+
     </head>
     <body ng-controller="TestController">
 
-        <h1>Angular file upload: test page</h1>
+		<div class="container">
 
-        <a href="https://github.com/nervgh/angular-file-upload">Download / Repository</a>
-        <br />
-        <br />
+			<div class="navbar navbar-default">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="https://github.com/nervgh/angular-file-upload">Angular File Upload</a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="#">Demo</a></li>
+						<li><a href="https://github.com/nervgh/angular-file-upload">View on Github</a></li>
+					</ul>
+				</div>
+			</div>
 
-        <!-- 3. ng-file-over | ng-file-over="className" -->
-        <div class="over-zone" ng-file-over>
-            Base drop zone
-        </div>
+			<div class="row">
 
-        <br />
+				<div class="col-md-4">
 
-        <!-- Example: ng-file-drop | ng-file-drop="options" -->
-        <div ng-file-drop="{ url: '/foo' }" ng-file-over="other-over-zone" class="other-drop-zone">
-            One more drop zone with its own settings
-        </div>
+					<h3>Select files</h3>
 
-        <br />
+					<!-- 3. ng-file-over | ng-file-over="className" -->
+					<div class="well my-drop-zone" ng-file-over>
+						Base drop zone
+					</div>
 
-        <!-- 2. ng-file-select | ng-file-select="options" -->
-        <input ng-file-select type="file" multiple />
+					<!-- Example: ng-file-drop | ng-file-drop="options" -->
+					<div class="well my-drop-zone" ng-file-drop="{ url: '/foo' }" ng-file-over="another-file-over-class">
+						Another drop zone with its own settings
+					</div>
 
-        <h2>The queue. Length: {{ uploader.queue.length }}</h2>
-        <ul>
-            <li ng-repeat="item in uploader.queue">
-                <div>Name: {{ item.file.name }}</div>
-                <div>Size: {{ item.file.size }}</div>
-                <div>
-                    Progress: {{ item.progress }}
-                    <div class="item-progress-box">
-                        <div class="item-progress" ng-style="{ 'width': item.progress + '%' }"></div>
-                    </div>
-                </div>
-                <div>Uploaded: {{ item.isUploaded }}</div>
-                <div>
-                    <a ng-href="#" ng-click="$event.preventDefault(); item.upload()" ng-hide="item.isUploaded" >upload</a>
-                    <a ng-href="#" ng-click="$event.preventDefault(); item.remove()">delete</a>
-                </div>
-            </li>
-        </ul>
-        <div ng-show="uploader.queue.length">
-            <div>
-                Total progress: {{ uploader.progress }}
-                <div class="total-progress-box">
-                    <div class="total-progress" ng-style="{ 'width': uploader.progress + '%' }"></div>
-                </div>
-            </div>
-            <a ng-href="#" ng-click="$event.preventDefault(); uploader.uploadAll()" ng-show="uploader.getNotUploadedItems().length">upload all</a>
-            <a ng-href="#" ng-click="$event.preventDefault(); uploader.clearQueue()">delete all</a>
-        </div>
+					<!-- 2. ng-file-select | ng-file-select="options" -->
+					<input ng-file-select type="file" multiple  />
+
+				</div>
+
+				<div class="col-md-8">
+
+					<h3>Upload queue</h3>
+					<p>Queue length: {{ uploader.queue.length }}</p>
+
+					<table class="table">
+						<thead>
+							<tr>
+								<th width="50%">Name</th>
+								<th>Size</th>
+								<th>Progress</th>
+								<th>Ok</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="item in uploader.queue">
+								<td><strong>{{ item.file.name }}</strong></td>
+								<td nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
+								<td>
+									<div class="progress" style="margin-bottom: 0;">
+										<div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+									</div>
+								</td>
+								<td>
+									<i class="glyphicon glyphicon-ok" ng-show="item.isUploaded"></i>
+								</td>
+								<td nowrap>
+									<button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isUploaded">
+										<span class="glyphicon glyphicon-upload"></span> Upload
+									</button>
+									<button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+										<span class="glyphicon glyphicon-trash"></span> Remove
+									</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<div>
+						<p>
+							Queue progress:
+							<div class="progress" style="">
+								<div class="progress-bar" role="progressbar" ng-style="{ 'width': uploader.progress + '%' }"></div>
+							</div>
+						</p>
+						<button type="button" class="btn btn-success btn-s" ng-click="uploader.uploadAll()" ng-disabled="!uploader.getNotUploadedItems().length">
+							<span class="glyphicon glyphicon-upload"></span> Upload all
+						</button>
+						<button type="button" class="btn btn-danger btn-s" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length">
+							<span class="glyphicon glyphicon-trash"></span> Remove all
+						</button>
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
 
     </body>
 </html>
