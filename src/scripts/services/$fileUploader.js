@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.7, 2012-10-06
+ * @version: 0.2.7.1, 2012-10-15
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $rootScope) {
@@ -62,6 +62,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
          */
         bind: function (event, handler) {
             this._observer.$on(this._timestamp + ':' + event, handler.bind(this));
+            return this;
         },
 
         /**
@@ -73,6 +74,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
             var params = Array.prototype.slice.call(arguments, 1);
             params.unshift(this._timestamp + ':' + event);
             this._observer.$emit.apply(this._observer, params);
+            return this;
         },
 
         /**
@@ -117,6 +119,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
                 this.trigger('changedqueue', this.queue);
             }
             this.autoUpload && this.uploadAll();
+            return this;
         },
 
         /**
@@ -128,6 +131,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
             var item = this.queue.splice(index, 1)[ 0 ];
             item.file._form && item.file._form.remove();
             this.trigger('changedqueue', item);
+            return this;
         },
 
         /**
@@ -139,6 +143,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
             }, this);
             this.queue.length = 0;
             this.trigger('changedqueue', this.queue);
+            return this;
         },
 
         /**
@@ -166,7 +171,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
          */
         uploadItem: function (value) {
             if (this.isUploading) {
-                return;
+                return this;
             }
 
             var index = angular.isObject(value) ? this.getIndexOfItem(value) : value;
@@ -174,12 +179,14 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', function ($compile, $ro
             var transport = item.file._form ? '_iframeTransport' : '_xhrTransport';
             this.isUploading = true;
             this[ transport ](item);
+            return this;
         },
 
         uploadAll: function () {
             var item = this.getNotUploadedItems()[ 0 ];
             this._uploadNext = !!item;
             this._uploadNext && this.uploadItem(item);
+            return this;
         },
 
         /**
