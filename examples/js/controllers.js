@@ -13,7 +13,7 @@ angular.module('app', ['angularFileUpload'])
             ],
             filters: [
                 function (item) {                    // first user filter
-                    console.log('filter1');
+                    console.info('filter1');
                     return true;
                 }
             ]
@@ -22,46 +22,50 @@ angular.module('app', ['angularFileUpload'])
         // ADDING FILTER
 
         uploader.filters.push(function (item) { // second user filter
-            console.log('filter2');
+            console.info('filter2');
             return true;
         });
 
         // REGISTER HANDLERS
 
         uploader.bind('afteraddingfile', function (event, item) {
-            console.log('After adding a file', item);
+            console.info('After adding a file', item);
         });
 
         uploader.bind('afteraddingall', function (event, items) {
-            console.log('After adding all files', items);
+            console.info('After adding all files', items);
         });
 
         uploader.bind('changedqueue', function (event, items) {
-            console.log('Changed queue', items);
+            console.info('Changed queue', items);
         });
 
         uploader.bind('beforeupload', function (event, item) {
-            console.log('Before upload', item);
+            console.info('Before upload', item);
         });
 
         uploader.bind('progress', function (event, item, progress) {
-            console.log('Progress: ' + progress, item);
+            console.info('Progress: ' + progress, item);
         });
 
-        uploader.bind('success', function (event, xhr, item) {
-            console.log('Success: ' + xhr.response, item);
+        uploader.bind('success', function (event, xhr, item, response) {
+            console.info('Success', xhr, item, response);
         });
 
-        uploader.bind('complete', function (event, xhr, item) {
-            console.log('Complete: ' + xhr.response, item);
+        uploader.bind('error', function (event, xhr, item, response) {
+            console.info('Error', xhr, item, response);
+        });
+
+        uploader.bind('complete', function (event, xhr, item, response) {
+            console.info('Complete', xhr, item, response);
         });
 
         uploader.bind('progressall', function (event, progress) {
-            console.log('Total progress: ' + progress);
+            console.info('Total progress: ' + progress);
         });
 
         uploader.bind('completeall', function (event, items) {
-            console.log('All files are transferred', items);
+            console.info('All files are transferred', items);
         });
 
     });

@@ -118,9 +118,9 @@ function( item ) {
 - **beforeupload** `function( event, items ) {`: Fires before uploading an item
 - **changedqueue** `function( event, [item|items] ) {`: When the queue has changed as a result of adding or removing elements
 - **progress** `function( event, item, progress ) {`: On file upload progress
-- **success** `function( event, xhr, item ) {`: On file successfully uploaded
-- **error** `function( event, xhr, item ) {`: On upload error
-- **complete** `function( event, xhr, item ) {`: On file upload complete (independently of the sucess of the operation)
+- **success** `function( event, xhr, item, response ) {`: On file successfully uploaded
+- **error** `function( event, xhr, item[, response ]) {`: On upload error
+- **complete** `function( event, xhr, item, response ) {`: On file upload complete (independently of the sucess of the operation)
 - **progressall** `function( event, progress ) {`: On upload queue progress
 - **completeall** `function( event, items ) {`: On all loaded when uploading an entire queue, or on file loaded when uploading a single independent file
 
@@ -248,9 +248,9 @@ function( item ) {
 - **beforeupload** `function( event, items ) {` - перед загрузкой файла
 - **changedqueue** `function( event, [item|items] ) {` - очередь изменена
 - **progress** `function( event, item, progress ) {` - прогресс загрузки файла
-- **success** `function( event, xhr, item ) {` - файл успешно загружен
-- **error** `function( event, xhr, item ) {` - ошибка при загрузке
-- **complete** `function( event, xhr, item ) {` - файл загружен
+- **success** `function( event, xhr, item, response ) {` - файл успешно загружен
+- **error** `function( event, xhr, item[, response ]) {` - ошибка при загрузке
+- **complete** `function( event, xhr, item, response ) {` - файл загружен
 - **progressall** `function( event, progress ) {` - прогресс загрузки очереди
 - **completeall** `function( event, items ) {` - "очередь загружена", если была инициирована загрузка всей очереди; иначе "файл загружен", если была инициирована загрузка файла
 
