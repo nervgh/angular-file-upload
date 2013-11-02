@@ -10,14 +10,14 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.5.2, 2012-09-25
+ * @version: 0.2.8.2, 2012-11-02
  */
 var app = angular.module('angularFileUpload', []);
 
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.1, 2012-10-21
+ * @version: 0.2.8.2, 2012-11-02
  */
 
 // It is attached to an element that catches the event drop file
@@ -57,7 +57,7 @@ app.directive('ngFileDrop', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.1, 2012-10-21
+ * @version: 0.2.8.2, 2012-11-02
  */
 
 // It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"
@@ -78,7 +78,7 @@ app.directive('ngFileOver', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.1, 2012-10-21
+ * @version: 0.2.8.2, 2012-11-02
  */
 
 // It is attached to <input type="file"> element like <ng-file-select="options">
@@ -101,7 +101,7 @@ app.directive('ngFileSelect', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.1, 2012-10-21
+ * @version: 0.2.8.2, 2012-11-02
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($compile, $rootScope, $http) {
@@ -397,16 +397,14 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
 
             // remove all but the INPUT file type
             angular.forEach(input, function(element) {
-                element.type !== 'file' && element.parentNode.removeChild(element);
+                element.type !== 'file' && angular.element(element).remove(); // prevent memory leaks
             });
 
             input.prop('name', item.alias);
 
             angular.forEach(item.formData, function(obj) {
                 angular.forEach(obj, function(value, key) {
-                    form.append(
-                        angular.element('<input type="hidden" name="' + key + '" value="' + value + '" />')
-                    );
+                    form.append(angular.element('<input type="hidden" name="' + key + '" value="' + value + '" />'));
                 });
             });
 
@@ -446,9 +444,9 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
         // fix for old browsers
         if (angular.isElement(params.file)) {
             var input = angular.element(params.file);
-            var clone = $compile(input.clone())(params.uploader.scope.$new(true));
+            var clone = $compile(input.clone())(params.uploader.scope);
             var form = angular.element('<form style="display: none;" />');
-            var iframe = angular.element('<iframe name="iframeTransport' + +new Date() + '">');
+            var iframe = angular.element('<iframe name="iframeTransport' + Date.now() + '">');
             var value = input.val();
 
             params.file = {

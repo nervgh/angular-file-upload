@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.1, 2012-10-21
+ * @version: 0.2.8.2, 2012-11-02
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($compile, $rootScope, $http) {
@@ -297,16 +297,14 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
 
             // remove all but the INPUT file type
             angular.forEach(input, function(element) {
-                element.type !== 'file' && element.parentNode.removeChild(element);
+                element.type !== 'file' && angular.element(element).remove(); // prevent memory leaks
             });
 
             input.prop('name', item.alias);
 
             angular.forEach(item.formData, function(obj) {
                 angular.forEach(obj, function(value, key) {
-                    form.append(
-                        angular.element('<input type="hidden" name="' + key + '" value="' + value + '" />')
-                    );
+                    form.append(angular.element('<input type="hidden" name="' + key + '" value="' + value + '" />'));
                 });
             });
 
@@ -346,9 +344,9 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
         // fix for old browsers
         if (angular.isElement(params.file)) {
             var input = angular.element(params.file);
-            var clone = $compile(input.clone())(params.uploader.scope.$new(true));
+            var clone = $compile(input.clone())(params.uploader.scope);
             var form = angular.element('<form style="display: none;" />');
-            var iframe = angular.element('<iframe name="iframeTransport' + +new Date() + '">');
+            var iframe = angular.element('<iframe name="iframeTransport' + Date.now() + '">');
             var value = input.val();
 
             params.file = {
