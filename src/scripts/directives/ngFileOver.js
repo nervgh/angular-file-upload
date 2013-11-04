@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.2, 2012-11-02
+ * @version: 0.2.8.4, 2012-11-05
  */
 
 // It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"

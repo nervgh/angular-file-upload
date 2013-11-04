@@ -68,7 +68,8 @@ When files are selected or dropped into the component, one or more filters are a
 - **headers** `{Object}`: Headers to be sent along with this file
 - **formData** `{Array}`: Data to be sent along with this file
 - **progress** `{Number}`: File upload progress percentage
-- **removeAfterUpload** `{Boolean}`: Remove this file from the queue after uploading 
+- **method** `{String}`: It's a request method. By default `POST`
+- **removeAfterUpload** `{Boolean}`: Remove this file from the queue after uploading
 - **isUploading** `{Boolean}`: `true` if the file is being uploaded
 - **isUploaded** `{Boolean}`: `true` if the file was uploaded successfully
 - **uploader** `{Object}`: Reference to the parent `Uploader` object for this file
@@ -199,6 +200,7 @@ uploader.bind( 'progress', function( event, item, progress ) {
 - **headers** `{Object}` - заголовки, которые будут переданы вместе с файлом
 - **formData** `{Array}` - данные, отправляемые вместе с файлом
 - **progress** `{Number}` - прогресс загрузки файла
+- **method** `{String}`: - метод запроса. По умолчанию `POST`
 - **removeAfterUpload** `{Boolean}` - удалить файл после загрузки
 - **isUploading** `{Boolean}` - файл в процессе загрузки
 - **isUploaded** `{Boolean}` - файл загружен
