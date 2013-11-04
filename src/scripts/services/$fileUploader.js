@@ -261,8 +261,8 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
 
             xhr.addEventListener('load', function () {
                 var response = that._transformResponse(xhr.response);
-                xhr.status === 200 && that.trigger('in:success', xhr, item, response);
-                xhr.status !== 200 && that.trigger('in:error', xhr, item, response);
+                var event = ~[200, 201].indexOf(xhr.status) ? 'in:success' : 'in:error';
+                that.trigger(event, xhr, item, response);
                 that.trigger('in:complete', xhr, item, response);
             }, false);
 
@@ -277,7 +277,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
 
             this.trigger('beforeupload', item);
 
-            xhr.open('POST', item.url, true);
+            xhr.open(item.method, item.url, true);
 
             angular.forEach(item.headers, function (value, name) {
                 xhr.setRequestHeader(name, value);
@@ -312,7 +312,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
 
             form.prop({
                 action: item.url,
-                method: 'post',
+                method: item.method,
                 target: iframe.prop('name'),
                 enctype: 'multipart/form-data',
                 encoding: 'multipart/form-data' // old IE
@@ -366,7 +366,8 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
         angular.extend(this, {
             progress: null,
             isUploading: false,
-            isUploaded: false
+            isUploaded: false,
+            method: 'POST'
         }, params);
     }
 
