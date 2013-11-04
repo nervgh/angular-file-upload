@@ -29,7 +29,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
         // add the base filter
         this.filters.unshift(this._filter);
 
-        $rootScope.$on('file:add', function (event, items, options) {
+        this.scope.$on('file:add', function (event, items, options) {
             event.stopPropagation();
             this.addToQueue(items, options);
         }.bind(this));
