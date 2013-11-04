@@ -246,6 +246,8 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
             var form = new FormData();
             var that = this;
 
+            this.trigger('beforeupload', item);
+
             angular.forEach(item.formData, function(obj) {
                 angular.forEach(obj, function(value, key) {
                     form.append(key, value);
@@ -275,8 +277,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
                 that.trigger('in:complete', xhr, item);
             }, false);
 
-            this.trigger('beforeupload', item);
-
             xhr.open('POST', item.url, true);
 
             angular.forEach(item.headers, function (value, name) {
@@ -294,6 +294,8 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
             var iframe = form.find('iframe');
             var input = form.find('input');
             var that = this;
+
+            this.trigger('beforeupload', item);
 
             // remove all but the INPUT file type
             angular.forEach(input, function(element) {
@@ -321,8 +323,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
                 var response = that._transformResponse(xhr.response);
                 that.trigger('in:complete', xhr, item, response);
             });
-
-            this.trigger('beforeupload', item);
 
             form[ 0 ].submit();
         },
