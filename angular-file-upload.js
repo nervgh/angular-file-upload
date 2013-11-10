@@ -10,14 +10,14 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.4, 2012-11-05
+ * @version: 0.2.8.5, 2012-11-10
  */
 var app = angular.module('angularFileUpload', []);
 
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.4, 2012-11-05
+ * @version: 0.2.8.5, 2012-11-10
  */
 
 // It is attached to an element that catches the event drop file
@@ -57,7 +57,7 @@ app.directive('ngFileDrop', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.4, 2012-11-05
+ * @version: 0.2.8.5, 2012-11-10
  */
 
 // It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"
@@ -78,7 +78,7 @@ app.directive('ngFileOver', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.4, 2012-11-05
+ * @version: 0.2.8.5, 2012-11-10
  */
 
 // It is attached to <input type="file"> element like <ng-file-select="options">
@@ -101,7 +101,7 @@ app.directive('ngFileSelect', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.4, 2012-11-05
+ * @version: 0.2.8.5, 2012-11-10
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($compile, $rootScope, $http) {
@@ -229,7 +229,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
         removeFromQueue: function (value) {
             var index = angular.isObject(value) ? this.getIndexOfItem(value) : value;
             var item = this.queue.splice(index, 1)[ 0 ];
-            item.file._form && item.file._form.remove();
+            ( item.file && item.file._form ) && item.file._form.remove();
             this.trigger('changedqueue', item);
             return this;
         },

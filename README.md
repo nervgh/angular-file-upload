@@ -135,6 +135,16 @@ uploader.bind( 'progress', function( event, item, progress ) {
 });
 ```
 
+### FAQ
+1. How to add the previously uploaded files in the queue?
+
+```javascript
+// Add a item to the queue
+uploader.queue.push({
+    example: {},      // your data here
+    isUploaded: true
+});
+```
 ---
 
 ## Русская документация
@@ -266,3 +276,13 @@ uploader.bind( 'progress', function( event, item, progress ) {
 });
 ```
 
+### FAQ / Вопросы и ответы
+1. Как добавить ранее загруженные файлы в очередь?
+
+```javascript
+// Add a item to the queue
+uploader.queue.push({
+    example: {},      // your data here
+    isUploaded: true
+});
+```
