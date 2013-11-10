@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.4, 2012-11-05
+ * @version: 0.2.8.5, 2012-11-10
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($compile, $rootScope, $http) {
@@ -129,7 +129,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
         removeFromQueue: function (value) {
             var index = angular.isObject(value) ? this.getIndexOfItem(value) : value;
             var item = this.queue.splice(index, 1)[ 0 ];
-            item.file._form && item.file._form.remove();
+            ( item.file && item.file._form ) && item.file._form.remove();
             this.trigger('changedqueue', item);
             return this;
         },
