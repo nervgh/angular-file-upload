@@ -10,14 +10,14 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.5, 2012-11-10
+ * @version: 0.2.8.6, 2012-11-15
  */
 var app = angular.module('angularFileUpload', []);
 
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.5, 2012-11-10
+ * @version: 0.2.8.6, 2012-11-15
  */
 
 // It is attached to an element that catches the event drop file
@@ -57,7 +57,7 @@ app.directive('ngFileDrop', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.5, 2012-11-10
+ * @version: 0.2.8.6, 2012-11-15
  */
 
 // It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"
@@ -78,7 +78,7 @@ app.directive('ngFileOver', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.5, 2012-11-10
+ * @version: 0.2.8.6, 2012-11-15
  */
 
 // It is attached to <input type="file"> element like <ng-file-select="options">
@@ -101,7 +101,7 @@ app.directive('ngFileSelect', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.5, 2012-11-10
+ * @version: 0.2.8.6, 2012-11-15
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($compile, $rootScope, $http) {
@@ -129,7 +129,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
         // add the base filter
         this.filters.unshift(this._filter);
 
-        $rootScope.$on('file:add', function (event, items, options) {
+        this.scope.$on('file:add', function (event, items, options) {
             event.stopPropagation();
             this.addToQueue(items, options);
         }.bind(this));

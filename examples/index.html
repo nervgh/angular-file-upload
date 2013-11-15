@@ -1,7 +1,5 @@
 ﻿<!DOCTYPE html>
-
-<!-- 1. ng-file-drop | ng-file-drop="options" -->
-<html id="ng-app" ng-app="app" ng-file-drop> <!-- id="ng-app" IE<8 -->
+<html id="ng-app" ng-app="app"> <!-- id="ng-app" IE<8 -->
 
     <head>
         <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
@@ -22,7 +20,9 @@
         </style>
 
     </head>
-    <body ng-controller="TestController">
+
+    <!-- 1. ng-file-drop | ng-file-drop="options" -->
+    <body ng-controller="TestController" ng-file-drop>
 
         <div class="container">
 

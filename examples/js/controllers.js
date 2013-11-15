@@ -19,7 +19,7 @@ angular.module('app', ['angularFileUpload'])
             ]
         });
 
-        // ADDING FILTER
+        // ADDING FILTERS
 
         uploader.filters.push(function (item) { // second user filter
             console.info('filter2');
