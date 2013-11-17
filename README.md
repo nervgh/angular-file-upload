@@ -43,14 +43,14 @@ When files are selected or dropped into the component, one or more filters are a
 - **formData** `{Array}`: Data to be sent along with the files
 - **filters** `{Array}`: Filters to be applied to the files before adding them to the queue. If the filter returns `true` the file will be added to the queue
 - **autoUpload** `{Boolean}`: Automatically upload files after adding them to the queue 
-- **removeAfterUpload** `{Boolean}`: Remove files from the queue after uploading 
+- **removeAfterUpload** `{Boolean}`: Remove files from the queue after uploading
+- **hasHTML5** `{Boolean}`: Checks whether browser has HTML5 upload support
 - **isUploading** `{Boolean}`: `true` if an upload is in progress
 
 #### Methods
 
 - **bind** `function( event, handler ) {`: Registers an event handler
 - **trigger** `function( event[, params ]) {`: Executes all handlers bound to this event
-- **hasHTML5** `function() { return [Boolean];}`: Checks whether browser has HTML5 upload support
 - **addToQueue** `function( items, options ) {`: Add items to the queue, where `items` is a `FileList`, `File` or `Input`, and `options` is an `Object`
 - **removeFromQueue** `function( value ) {`: Remove an item from the queue, where `value` is a queue element `Item` or index
 - **clearQueue** `function() {`: Removes all elements from the queue
@@ -186,13 +186,13 @@ uploader.queue.push({
 - **filters** `{Array}` - фильтры, применяемые к [файлу|элементу] перед добавлением его в очередь. Если фильтр возвращает `true`, [файл|элемент] будет добавлен в очередь
 - **autoUpload** `{Boolean}` - загружать автоматически после добавления элемента в очередь
 - **removeAfterUpload** `{Boolean}` - удалить файлы после загрузки
+- **hasHTML5** `{Boolean}` - проверяет, поддерживает ли браузер html5 загрузку
 - **isUploading** `{Boolean}` - загрузчик в процессе загрузки
 
 #### Методы
 
 - **bind** `function( event, handler ) {` - регистрирует обработчик события
 - **trigger** `function( event[, params ]) {` - выполняет все обработчики, связанные с данным событием
-- **hasHTML5** `function() { return [Boolean];}` - проверяет, поддерживает ли браузер html5 загрузку
 - **addToQueue** `function( items, options ) {` - где _items_ [FileList|File|Input], _options_ [Object]
 - **removeFromQueue** `function( value ) {` - где _value_ элемент очереди или его индекс [Item|Index]
 - **clearQueue** `function() {` - удаляет все элементы из очереди

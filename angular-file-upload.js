@@ -10,14 +10,14 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.6, 2012-11-15
+ * @version: 0.2.8.7, 2012-11-17
  */
 var app = angular.module('angularFileUpload', []);
 
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.6, 2012-11-15
+ * @version: 0.2.8.7, 2012-11-17
  */
 
 // It is attached to an element that catches the event drop file
@@ -57,7 +57,7 @@ app.directive('ngFileDrop', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.6, 2012-11-15
+ * @version: 0.2.8.7, 2012-11-17
  */
 
 // It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"
@@ -78,7 +78,7 @@ app.directive('ngFileOver', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.6, 2012-11-15
+ * @version: 0.2.8.7, 2012-11-17
  */
 
 // It is attached to <input type="file"> element like <ng-file-select="options">
@@ -101,7 +101,7 @@ app.directive('ngFileSelect', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.6, 2012-11-15
+ * @version: 0.2.8.7, 2012-11-17
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($compile, $rootScope, $http) {
@@ -181,9 +181,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
          * Checks a support the html5 uploader
          * @returns {Boolean}
          */
-        hasHTML5: function () {
-            return !!(window.File && window.FormData);
-        },
+        hasHTML5: !!(window.File && window.FormData),
 
         /**
          * Adds items to the queue
