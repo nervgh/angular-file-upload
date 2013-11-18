@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.8, 2013-11-18
+ * @version: 0.2.8.9, 2013-11-18
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
@@ -261,7 +261,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
 
             xhr.addEventListener('load', function () {
                 var response = that._transformResponse(xhr.response);
-                var isSuccess = xhr.status >= 200 && xhr.status < 300 || xhr.status === 304;
+                var isSuccess = (xhr.status >= 200 && xhr.status < 300) || xhr.status === 304;
                 var event = isSuccess ? 'in:success' : 'in:error';
                 that.trigger(event, xhr, item, response);
                 that.trigger('in:complete', xhr, item, response);
