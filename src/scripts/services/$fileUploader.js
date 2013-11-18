@@ -1,10 +1,10 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.7, 2012-11-17
+ * @version: 0.2.8.8, 2013-11-18
  */
 
-app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($compile, $rootScope, $http) {
+app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
     'use strict';
 
     function Uploader(params) {
@@ -81,7 +81,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
          * Checks a support the html5 uploader
          * @returns {Boolean}
          */
-        hasHTML5: !!(window.File && window.FormData),
+        hasHTML5: !!($window.File && $window.FormData),
 
         /**
          * Adds items to the queue
@@ -405,6 +405,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
     return {
         create: function (params) {
             return new Uploader(params);
-        }
+        },
+        hasHTML5: Uploader.prototype.hasHTML5
     };
 }])

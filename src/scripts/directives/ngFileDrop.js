@@ -1,16 +1,16 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.7, 2012-11-17
+ * @version: 0.2.8.8, 2013-11-18
  */
 
 // It is attached to an element that catches the event drop file
-app.directive('ngFileDrop', function () {
+app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
     'use strict';
 
     return {
         // don't use drag-n-drop files in IE9, because not File API support
-        link: !window.File ? angular.noop : function (scope, element, attributes) {
+        link: !$fileUploader.hasHTML5 ? angular.noop : function (scope, element, attributes) {
             element
                 .bind('drop', function (event) {
                     var dataTransfer = event.dataTransfer ?
@@ -37,4 +37,4 @@ app.directive('ngFileDrop', function () {
                 });
         }
     };
-})
+}])

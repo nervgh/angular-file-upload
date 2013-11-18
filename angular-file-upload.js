@@ -10,23 +10,23 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.7, 2012-11-17
+ * @version: 0.2.8.8, 2013-11-18
  */
 var app = angular.module('angularFileUpload', []);
 
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.7, 2012-11-17
+ * @version: 0.2.8.8, 2013-11-18
  */
 
 // It is attached to an element that catches the event drop file
-app.directive('ngFileDrop', function () {
+app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
     'use strict';
 
     return {
         // don't use drag-n-drop files in IE9, because not File API support
-        link: !window.File ? angular.noop : function (scope, element, attributes) {
+        link: !$fileUploader.hasHTML5 ? angular.noop : function (scope, element, attributes) {
             element
                 .bind('drop', function (event) {
                     var dataTransfer = event.dataTransfer ?
@@ -53,11 +53,11 @@ app.directive('ngFileDrop', function () {
                 });
         }
     };
-})
+}])
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.7, 2012-11-17
+ * @version: 0.2.8.8, 2013-11-18
  */
 
 // It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"
@@ -78,33 +78,31 @@ app.directive('ngFileOver', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.7, 2012-11-17
+ * @version: 0.2.8.8, 2013-11-18
  */
 
 // It is attached to <input type="file"> element like <ng-file-select="options">
-app.directive('ngFileSelect', function () {
+app.directive('ngFileSelect', [ '$fileUploader', function ($fileUploader) {
     'use strict';
 
     return {
         link: function (scope, element, attributes) {
-            if (!window.File || !window.FormData) {
-                element.removeAttr('multiple');
-            }
+            $fileUploader.hasHTML5 || element.removeAttr('multiple');
 
             element.bind('change', function () {
                 scope.$emit('file:add', this.files ? this.files : this, scope.$eval(attributes.ngFileSelect));
-                window.File && element.prop('value', null);
+                $fileUploader.hasHTML5 && element.prop('value', null);
             });
         }
     };
-});
+}]);
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.8.7, 2012-11-17
+ * @version: 0.2.8.8, 2013-11-18
  */
 
-app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($compile, $rootScope, $http) {
+app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
     'use strict';
 
     function Uploader(params) {
@@ -181,7 +179,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
          * Checks a support the html5 uploader
          * @returns {Boolean}
          */
-        hasHTML5: !!(window.File && window.FormData),
+        hasHTML5: !!($window.File && $window.FormData),
 
         /**
          * Adds items to the queue
@@ -504,7 +502,8 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
     return {
         create: function (params) {
             return new Uploader(params);
-        }
+        },
+        hasHTML5: Uploader.prototype.hasHTML5
     };
 }])
     return app;
