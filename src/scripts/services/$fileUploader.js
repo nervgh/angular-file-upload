@@ -261,7 +261,8 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', function ($com
 
             xhr.addEventListener('load', function () {
                 var response = that._transformResponse(xhr.response);
-                var event = ~[200, 201].indexOf(xhr.status) ? 'in:success' : 'in:error';
+                var isSuccess = xhr.status >= 200 && xhr.status < 300 || xhr.status === 304;
+                var event = isSuccess ? 'in:success' : 'in:error';
                 that.trigger(event, xhr, item, response);
                 that.trigger('in:complete', xhr, item, response);
             }, false);
