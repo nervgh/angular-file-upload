@@ -104,7 +104,8 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
                         formData: angular.copy(this.formData),
                         removeAfterUpload: this.removeAfterUpload,
                         uploader: this,
-                        file: item
+                        file: item,
+                        method: this.method
                     }, options));
 
                     this.queue.push(item);
