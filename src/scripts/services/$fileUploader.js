@@ -13,6 +13,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             url: '/',
             alias: 'file',
             queue: [],
+            uploadingQueue: [],
             headers: {},
             progress: null,
             autoUpload: false,
@@ -20,7 +21,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             filters: [],
             formData: [],
             isUploading: false,
-            _uploadNext: false,
             _timestamp: Date.now()
         }, params);
 
@@ -164,29 +164,42 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
         },
 
         /**
-         * Upload a item from the queue
+         * Upload first file from uploadingQueue
+         */
+
+        _upload: function() {
+            if (!this.isUploading) {
+                var item = this.uploadingQueue[ 0 ];
+                if (item) {
+                    var transport = item.file._form ? '_iframeTransport' : '_xhrTransport';
+                    this.isUploading = true;
+                    this.uploadingQueue.shift();
+                    this[ transport ](item);
+                }
+            }
+        },
+
+        /**
+         * Add item to the uploading queue
          * @param {Item|Number} value
          */
         uploadItem: function (value) {
-            if (this.isUploading) {
-                return this;
+            if (!(value.isUploaded || value.isUploading) &&
+                this.uploadingQueue.indexOf(value) == -1) {
+                this.uploadingQueue.push(value);
+                this._upload();
             }
-
-            var index = angular.isObject(value) ? this.getIndexOfItem(value) : value;
-            var item = this.queue[ index ];
-            var transport = item.file._form ? '_iframeTransport' : '_xhrTransport';
-            this.isUploading = true;
-            this[ transport ](item);
             return this;
         },
 
         /**
-         * Uploads all items of queue
+         * Uploads all items from queue to uploading queue
          */
         uploadAll: function () {
-            var item = this.getNotUploadedItems()[ 0 ];
-            this._uploadNext = !!item;
-            this._uploadNext && this.uploadItem(item);
+            angular.forEach(this.queue, function(value) {
+                this.uploadItem(value);
+            });
+            this._upload();
             return this;
         },
 
@@ -223,9 +236,9 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          */
         _complete: function () {
             this.isUploading = false;
-            this._uploadNext && this.uploadAll();
-            this._uploadNext || this.trigger('completeall', this.queue);
-            ( this._uploadNext && this.scope.$$phase ) || this.scope.$apply();
+            this._upload();
+            this.isUploading || this.trigger('completeall', this.queue);
+            this.isUploading && (this.scope.$$phase || this.scope.$apply());
         },
 
         /**
