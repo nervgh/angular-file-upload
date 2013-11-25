@@ -225,7 +225,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
         removeFromQueue: function (value) {
             var index = angular.isObject(value) ? this.getIndexOfItem(value) : value;
             var item = this.queue.splice(index, 1)[ 0 ];
-            ( item.file && item.file._form ) && item.file._form.remove();
+            item._destroyForm();
             this.trigger('changedqueue', item);
             return this;
         },
@@ -235,7 +235,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          */
         clearQueue: function () {
             angular.forEach(this.queue, function (item) {
-                item.file._form && item.file._form.remove();
+                item._destroyForm();
             }, this);
             this.queue.length = 0;
             this.trigger('changedqueue', this.queue);
@@ -272,7 +272,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
 
             var index = angular.isObject(value) ? this.getIndexOfItem(value) : value;
             var item = this.queue[ index ];
-            var transport = item.file._form ? '_iframeTransport' : '_xhrTransport';
+            var transport = item._hasForm() ? '_iframeTransport' : '_xhrTransport';
             this.isUploading = true;
             this[ transport ](item);
             return this;
@@ -472,6 +472,12 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
         },
         upload: function () {
             this.uploader.uploadItem(this);
+        },
+        _hasForm: function() {
+            return !!(this.file && this.file._form);
+        },
+        _destroyForm: function() {
+            this._hasForm() && this.file._form.remove();
         },
         _beforeupload: function (event, item) {
             item.isUploaded = false;
