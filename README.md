@@ -42,7 +42,8 @@ When files are selected or dropped into the component, one or more filters are a
 - **headers** `{Object}`: Headers to be sent along with the files
 - **formData** `{Array}`: Data to be sent along with the files
 - **filters** `{Array}`: Filters to be applied to the files before adding them to the queue. If the filter returns `true` the file will be added to the queue
-- **autoUpload** `{Boolean}`: Automatically upload files after adding them to the queue 
+- **autoUpload** `{Boolean}`: Automatically upload files after adding them to the queue
+- **requestMethod** `{String}`: It's a request method. By default `POST`
 - **removeAfterUpload** `{Boolean}`: Remove files from the queue after uploading
 - **hasHTML5** `{Boolean}`: Checks whether browser has HTML5 upload support
 - **isUploading** `{Boolean}`: `true` if an upload is in progress
@@ -68,10 +69,12 @@ When files are selected or dropped into the component, one or more filters are a
 - **headers** `{Object}`: Headers to be sent along with this file
 - **formData** `{Array}`: Data to be sent along with this file
 - **progress** `{Number}`: File upload progress percentage
-- **method** `{String}`: It's a request method. By default `POST`
+- **indexOfUpload** `{Number}` - A sequence number upload
+- **requestMethod** `{String}`: It's a request method. By default `POST`
 - **removeAfterUpload** `{Boolean}`: Remove this file from the queue after uploading
 - **isUploading** `{Boolean}`: `true` if the file is being uploaded
 - **isUploaded** `{Boolean}`: `true` if the file was uploaded successfully
+- **isComplete** `{Boolean}` - `true` if the file was uploaded
 - **uploader** `{Object}`: Reference to the parent `Uploader` object for this file
 
 #### Methods
@@ -185,6 +188,7 @@ uploader.queue.push({
 - **formData** `{Array}` - данные, отправляемые вместе с файлами
 - **filters** `{Array}` - фильтры, применяемые к [файлу|элементу] перед добавлением его в очередь. Если фильтр возвращает `true`, [файл|элемент] будет добавлен в очередь
 - **autoUpload** `{Boolean}` - загружать автоматически после добавления элемента в очередь
+- **requestMethod** `{String}`: - метод запроса. По умолчанию `POST`
 - **removeAfterUpload** `{Boolean}` - удалить файлы после загрузки
 - **hasHTML5** `{Boolean}` - проверяет, поддерживает ли браузер html5 загрузку
 - **isUploading** `{Boolean}` - загрузчик в процессе загрузки
@@ -210,10 +214,12 @@ uploader.queue.push({
 - **headers** `{Object}` - заголовки, которые будут переданы вместе с файлом
 - **formData** `{Array}` - данные, отправляемые вместе с файлом
 - **progress** `{Number}` - прогресс загрузки файла
-- **method** `{String}`: - метод запроса. По умолчанию `POST`
+- **indexOfUpload** `{Number}` - индекс / порядковый номер загрузки
+- **requestMethod** `{String}`: - метод запроса. По умолчанию `POST`
 - **removeAfterUpload** `{Boolean}` - удалить файл после загрузки
 - **isUploading** `{Boolean}` - файл в процессе загрузки
-- **isUploaded** `{Boolean}` - файл загружен
+- **isUploaded** `{Boolean}` - файл успешно загружен
+- **isComplete** `{Boolean}` - файл загружен
 - **uploader** `{Object}` - ссылка на загрузчик
 
 #### Методы
