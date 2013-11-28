@@ -22,7 +22,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             filters: [],
             formData: [],
             isUploading: false,
-            _nextIndexOfUpload: 0,
+            _nextIndex: 0,
             _timestamp: Date.now()
         }, params);
 
@@ -166,6 +166,19 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             });
         },
 
+        /**
+         * Returns items ready for upload
+         * @returns {Array}
+         */
+        getReadyItems: function() {
+            return this.queue
+                .filter(function(item) {
+                    return item.isReady && !item.isUploading;
+                })
+                .sort(function(item1, item2) {
+                    return item1.index - item2.index;
+                });
+        },
 
         /**
          * Upload a item from the queue
@@ -176,7 +189,8 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             var item = this.queue[ index ];
             var transport = item._hasForm() ? '_iframeTransport' : '_xhrTransport';
 
-            item.indexOfUpload = item.indexOfUpload || this._nextIndexOfUpload++;
+            item.index = item.index || this._nextIndex++;
+            item.isReady = true;
 
             if (this.isUploading) {
                 return this;
@@ -192,28 +206,16 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          */
         uploadAll: function () {
             var items = this.getNotUploadedItems().filter(function(item) {
-                return !item.isUploading && !angular.isNumber(item.indexOfUpload);
+                return !item.isUploading;
             });
             items.forEach(function(item) {
-                item.indexOfUpload = this._nextIndexOfUpload++;
+                item.index = item.index || this._nextIndex++;
+                item.isReady = true;
             }, this);
             items.length && this.uploadItem(items[ 0 ]);
             return this;
         },
 
-        /**
-         * Return items with index of upload
-         * @returns {Array}
-         */
-        _getItemsWithIndexOfUpload: function() {
-            return this.queue
-                .filter(function(item) {
-                    return angular.isNumber(item.indexOfUpload);
-                })
-                .sort(function(item1, item2) {
-                    return item1.indexOfUpload - item2.indexOfUpload;
-                });
-        },
 
         /**
          * Returns the total progress
@@ -247,7 +249,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          * The 'in:complete' handler
          */
         _complete: function () {
-            var item = this._getItemsWithIndexOfUpload()[ 0 ];
+            var item = this.getReadyItems()[ 0 ];
             this.isUploading = false;
 
             if ( angular.isDefined(item) ) {
@@ -408,7 +410,8 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             isUploading: false,
             isUploaded: false,
             isComplete: false,
-            indexOfUpload: null
+            isReady: false,
+            index: null
         }, params);
     }
 
@@ -429,7 +432,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             item.isUploaded = false;
             item.isUploading = true;
             item.isComplete = false;
-            item.indexOfUpload = null;
             item.progress = null;
         },
         _progress: function (event, item, progress) {
@@ -440,21 +442,24 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             item.isUploaded = true;
             item.isUploading = false;
             item.isComplete = true;
-            item.indexOfUpload = null;
+            item.isReady = false;
+            item.index = null;
             item.uploader.trigger('success', xhr, item, response);
         },
         _error: function (event, xhr, item, response) {
             item.isUploaded = false;
             item.isUploading = false;
             item.isComplete = true;
-            item.indexOfUpload = null;
+            item.isReady = false;
+            item.index = null;
             item.uploader.trigger('error', xhr, item, response);
         },
         _complete: function (event, xhr, item, response) {
             item.isUploaded = item.uploader._isSuccessCode(xhr.status);;
             item.isUploading = false;
             item.isComplete = true;
-            item.indexOfUpload = null;
+            item.isReady = false;
+            item.index = null;
             item.uploader.trigger('complete', xhr, item, response);
             item.removeAfterUpload && item.remove();
         }
