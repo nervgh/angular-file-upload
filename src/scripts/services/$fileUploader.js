@@ -73,7 +73,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
         trigger: function (event, some) {
             var params = Array.prototype.slice.call(arguments, 1);
             params.unshift(this._timestamp + ':' + event);
-            this._observer.$emit.apply(this._observer, params);
+            this._observer.$broadcast.apply(this._observer, params);
             return this;
         },
 
