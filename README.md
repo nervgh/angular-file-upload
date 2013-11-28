@@ -56,6 +56,7 @@ When files are selected or dropped into the component, one or more filters are a
 - **removeFromQueue** `function( value ) {`: Remove an item from the queue, where `value` is a queue element `Item` or index
 - **clearQueue** `function() {`: Removes all elements from the queue
 - **getIndexOfItem** `function( Item ) { return [Number]; }`: Returns the index of the `Item` queue element
+- **getReadyItems** `function() { return [Array]; }`: Return items are ready to upload
 - **getNotUploadedItems** `function() { return [Array]; }`: Return an array of all pending items on the queue
 - **uploadItem** `function( value ) {`: Uploads an item, where `value` is a queue element `Item` or index
 - **uploadAll** `function() {`: Upload all pending items on the queue
@@ -69,9 +70,10 @@ When files are selected or dropped into the component, one or more filters are a
 - **headers** `{Object}`: Headers to be sent along with this file
 - **formData** `{Array}`: Data to be sent along with this file
 - **progress** `{Number}`: File upload progress percentage
-- **indexOfUpload** `{Number}` - A sequence number upload
+- **index** `{Number}` - A sequence number upload
 - **requestMethod** `{String}`: It's a request method. By default `POST`
 - **removeAfterUpload** `{Boolean}`: Remove this file from the queue after uploading
+- **isReady** `{Boolean}` - File is ready to upload
 - **isUploading** `{Boolean}`: `true` if the file is being uploaded
 - **isUploaded** `{Boolean}`: `true` if the file was uploaded successfully
 - **isComplete** `{Boolean}` - `true` if the file was uploaded
@@ -201,6 +203,7 @@ uploader.queue.push({
 - **removeFromQueue** `function( value ) {` - где _value_ элемент очереди или его индекс [Item|Index]
 - **clearQueue** `function() {` - удаляет все элементы из очереди
 - **getIndexOfItem** `function( item ) { return [Number]; }` - где _item_ элемент очереди
+- **getReadyItems** `function() { return [Array]; }`- Возвращает элементы готовые к загрузке
 - **getNotUploadedItems** `function() { return [Array]; }` - возвращает массив не загруженных элементов
 - **uploadItem** `function( value ) {` - где _value_ элемент очереди или его индекс [Item|Index]
 - **uploadAll** `function() {` - загружает все незагруженные элементы
@@ -214,9 +217,10 @@ uploader.queue.push({
 - **headers** `{Object}` - заголовки, которые будут переданы вместе с файлом
 - **formData** `{Array}` - данные, отправляемые вместе с файлом
 - **progress** `{Number}` - прогресс загрузки файла
-- **indexOfUpload** `{Number}` - индекс / порядковый номер загрузки
+- **index** `{Number}` - индекс / порядковый номер загрузки
 - **requestMethod** `{String}`: - метод запроса. По умолчанию `POST`
 - **removeAfterUpload** `{Boolean}` - удалить файл после загрузки
+- **isReady** `{Boolean}` - файл готов к загрузке
 - **isUploading** `{Boolean}` - файл в процессе загрузки
 - **isUploaded** `{Boolean}` - файл успешно загружен
 - **isComplete** `{Boolean}` - файл загружен

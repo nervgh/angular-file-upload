@@ -1,8 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- *  @version: 0.2.9.1, 2013-11-26
-
+ * @version: 0.2.9.2, 2013-11-29
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
