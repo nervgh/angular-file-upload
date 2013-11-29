@@ -24,8 +24,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             _timestamp: Date.now()
         }, params);
 
-        this._observer = this.scope.$new(true);
-
         // add the base filter
         this.filters.unshift(this._filter);
 
@@ -61,7 +59,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          * @param {Function} handler
          */
         bind: function (event, handler) {
-            this._observer.$on(this._timestamp + ':' + event, handler.bind(this));
+            this.scope.$on(this._timestamp + ':' + event, handler.bind(this));
             return this;
         },
 
@@ -73,7 +71,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
         trigger: function (event, some) {
             var params = Array.prototype.slice.call(arguments, 1);
             params.unshift(this._timestamp + ':' + event);
-            this._observer.$broadcast.apply(this._observer, params);
+            this.scope.$broadcast.apply(this.scope, params);
             return this;
         },
 
