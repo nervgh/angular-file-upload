@@ -103,7 +103,8 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
                         removeAfterUpload: this.removeAfterUpload,
                         method: this.method,
                         uploader: this,
-                        file: item
+                        file: item,
+                        method: this.method
                     }, options));
 
                     this.queue.push(item);
