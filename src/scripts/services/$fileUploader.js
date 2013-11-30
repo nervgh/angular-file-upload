@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.2, 2013-11-29
+ * @version: 0.2.9.4, 2013-12-01
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
@@ -17,7 +17,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             progress: null,
             autoUpload: false,
             removeAfterUpload: false,
-            requestMethod: 'POST',
+            method: 'POST',
             filters: [],
             formData: [],
             isUploading: false,
@@ -70,7 +70,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          * @param {...*} [some]
          */
         trigger: function (event, some) {
-            Array.prototype.unshift.call(arguments, this._timestamp + ':' + event);
+            arguments[ 0 ] = this._timestamp + ':' + event;
             this.scope.$broadcast.apply(this.scope, arguments);
             return this;
         },
@@ -101,7 +101,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
                         headers: angular.copy(this.headers),
                         formData: angular.copy(this.formData),
                         removeAfterUpload: this.removeAfterUpload,
-                        requestMethod: this.requestMethod,
+                        method: this.method,
                         uploader: this,
                         file: item
                     }, options));
@@ -135,7 +135,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          * Clears the queue
          */
         clearQueue: function () {
-            angular.forEach(this.queue, function (item) {
+            this.queue.forEach(function (item) {
                 item._destroyForm();
             }, this);
             this.queue.length = 0;
@@ -275,7 +275,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
 
             this.trigger('beforeupload', item);
 
-            angular.forEach(item.formData, function(obj) {
+            item.formData.forEach(function(obj) {
                 angular.forEach(obj, function(value, key) {
                     form.append(key, value);
                 });
@@ -283,28 +283,28 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
 
             form.append(item.alias, item.file);
 
-            xhr.upload.addEventListener('progress', function (event) {
+            xhr.upload.onprogress = function (event) {
                 var progress = event.lengthComputable ? event.loaded * 100 / event.total : 0;
                 that.trigger('in:progress', item, Math.round(progress));
-            }, false);
+            };
 
-            xhr.addEventListener('load', function () {
+            xhr.onload = function () {
                 var response = that._transformResponse(xhr.response);
                 var event = that._isSuccessCode(xhr.status) ? 'success' : 'error';
                 that.trigger('in:' + event, xhr, item, response);
                 that.trigger('in:complete', xhr, item, response);
-            }, false);
+            };
 
-            xhr.addEventListener('error', function () {
+            xhr.onerror = function () {
                 that.trigger('in:error', xhr, item);
                 that.trigger('in:complete', xhr, item);
-            }, false);
+            };
 
-            xhr.addEventListener('abort', function () {
+            xhr.onabort = function () {
                 that.trigger('in:complete', xhr, item);
-            }, false);
+            };
 
-            xhr.open(item.requestMethod, item.url, true);
+            xhr.open(item.method, item.url, true);
 
             angular.forEach(item.headers, function (value, name) {
                 xhr.setRequestHeader(name, value);
@@ -331,7 +331,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
 
             input.prop('name', item.alias);
 
-            angular.forEach(item.formData, function(obj) {
+            item.formData.forEach(function(obj) {
                 angular.forEach(obj, function(value, key) {
                     form.append(angular.element('<input type="hidden" name="' + key + '" value="' + value + '" />'));
                 });
@@ -339,7 +339,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
 
             form.prop({
                 action: item.url,
-                method: item.requestMethod,
+                method: item.method,
                 target: iframe.prop('name'),
                 enctype: 'multipart/form-data',
                 encoding: 'multipart/form-data' // old IE
@@ -371,7 +371,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          * @returns {*}
          */
         _transformResponse: function (response) {
-            angular.forEach($http.defaults.transformResponse, function (transformFn) {
+            $http.defaults.transformResponse.forEach(function (transformFn) {
                 response = transformFn(response);
             });
             return response;
