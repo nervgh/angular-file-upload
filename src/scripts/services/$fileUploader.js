@@ -69,9 +69,8 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          * @param {...*} [some]
          */
         trigger: function (event, some) {
-            var params = Array.prototype.slice.call(arguments, 1);
-            params.unshift(this._timestamp + ':' + event);
-            this.scope.$broadcast.apply(this.scope, params);
+            Array.prototype.unshift.call(arguments, this._timestamp + ':' + event);
+            this.scope.$broadcast.apply(this.scope, arguments);
             return this;
         },
 
