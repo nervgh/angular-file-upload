@@ -10,14 +10,14 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.4, 2013-12-01
+ * @version: 0.2.9.5, 2013-12-02
  */
 var app = angular.module('angularFileUpload', []);
 
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.4, 2013-12-01
+ * @version: 0.2.9.5, 2013-12-02
  */
 
 // It is attached to an element that catches the event drop file
@@ -57,7 +57,7 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.4, 2013-12-01
+ * @version: 0.2.9.5, 2013-12-02
  */
 
 // It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"
@@ -78,7 +78,7 @@ app.directive('ngFileOver', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.4, 2013-12-01
+ * @version: 0.2.9.5, 2013-12-02
  */
 
 // It is attached to <input type="file"> element like <ng-file-select="options">
@@ -99,7 +99,7 @@ app.directive('ngFileSelect', [ '$fileUploader', function ($fileUploader) {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.4, 2013-12-01
+ * @version: 0.2.9.5, 2013-12-02
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
@@ -351,6 +351,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
                 return;
             }
 
+            this.progress = this._getTotalProgress();
             this.trigger('completeall', this.queue);
             this.scope.$$phase || this.scope.$apply();
         },
@@ -537,6 +538,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             item.isUploading = false;
             item.isComplete = true;
             item.isReady = false;
+            item.progress = 100;
             item.index = null;
             item.uploader.trigger('success', xhr, item, response);
         },

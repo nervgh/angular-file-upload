@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.4, 2013-12-01
+ * @version: 0.2.9.5, 2013-12-02
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
@@ -253,6 +253,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
                 return;
             }
 
+            this.progress = this._getTotalProgress();
             this.trigger('completeall', this.queue);
             this.scope.$$phase || this.scope.$apply();
         },
@@ -439,6 +440,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             item.isUploading = false;
             item.isComplete = true;
             item.isReady = false;
+            item.progress = 100;
             item.index = null;
             item.uploader.trigger('success', xhr, item, response);
         },
