@@ -1,6 +1,6 @@
 {
   "name": "angular-file-upload",
-  "version": "0.2.9.5",
+  "version": "0.2.9.6",
   "main": "angular-file-upload.js",
   "ignore": [],
   "dependencies": {

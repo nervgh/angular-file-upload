@@ -69,14 +69,15 @@ When files are selected or dropped into the component, one or more filters are a
 - **alias** `{String}`: Name of the field which will contain the file, default is `file` 
 - **headers** `{Object}`: Headers to be sent along with this file
 - **formData** `{Array}`: Data to be sent along with this file
-- **progress** `{Number}`: File upload progress percentage
-- **index** `{Number}` - A sequence number upload
 - **method** `{String}`: It's a request method. By default `POST`
 - **removeAfterUpload** `{Boolean}`: Remove this file from the queue after uploading
+- **index** `{Number}` - A sequence number upload
+- **progress** `{Number}`: File upload progress percentage
 - **isReady** `{Boolean}` - File is ready to upload
 - **isUploading** `{Boolean}`: `true` if the file is being uploaded
-- **isUploaded** `{Boolean}`: `true` if the file was uploaded successfully
-- **isComplete** `{Boolean}` - `true` if the file was uploaded
+- **isUploaded** `{Boolean}`: `true` if the file was uploaded
+- **isSuccess** `{Boolean}`: `true` if the file was uploaded successfully
+- **isError** `{Boolean}` - `true` if occurred error while file uploading
 - **uploader** `{Object}`: Reference to the parent `Uploader` object for this file
 
 #### Methods
@@ -216,14 +217,15 @@ uploader.queue.push({
 - **alias** `{String}` - псевдоним файла
 - **headers** `{Object}` - заголовки, которые будут переданы вместе с файлом
 - **formData** `{Array}` - данные, отправляемые вместе с файлом
-- **progress** `{Number}` - прогресс загрузки файла
-- **index** `{Number}` - индекс / порядковый номер загрузки
 - **method** `{String}`: - метод запроса. По умолчанию `POST`
 - **removeAfterUpload** `{Boolean}` - удалить файл после загрузки
+- **index** `{Number}` - индекс / порядковый номер загрузки
+- **progress** `{Number}` - прогресс загрузки файла
 - **isReady** `{Boolean}` - файл готов к загрузке
 - **isUploading** `{Boolean}` - файл в процессе загрузки
-- **isUploaded** `{Boolean}` - файл успешно загружен
-- **isComplete** `{Boolean}` - файл загружен
+- **isUploaded** `{Boolean}` - файл загружен
+- **isSuccess** `{Boolean}` - файл успешно загружен
+- **isError** `{Boolean}` - при загрузке файла произошла ошибка
 - **uploader** `{Object}` - ссылка на загрузчик
 
 #### Методы

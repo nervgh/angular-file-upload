@@ -10,14 +10,14 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.5, 2013-12-02
+ * @version: 0.2.9.6, 2013-12-06
  */
 var app = angular.module('angularFileUpload', []);
 
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.5, 2013-12-02
+ * @version: 0.2.9.6, 2013-12-06
  */
 
 // It is attached to an element that catches the event drop file
@@ -57,7 +57,7 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.5, 2013-12-02
+ * @version: 0.2.9.6, 2013-12-06
  */
 
 // It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"
@@ -78,7 +78,7 @@ app.directive('ngFileOver', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.5, 2013-12-02
+ * @version: 0.2.9.6, 2013-12-06
  */
 
 // It is attached to <input type="file"> element like <ng-file-select="options">
@@ -99,7 +99,7 @@ app.directive('ngFileSelect', [ '$fileUploader', function ($fileUploader) {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.5, 2013-12-02
+ * @version: 0.2.9.6, 2013-12-06
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
@@ -256,7 +256,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          */
         getNotUploadedItems: function () {
             return this.queue.filter(function (item) {
-                return !item.isComplete;
+                return !item.isUploaded;
             });
         },
 
@@ -501,11 +501,12 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
         }
 
         angular.extend(this, {
-            progress: null,
+            isReady: false,
             isUploading: false,
             isUploaded: false,
-            isComplete: false,
-            isReady: false,
+            isSuccess: false,
+            isError: false,
+            progress: null,
             index: null
         }, params);
     }
@@ -524,9 +525,11 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             this._hasForm() && this.file._form.remove();
         },
         _beforeupload: function (event, item) {
-            item.isUploaded = false;
+            item.isReady = true;
             item.isUploading = true;
-            item.isComplete = false;
+            item.isUploaded = false;
+            item.isSuccess = false;
+            item.isError = false;
             item.progress = null;
         },
         _progress: function (event, item, progress) {
@@ -534,27 +537,31 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             item.uploader.trigger('progress', item, progress);
         },
         _success: function (event, xhr, item, response) {
-            item.isUploaded = true;
-            item.isUploading = false;
-            item.isComplete = true;
             item.isReady = false;
+            item.isUploading = false;
+            item.isUploaded = true;
+            item.isSuccess = true;
+            item.isError = false;
             item.progress = 100;
             item.index = null;
             item.uploader.trigger('success', xhr, item, response);
         },
         _error: function (event, xhr, item, response) {
-            item.isUploaded = false;
-            item.isUploading = false;
-            item.isComplete = true;
             item.isReady = false;
+            item.isUploading = false;
+            item.isUploaded = true;
+            item.isSuccess = false;
+            item.isError = true;
             item.index = null;
             item.uploader.trigger('error', xhr, item, response);
         },
         _complete: function (event, xhr, item, response) {
-            item.isUploaded = item.uploader._isSuccessCode(xhr.status);;
-            item.isUploading = false;
-            item.isComplete = true;
+            var status = item.uploader._isSuccessCode(xhr.status);
             item.isReady = false;
+            item.isUploading = false;
+            item.isUploaded = true;
+            item.isSuccess = status;
+            item.isError = !status;
             item.index = null;
             item.uploader.trigger('complete', xhr, item, response);
             item.removeAfterUpload && item.remove();

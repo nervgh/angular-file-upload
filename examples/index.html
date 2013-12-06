@@ -43,7 +43,7 @@
 
             <div class="row">
 
-                <div class="col-md-4">
+                <div class="col-md-3">
 
                     <h3>Select files</h3>
 
@@ -64,7 +64,7 @@
 
                 </div>
 
-                <div class="col-md-8" style="margin-bottom: 40px">
+                <div class="col-md-9" style="margin-bottom: 40px">
 
                     <h3>Upload queue</h3>
                     <p>Queue length: {{ uploader.queue.length }}</p>
@@ -75,7 +75,8 @@
                                 <th width="50%">Name</th>
                                 <th ng-show="uploader.hasHTML5">Size</th>
                                 <th ng-show="uploader.hasHTML5">Progress</th>
-                                <th>Ok</th>
+                                <th>Success</th>
+                                <th>Error</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -89,10 +90,13 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <i class="glyphicon glyphicon-ok" ng-show="item.isUploaded"></i>
+                                    <i class="glyphicon glyphicon-ok" ng-show="item.isSuccess"></i>
+                                </td>
+                                <td>
+                                    <i class="glyphicon glyphicon-remove" ng-show="item.isError"></i>
                                 </td>
                                 <td nowrap>
-                                    <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isUploaded">
+                                    <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
                                         <span class="glyphicon glyphicon-upload"></span> Upload
                                     </button>
                                     <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
