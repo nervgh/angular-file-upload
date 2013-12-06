@@ -454,6 +454,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             item.isUploaded = true;
             item.isSuccess = false;
             item.isError = true;
+            item.progress = 100;
             item.index = null;
             item.uploader.trigger('error', xhr, item, response);
         },
@@ -464,6 +465,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             item.isUploaded = true;
             item.isSuccess = status;
             item.isError = !status;
+            item.progress = 100;
             item.index = null;
             item.uploader.trigger('complete', xhr, item, response);
             item.removeAfterUpload && item.remove();
