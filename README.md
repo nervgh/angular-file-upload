@@ -122,7 +122,7 @@ function( item ) {
 
 - **afteraddingfile** `function( event, item ) {`: Fires after adding a single file to the queue
 - **afteraddingall** `function( event, items ) {`: Fires after adding all the dragged or selected files to the queue 
-- **beforeupload** `function( event, items ) {`: Fires before uploading an item
+- **beforeupload** `function( event, item ) {`: Fires before uploading an item
 - **changedqueue** `function( event, [item|items] ) {`: When the queue has changed as a result of adding or removing elements
 - **progress** `function( event, item, progress ) {`: On file upload progress
 - **success** `function( event, xhr, item, response ) {`: On file successfully uploaded
@@ -269,7 +269,7 @@ function( item ) {
 
 - **afteraddingfile** `function( event, item ) {` - после добавления файла в очередь
 - **afteraddingall** `function( event, items ) {` - после добавления всех файлов в очередь
-- **beforeupload** `function( event, items ) {` - перед загрузкой файла
+- **beforeupload** `function( event, item ) {` - перед загрузкой файла
 - **changedqueue** `function( event, [item|items] ) {` - очередь изменена
 - **progress** `function( event, item, progress ) {` - прогресс загрузки файла
 - **success** `function( event, xhr, item, response ) {` - файл успешно загружен
