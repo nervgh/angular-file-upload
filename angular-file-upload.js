@@ -32,7 +32,7 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
                     var dataTransfer = event.dataTransfer ?
                         event.dataTransfer :
                         event.originalEvent.dataTransfer; // jQuery fix;
-
+                    if (!dataTransfer) return;
                     event.preventDefault();
                     event.stopPropagation();
                     scope.$broadcast('file:removeoverclass');
