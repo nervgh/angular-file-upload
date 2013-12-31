@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.6, 2013-12-06
+ * @version: 0.2.9.7, 2013-12-31
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
@@ -58,6 +58,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          * Registers a event handler
          * @param {String} event
          * @param {Function} handler
+         * @return {Function} unsubscribe function
          */
         bind: function (event, handler) {
             return this.scope.$on(this._timestamp + ':' + event, handler.bind(this));
@@ -71,7 +72,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
         trigger: function (event, some) {
             arguments[ 0 ] = this._timestamp + ':' + event;
             this.scope.$broadcast.apply(this.scope, arguments);
-            return this;
         },
 
         /**
@@ -115,7 +115,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
                 this.trigger('changedqueue', this.queue);
             }
             this.autoUpload && this.uploadAll();
-            return this;
         },
 
         /**
@@ -127,7 +126,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             var item = this.queue.splice(index, 1)[ 0 ];
             item._destroyForm();
             this.trigger('changedqueue', item);
-            return this;
         },
 
         /**
@@ -139,7 +137,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             }, this);
             this.queue.length = 0;
             this.trigger('changedqueue', this.queue);
-            return this;
         },
 
         /**
@@ -188,12 +185,11 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             item.isReady = true;
 
             if (this.isUploading) {
-                return this;
+                return;
             }
 
             this.isUploading = true;
             this[ transport ](item);
-            return this;
         },
 
         /**
@@ -208,7 +204,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
                 item.isReady = true;
             }, this);
             items.length && this.uploadItem(items[ 0 ]);
-            return this;
         },
 
 

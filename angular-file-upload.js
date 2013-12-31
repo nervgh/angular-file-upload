@@ -10,14 +10,14 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.6, 2013-12-06
+ * @version: 0.2.9.7, 2013-12-31
  */
 var app = angular.module('angularFileUpload', []);
 
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.6, 2013-12-06
+ * @version: 0.2.9.7, 2013-12-31
  */
 
 // It is attached to an element that catches the event drop file
@@ -57,7 +57,7 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.6, 2013-12-06
+ * @version: 0.2.9.7, 2013-12-31
  */
 
 // It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"
@@ -78,7 +78,7 @@ app.directive('ngFileOver', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.6, 2013-12-06
+ * @version: 0.2.9.7, 2013-12-31
  */
 
 // It is attached to <input type="file"> element like <ng-file-select="options">
@@ -99,7 +99,7 @@ app.directive('ngFileSelect', [ '$fileUploader', function ($fileUploader) {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.6, 2013-12-06
+ * @version: 0.2.9.7, 2013-12-31
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
@@ -156,10 +156,10 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          * Registers a event handler
          * @param {String} event
          * @param {Function} handler
+         * @return {Function} unsubscribe function
          */
         bind: function (event, handler) {
-            this.scope.$on(this._timestamp + ':' + event, handler.bind(this));
-            return this;
+            return this.scope.$on(this._timestamp + ':' + event, handler.bind(this));
         },
 
         /**
@@ -170,7 +170,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
         trigger: function (event, some) {
             arguments[ 0 ] = this._timestamp + ':' + event;
             this.scope.$broadcast.apply(this.scope, arguments);
-            return this;
         },
 
         /**
@@ -214,7 +213,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
                 this.trigger('changedqueue', this.queue);
             }
             this.autoUpload && this.uploadAll();
-            return this;
         },
 
         /**
@@ -226,7 +224,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             var item = this.queue.splice(index, 1)[ 0 ];
             item._destroyForm();
             this.trigger('changedqueue', item);
-            return this;
         },
 
         /**
@@ -238,7 +235,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             }, this);
             this.queue.length = 0;
             this.trigger('changedqueue', this.queue);
-            return this;
         },
 
         /**
@@ -287,12 +283,11 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             item.isReady = true;
 
             if (this.isUploading) {
-                return this;
+                return;
             }
 
             this.isUploading = true;
             this[ transport ](item);
-            return this;
         },
 
         /**
@@ -307,7 +302,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
                 item.isReady = true;
             }, this);
             items.length && this.uploadItem(items[ 0 ]);
-            return this;
         },
 
 
@@ -552,6 +546,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             item.isUploaded = true;
             item.isSuccess = false;
             item.isError = true;
+            item.progress = 100;
             item.index = null;
             item.uploader.trigger('error', xhr, item, response);
         },
@@ -562,6 +557,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             item.isUploaded = true;
             item.isSuccess = status;
             item.isError = !status;
+            item.progress = 100;
             item.index = null;
             item.uploader.trigger('complete', xhr, item, response);
             item.removeAfterUpload && item.remove();
@@ -575,5 +571,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
         hasHTML5: Uploader.prototype.hasHTML5
     };
 }])
+
     return app;
 }));

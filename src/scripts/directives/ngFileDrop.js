@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.6, 2013-12-06
+ * @version: 0.2.9.7, 2013-12-31
  */
 
 // It is attached to an element that catches the event drop file
