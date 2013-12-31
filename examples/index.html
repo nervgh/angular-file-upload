@@ -47,7 +47,7 @@
 
                     <h3>Select files</h3>
 
-                    <div ng-show="uploader.hasHTML5">
+                    <div ng-show="uploader.isHTML5">
                         <!-- 3. ng-file-over | ng-file-over="className" -->
                         <div class="well my-drop-zone" ng-file-over>
                             Base drop zone
@@ -73,8 +73,8 @@
                         <thead>
                             <tr>
                                 <th width="50%">Name</th>
-                                <th ng-show="uploader.hasHTML5">Size</th>
-                                <th ng-show="uploader.hasHTML5">Progress</th>
+                                <th ng-show="uploader.isHTML5">Size</th>
+                                <th ng-show="uploader.isHTML5">Progress</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -82,8 +82,8 @@
                         <tbody>
                             <tr ng-repeat="item in uploader.queue">
                                 <td><strong>{{ item.file.name }}</strong></td>
-                                <td ng-show="uploader.hasHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
-                                <td ng-show="uploader.hasHTML5">
+                                <td ng-show="uploader.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
+                                <td ng-show="uploader.isHTML5">
                                     <div class="progress" style="margin-bottom: 0;">
                                         <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
                                     </div>

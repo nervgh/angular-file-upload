@@ -10,14 +10,14 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.8, 2013-12-31
+ * @version: 0.2.9.8.1, 2013-12-31
  */
 var app = angular.module('angularFileUpload', []);
 
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.8, 2013-12-31
+ * @version: 0.2.9.8.1, 2013-12-31
  */
 
 // It is attached to an element that catches the event drop file
@@ -26,7 +26,7 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
 
     return {
         // don't use drag-n-drop files in IE9, because not File API support
-        link: !$fileUploader.hasHTML5 ? angular.noop : function (scope, element, attributes) {
+        link: !$fileUploader.isHTML5 ? angular.noop : function (scope, element, attributes) {
             element
                 .bind('drop', function (event) {
                     var dataTransfer = event.dataTransfer ?
@@ -57,7 +57,7 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.8, 2013-12-31
+ * @version: 0.2.9.8.1, 2013-12-31
  */
 
 // It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"
@@ -78,7 +78,7 @@ app.directive('ngFileOver', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.8, 2013-12-31
+ * @version: 0.2.9.8.1, 2013-12-31
  */
 
 // It is attached to <input type="file"> element like <ng-file-select="options">
@@ -87,11 +87,11 @@ app.directive('ngFileSelect', [ '$fileUploader', function ($fileUploader) {
 
     return {
         link: function (scope, element, attributes) {
-            $fileUploader.hasHTML5 || element.removeAttr('multiple');
+            $fileUploader.isHTML5 || element.removeAttr('multiple');
 
             element.bind('change', function () {
                 scope.$emit('file:add', this.files ? this.files : this, scope.$eval(attributes.ngFileSelect));
-                $fileUploader.hasHTML5 && element.prop('value', null);
+                $fileUploader.isHTML5 && element.prop('value', null);
             });
         }
     };
@@ -99,7 +99,7 @@ app.directive('ngFileSelect', [ '$fileUploader', function ($fileUploader) {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.8, 2013-12-31
+ * @version: 0.2.9.8.1, 2013-12-31
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
@@ -177,7 +177,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          * Checks a support the html5 uploader
          * @returns {Boolean}
          */
-        hasHTML5: !!($window.File && $window.FormData),
+        isHTML5: !!($window.File && $window.FormData),
 
         /**
          * Adds items to the queue
@@ -281,7 +281,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
         uploadItem: function (value) {
             var index = this.getIndexOfItem(value);
             var item = this.queue[ index ];
-            var transport = item._hasForm() ? '_iframeTransport' : '_xhrTransport';
+            var transport = this.isHTML5 ? '_xhrTransport' : '_iframeTransport';
 
             item.index = item.index || this._nextIndex++;
             item.isReady = true;
@@ -303,11 +303,10 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             var index = this.getIndexOfItem(value);
             var item = this.queue[ index ];
 
-            if (item._hasForm()) {
-                // TODO: old browsers
-            } else {
+            if (this.isHTML5) {
                 item._xhr && item._xhr.abort();
-                delete item._xhr;
+            } else {
+                // TODO: old browsers
             }
         },
 
@@ -508,7 +507,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
     // item of queue
     function Item(params) {
         // fix for old browsers
-        if (angular.isElement(params.file)) {
+        if (!Uploader.prototype.isHTML5) {
             var input = angular.element(params.file);
             var clone = $compile(input.clone())(params.uploader.scope);
             var form = angular.element('<form style="display: none;" />');
@@ -611,7 +610,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
         create: function (params) {
             return new Uploader(params);
         },
-        hasHTML5: Uploader.prototype.hasHTML5
+        isHTML5: Uploader.prototype.isHTML5
     };
 }])
 

@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.8, 2013-12-31
+ * @version: 0.2.9.8.1, 2013-12-31
  */
 
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
@@ -79,7 +79,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          * Checks a support the html5 uploader
          * @returns {Boolean}
          */
-        hasHTML5: !!($window.File && $window.FormData),
+        isHTML5: !!($window.File && $window.FormData),
 
         /**
          * Adds items to the queue
@@ -183,7 +183,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
         uploadItem: function (value) {
             var index = this.getIndexOfItem(value);
             var item = this.queue[ index ];
-            var transport = item._hasForm() ? '_iframeTransport' : '_xhrTransport';
+            var transport = this.isHTML5 ? '_xhrTransport' : '_iframeTransport';
 
             item.index = item.index || this._nextIndex++;
             item.isReady = true;
@@ -205,11 +205,10 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             var index = this.getIndexOfItem(value);
             var item = this.queue[ index ];
 
-            if (item._hasForm()) {
-                // TODO: old browsers
-            } else {
+            if (this.isHTML5) {
                 item._xhr && item._xhr.abort();
-                delete item._xhr;
+            } else {
+                // TODO: old browsers
             }
         },
 
@@ -410,7 +409,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
     // item of queue
     function Item(params) {
         // fix for old browsers
-        if (angular.isElement(params.file)) {
+        if (!Uploader.prototype.isHTML5) {
             var input = angular.element(params.file);
             var clone = $compile(input.clone())(params.uploader.scope);
             var form = angular.element('<form style="display: none;" />');
@@ -513,6 +512,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
         create: function (params) {
             return new Uploader(params);
         },
-        hasHTML5: Uploader.prototype.hasHTML5
+        isHTML5: Uploader.prototype.isHTML5
     };
 }])
