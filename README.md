@@ -60,6 +60,8 @@ When files are selected or dropped into the component, one or more filters are a
 - **getNotUploadedItems** `function() { return [Array]; }`: Return an array of all pending items on the queue
 - **uploadItem** `function( value ) {`: Uploads an item, where `value` is a queue element `Item` or index
 - **uploadAll** `function() {`: Upload all pending items on the queue
+- **cancelItem** `function( value ) {`: Cancels uploading of item, where `value` is a queue element `Item` or index
+- **cancelAll** `function() {`: Cancels all current uploads
 
 ### The Item API:
 
@@ -77,6 +79,7 @@ When files are selected or dropped into the component, one or more filters are a
 - **isUploading** `{Boolean}`: `true` if the file is being uploaded
 - **isUploaded** `{Boolean}`: `true` if the file was uploaded
 - **isSuccess** `{Boolean}`: `true` if the file was uploaded successfully
+- **isCancel** `{Boolean}` : `true` if uploading was canceled
 - **isError** `{Boolean}` - `true` if occurred error while file uploading
 - **uploader** `{Object}`: Reference to the parent `Uploader` object for this file
 
@@ -84,6 +87,7 @@ When files are selected or dropped into the component, one or more filters are a
 
 - **remove** `function() {`: Remove this file from the queue
 - **upload** `function() {`: Upload this file
+- **cancel** `function() {`: Cancels uploading of this file
 
 ## Filters
 
@@ -126,6 +130,7 @@ function( item ) {
 - **changedqueue** `function( event, [item|items] ) {`: When the queue has changed as a result of adding or removing elements
 - **progress** `function( event, item, progress ) {`: On file upload progress
 - **success** `function( event, xhr, item, response ) {`: On file successfully uploaded
+- **cancel** `function( event, xhr, item ) {` - On cancel uploading
 - **error** `function( event, xhr, item[, response ]) {`: On upload error
 - **complete** `function( event, xhr, item, response ) {`: On file upload complete (independently of the sucess of the operation)
 - **progressall** `function( event, progress ) {`: On upload queue progress
@@ -208,6 +213,8 @@ uploader.queue.push({
 - **getNotUploadedItems** `function() { return [Array]; }` - возвращает массив не загруженных элементов
 - **uploadItem** `function( value ) {` - где _value_ элемент очереди или его индекс [Item|Index]
 - **uploadAll** `function() {` - загружает все незагруженные элементы
+- **cancelItem** `function( value ) {` - где _value_ элемент очереди или его индекс [Item|Index]
+- **cancelAll** `function() {` - отменяет все текущие загрузки
 
 ### Элемент очереди API:
 
@@ -225,6 +232,7 @@ uploader.queue.push({
 - **isUploading** `{Boolean}` - файл в процессе загрузки
 - **isUploaded** `{Boolean}` - файл загружен
 - **isSuccess** `{Boolean}` - файл успешно загружен
+- **isCancel** `{Boolean}` - загрузка файла была отменена
 - **isError** `{Boolean}` - при загрузке файла произошла ошибка
 - **uploader** `{Object}` - ссылка на загрузчик
 
@@ -232,6 +240,7 @@ uploader.queue.push({
 
 - **remove** `function() {` - удаляет элемент
 - **upload** `function() {` - загружает элемент
+- **cancel** `function() {` - отменяет загрузку элемента
 
 ## Фильтры
 
@@ -273,6 +282,7 @@ function( item ) {
 - **changedqueue** `function( event, [item|items] ) {` - очередь изменена
 - **progress** `function( event, item, progress ) {` - прогресс загрузки файла
 - **success** `function( event, xhr, item, response ) {` - файл успешно загружен
+- **cancel** `function( event, xhr, item ) {` - отменяет загрузку файла
 - **error** `function( event, xhr, item[, response ]) {` - ошибка при загрузке
 - **complete** `function( event, xhr, item, response ) {` - файл загружен
 - **progressall** `function( event, progress ) {` - прогресс загрузки очереди

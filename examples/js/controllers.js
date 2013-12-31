@@ -52,6 +52,10 @@ angular.module('app', ['angularFileUpload'])
             console.info('Success', xhr, item, response);
         });
 
+        uploader.bind('cancel', function (event, xhr, item) {
+            console.info('Cancel', xhr, item);
+        });
+
         uploader.bind('error', function (event, xhr, item, response) {
             console.info('Error', xhr, item, response);
         });
@@ -65,7 +69,7 @@ angular.module('app', ['angularFileUpload'])
         });
 
         uploader.bind('completeall', function (event, items) {
-            console.info('All files are transferred', items);
+            console.info('Complete all', items);
         });
 
     });
