@@ -1,6 +1,6 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.8.1, 2013-12-31
+ * @version: 0.3, 2014-01-03
  */
 var app = angular.module('angularFileUpload', []);

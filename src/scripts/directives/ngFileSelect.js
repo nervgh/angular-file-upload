@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.2.9.8.1, 2013-12-31
+ * @version: 0.3, 2014-01-03
  */
 
 // It is attached to <input type="file"> element like <ng-file-select="options">
@@ -13,9 +13,11 @@ app.directive('ngFileSelect', [ '$fileUploader', function ($fileUploader) {
             $fileUploader.isHTML5 || element.removeAttr('multiple');
 
             element.bind('change', function () {
-                scope.$emit('file:add', this.files ? this.files : this, scope.$eval(attributes.ngFileSelect));
+                scope.$emit('file:add', $fileUploader.isHTML5 ? this.files : this, scope.$eval(attributes.ngFileSelect));
                 $fileUploader.isHTML5 && element.prop('value', null);
             });
+
+            element.prop('value', null); // FF fix
         }
     };
 }]);
