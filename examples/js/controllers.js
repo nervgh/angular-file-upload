@@ -36,10 +36,6 @@ angular.module('app', ['angularFileUpload'])
             console.info('After adding all files', items);
         });
 
-        uploader.bind('changedqueue', function (event, items) {
-            console.info('Changed queue', items);
-        });
-
         uploader.bind('beforeupload', function (event, item) {
             console.info('Before upload', item);
         });

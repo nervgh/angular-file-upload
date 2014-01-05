@@ -138,7 +138,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
         this.bind('in:cancel', Item.prototype._cancel);
         this.bind('in:error', Item.prototype._error);
         this.bind('in:complete', Item.prototype._complete);
-        this.bind('changedqueue', this._changedQueue);
         this.bind('in:progress', this._progress);
         this.bind('in:complete', this._complete);
     }
@@ -187,8 +186,9 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          */
         addToQueue: function (items, options) {
             var length = this.queue.length;
+            var list = 'length' in items ? items : [items];
 
-            angular.forEach('length' in items ? items : [ items ], function (file) {
+            angular.forEach(list, function (file) {
                 var isValid = !this.filters.length ? true : this.filters.every(function (filter) {
                     return filter.call(this, file);
                 }, this);
@@ -211,9 +211,11 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             }, this);
 
             if (this.queue.length !== length) {
-                this.trigger('afteraddingall', this.queue);
-                this.trigger('changedqueue', this.queue);
+                this.trigger('after:adding:all', this.queue);
+                this.progress = this._getTotalProgress();
             }
+
+            this._render();
             this.autoUpload && this.uploadAll();
         },
 
@@ -227,7 +229,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             item.isUploading && item.cancel();
             this.queue.splice(index, 1);
             item._destroy();
-            this.trigger('changedqueue', item);
+            this.progress = this._getTotalProgress();
         },
 
         /**
@@ -239,7 +241,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
                 item._destroy();
             }, this);
             this.queue.length = 0;
-            this.trigger('changedqueue', this.queue);
+            this.progress = 0;
         },
 
         /**
@@ -328,8 +330,17 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          */
         cancelAll: function() {
             this.getNotUploadedItems().forEach(function(item) {
-                item.cancel();
-            });
+                this.cancelItem(item);
+            }, this);
+        },
+
+
+        /**
+         * Updates angular scope
+         * @private
+         */
+        _render: function() {
+            this.scope.$$phase || this.scope.$digest();
         },
 
 
@@ -346,7 +357,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             var notUploaded = this.getNotUploadedItems().length;
             var uploaded = notUploaded ? this.queue.length - notUploaded : this.queue.length;
             var ratio = 100 / this.queue.length;
-            var current = ( value || 0 ) * ratio / 100;
+            var current = (value || 0) * ratio / 100;
 
             return Math.round(uploaded * ratio + current);
         },
@@ -356,9 +367,9 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          */
         _progress: function (event, item, progress) {
             var result = this._getTotalProgress(progress);
-            this.progress = result;
             this.trigger('progressall', result);
-            this.scope.$$phase || this.scope.$apply();
+            this.progress = result;
+            this._render();
         },
 
         /**
@@ -373,17 +384,9 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
                 return;
             }
 
-            this.progress = this._getTotalProgress();
             this.trigger('completeall', this.queue);
-            this.scope.$$phase || this.scope.$apply();
-        },
-
-        /**
-         * The 'changedqueue' handler
-         */
-        _changedQueue: function () {
             this.progress = this._getTotalProgress();
-            this.scope.$$phase || this.scope.$apply();
+            this._render();
         },
 
         /**
