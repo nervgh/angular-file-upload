@@ -7,7 +7,7 @@ angular.module('app', ['angularFileUpload'])
         // create a uploader with options
         var uploader = $scope.uploader = $fileUploader.create({
             scope: $scope,                          // to automatically update the html. Default: $rootScope
-            url: '/examples/upload.php',
+            url: 'upload.php',
             formData: [
                 { key: 'value' }
             ],
