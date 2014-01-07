@@ -10,7 +10,9 @@
 
 When files are selected or dropped into the component, one or more filters are applied. Files which pass all filters are added to the queue and are ready to be uploaded.
 
-[Live demo](http://nervgh.github.io/pages/angular-file-upload/).
+## Demos
+1. [Base example](http://nervgh.github.io/pages/angular-file-upload/examples/simple)
+2. [Uploads only images (with canvas preview)](http://nervgh.github.io/pages/angular-file-upload/examples/image-preview)
 
 ## Requires
 
@@ -164,7 +166,9 @@ uploader.queue.push({
 **Angular File Upload** - модуль загрузки файлов (html5 + iframe) для фреймворка [AngularJS](http://angularjs.org/). Поддерживает drag-n-drop загрузку, индикацию прогресса загрузки, очередь. В старых браузерах деградирует до iframe загрузчика.<br />
 В общих чертах работа модуля выглядит так: директивы "ловят" файлы и добавляют их в очередь, если те прошли фильтры, после чего "загрузчик файлов" может ими (элементами очереди) манипулировать.
 
-[Live demo](http://nervgh.github.io/pages/angular-file-upload/).
+## Примеры
+1. [Base example](http://nervgh.github.io/pages/angular-file-upload/examples/simple)
+2. [Uploads only images (with canvas preview)](http://nervgh.github.io/pages/angular-file-upload/examples/image-preview)
 
 ## Требует
 - [AngularJS](https://github.com/angular/angular.js) фреймворк
