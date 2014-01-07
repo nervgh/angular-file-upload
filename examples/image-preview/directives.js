@@ -14,15 +14,24 @@ angular
     /**
     * The ng-thumb directive
     * @author: nerv
-    * @version: 0.1, 2014-01-07
+    * @version: 0.1.1, 2014-01-07
     */
-    .directive('ngThumb', ['$fileUploader', function($fileUploader) {
+    .directive('ngThumb', ['$fileUploader', '$window', function($fileUploader, $window) {
         return {
+            restrict: 'A',
             template: '<canvas/>',
             link: function(scope, element, attributes) {
-                if (!$fileUploader.isHTML5) return;
+                if (!$fileUploader.isHTML5 || !$window.FileReader || !$window.CanvasRenderingContext2D) return;
 
                 var params = scope.$eval(attributes.ngThumb);
+
+                if (!angular.isObject(params.file) || !(params.file instanceof $window.File)) return;
+
+                var type = params.file.type;
+                type = '|' + type.slice(type.lastIndexOf('/') + 1) + '|';
+
+                if ('|jpg|png|jpeg|bmp|'.indexOf(type) === -1) return;
+
                 var canvas = element.find('canvas');
                 var reader = new FileReader();
 
