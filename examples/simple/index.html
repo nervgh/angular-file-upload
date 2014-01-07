@@ -2,11 +2,14 @@
 <html id="ng-app" ng-app="app"> <!-- id="ng-app" IE<8 -->
 
     <head>
+        <title>Simple example</title>
         <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
 
         <!-- Fix for old browsers -->
         <script src="../bower_components/es5-shim/es5-shim.js"></script>
         <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
         <!--<script src="../bower_components/angular/angular.js"></script>-->
         <script src="http://code.angularjs.org/1.1.5/angular.min.js"></script>
@@ -34,7 +37,14 @@
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Demo</a></li>
+                        <li class="active dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Demos <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li class="active"><a href="#">Simple example</a></li>
+                                <li class="divider"></li>
+                                <li><a href="../image-preview">Uploads only images (with canvas preview)</a></li>
+                            </ul>
+                        </li>
                         <li><a href="https://github.com/nervgh/angular-file-upload">View on Github</a></li>
                         <li><a href="https://raw.github.com/nervgh/angular-file-upload/master/angular-file-upload.min.js">Download</a></li>
                     </ul>
