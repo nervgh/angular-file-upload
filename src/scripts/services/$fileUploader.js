@@ -425,8 +425,8 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             params.file = {
                 lastModifiedDate: null,
                 size: null,
-                type: 'like/' + value.replace(/^.+\.(?!\.)|.*/, ''),
-                name: value.match(/[^\\]+$/)[ 0 ]
+                type: 'like/' + value.slice(value.lastIndexOf('.') + 1).toLowerCase(),
+                name: value.slice(value.lastIndexOf('/') + value.lastIndexOf('\\') + 2)
             };
 
             params._input = input;
