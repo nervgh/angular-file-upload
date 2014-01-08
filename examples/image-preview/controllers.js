@@ -21,7 +21,7 @@ angular
         uploader.filters.push(function(item /*{File|HTMLInputElement}*/) {
             var type = uploader.isHTML5 ? item.type : '/' + item.value.slice(item.value.lastIndexOf('.') + 1);
             type = '|' + type.toLowerCase().slice(type.lastIndexOf('/') + 1) + '|';
-            return '|jpg|png|jpeg|bmp|'.indexOf(type) !== -1;
+            return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
         });
 
 

@@ -14,23 +14,30 @@ angular
     /**
     * The ng-thumb directive
     * @author: nerv
-    * @version: 0.1.1, 2014-01-07
+    * @version: 0.1.2, 2014-01-09
     */
-    .directive('ngThumb', ['$fileUploader', '$window', function($fileUploader, $window) {
+    .directive('ngThumb', ['$window', function($window) {
+        var helper = {
+            support: !!($window.FileReader && $window.CanvasRenderingContext2D),
+            isFile: function(item) {
+                return angular.isObject(item) && item instanceof $window.File;
+            },
+            isImage: function(file) {
+                var type =  '|' + file.type.slice(file.type.lastIndexOf('/') + 1) + '|';
+                return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
+            }
+        };
+
         return {
             restrict: 'A',
             template: '<canvas/>',
             link: function(scope, element, attributes) {
-                if (!$fileUploader.isHTML5 || !$window.FileReader || !$window.CanvasRenderingContext2D) return;
+                if (!helper.support) return;
 
                 var params = scope.$eval(attributes.ngThumb);
 
-                if (!angular.isObject(params.file) || !(params.file instanceof $window.File)) return;
-
-                var type = params.file.type;
-                type = '|' + type.slice(type.lastIndexOf('/') + 1) + '|';
-
-                if ('|jpg|png|jpeg|bmp|'.indexOf(type) === -1) return;
+                if (!helper.isFile(params.file)) return;
+                if (!helper.isImage(params.file)) return;
 
                 var canvas = element.find('canvas');
                 var reader = new FileReader();
