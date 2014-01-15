@@ -11,8 +11,9 @@
 When files are selected or dropped into the component, one or more filters are applied. Files which pass all filters are added to the queue and are ready to be uploaded.
 
 ## Demos
-1. [Base example](http://nervgh.github.io/pages/angular-file-upload/examples/simple)
+1. [Simple example](http://nervgh.github.io/pages/angular-file-upload/examples/simple)
 2. [Uploads only images (with canvas preview)](http://nervgh.github.io/pages/angular-file-upload/examples/image-preview)
+3. [Without bootstrap example](http://nervgh.github.io/pages/angular-file-upload/examples/without-bootstrap)
 
 ## Requires
 
@@ -167,8 +168,9 @@ uploader.queue.push({
 В общих чертах работа модуля выглядит так: директивы "ловят" файлы и добавляют их в очередь, если те прошли фильтры, после чего "загрузчик файлов" может ими (элементами очереди) манипулировать.
 
 ## Примеры
-1. [Base example](http://nervgh.github.io/pages/angular-file-upload/examples/simple)
+1. [Simple example](http://nervgh.github.io/pages/angular-file-upload/examples/simple)
 2. [Uploads only images (with canvas preview)](http://nervgh.github.io/pages/angular-file-upload/examples/image-preview)
+3. [Without bootstrap example](http://nervgh.github.io/pages/angular-file-upload/examples/without-bootstrap)
 
 ## Требует
 - [AngularJS](https://github.com/angular/angular.js) фреймворк

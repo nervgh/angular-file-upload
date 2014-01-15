@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html id="ng-app" ng-app="app"> <!-- id="ng-app" IE<8 -->
+    <head>
+        <title>Without bootstrap example</title>
+        <link rel="stylesheet" href="style.css" />
+
+        <!-- ES5 shim for old browsers -->
+        <script src="http://nervgh.github.io/js/es5-shim.min.js"></script>
+
+        <!-- Fix for IE<9 in iframe mode -->
+        <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+
+        <script src="http://code.angularjs.org/1.1.5/angular.min.js"></script>
+        <script src="../../angular-file-upload.js"></script>
+        <script src="controllers.js"></script>
+        <!--thumbnails for images-->
+        <script src="directives.js"></script>
+    </head>
+
+    <!-- 1. ng-file-drop | ng-file-drop="options" -->
+    <body ng-controller="TestController" ng-file-drop>
+
+        <h1>Without bootstrap example</h1>
+
+        <h2>Examples</h2>
+        <ul>
+            <li><a href="../simple">Simple example</a></li>
+            <li><a href="../image-preview">Uploads only images (with canvas preview)</a></li>
+            <li><a href="#">Without bootstrap</a></li>
+        </ul>
+        <a href="https://github.com/nervgh/angular-file-upload">Download / Repository</a>
+        <br />
+        <br />
+
+        <!-- 3. ng-file-over | ng-file-over="className" -->
+        <div ng-show="uploader.isHTML5">
+            <div class="over-zone zone" ng-file-over style="float: left">
+                Base drop zone indication
+            </div>
+            <!-- Example: ng-file-drop | ng-file-drop="options" -->
+            <div ng-file-drop="{ url: '/foo' }" ng-file-over="other-over-zone" class="other-drop-zone zone" style="float: right">
+                One more drop zone with its own settings (and indication)
+            </div>
+            <div style="clear: both"></div>
+        </div>
+
+        <br />
+
+        <!-- 2. ng-file-select | ng-file-select="options" -->
+        <input ng-file-select type="file" multiple />
+
+        <h2>The queue. Length: {{ uploader.queue.length }}</h2>
+        <ul>
+            <li ng-repeat="item in uploader.queue">
+                <div>Name: {{ item.file.name }}</div>
+                <div>Size: {{ item.file.size/1024/1024|number:2 }} Mb</div>
+                <div ng-show="uploader.isHTML5">
+                    Progress: {{ item.progress }}
+                    <div class="item-progress-box">
+                        <div class="item-progress" ng-style="{ 'width': item.progress + '%' }"></div>
+                    </div>
+                </div>
+                <div ng-show="controller.isImage(item.file)">
+                    Thumbnail (only images):
+                        <!-- Image preview -->
+                        <!--auto height-->
+                        <!--<div ng-thumb="{ file: item.file, width: 100 }"></div>-->
+                        <!--auto width-->
+                        <div ng-show="uploader.isHTML5" ng-thumb="{ file: item.file, height: 100 }"></div>
+                        <!--fixed width and height -->
+                        <!--<div ng-thumb="{ file: item.file, width: 100, height: 100 }"></div>-->
+                </div>
+                <div>
+                    <button ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">Upload</button>
+                    <button ng-click="item.cancel()" ng-disabled="!item.isUploading">Cancel</button>
+                    <button ng-click="item.remove()">Remove</button>
+                </div>
+            </li>
+        </ul>
+        <div>
+            <div>
+                Total progress: {{ uploader.progress }}
+                <div class="total-progress-box">
+                    <div class="total-progress" ng-style="{ 'width': uploader.progress + '%' }"></div>
+                </div>
+            </div>
+            <button ng-click="uploader.uploadAll()" ng-disabled="!uploader.getNotUploadedItems().length">Upload all</button>
+            <button ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading">Cancel all</button>
+            <button ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length">Remove all</button>
+        </div>
+    </body>
+</html>
