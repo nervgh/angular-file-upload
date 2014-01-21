@@ -299,7 +299,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
 
             this.trigger('beforeupload', item);
 
-            item.formData.forEach(function(obj) {
+            angular.copy(item.formData).forEach(function(obj) {
                 angular.forEach(obj, function(value, key) {
                     form.append(key, value);
                 });
@@ -354,7 +354,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
 
             input.prop('name', item.alias);
 
-            item.formData.forEach(function(obj) {
+            angular.copy(item.formData).forEach(function(obj) {
                 angular.forEach(obj, function(value, key) {
                     form.append(angular.element('<input type="hidden" name="' + key + '" value="' + value + '" />'));
                 });
