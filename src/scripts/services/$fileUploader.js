@@ -299,7 +299,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
 
             this.trigger('beforeupload', item);
 
-            item.formData.forEach(function(obj) {
+            angular.forEach(item.formData, function(obj) {
                 angular.forEach(obj, function(value, key) {
                     form.append(key, value);
                 });
