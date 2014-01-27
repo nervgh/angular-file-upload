@@ -5,7 +5,7 @@
     "homepage": "https://github.com/nervgh/angular-file-upload",
     "ignore": [],
     "dependencies": {
-        "angular": "~1.2.0-rc.1",
+        "angular": "~1.2.0rc.1",
         "es5-shim": "~2.1.0",
         "jquery": "1.8.3"
     },
