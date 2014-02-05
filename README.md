@@ -158,7 +158,7 @@ uploader.queue.push({
     isUploaded: true
 });
 ```
----
+
 2. How do I deal with Cross Site Request Forgery protection?
 
 See this issue: [#40](https://github.com/nervgh/angular-file-upload/issues/40)
@@ -177,6 +177,7 @@ var uploader = $scope.uploader = $fileUploader.create({
   });
 ```
 
+---
 
 ## Русская документация
 
