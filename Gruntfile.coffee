@@ -3,6 +3,15 @@ path = require 'path'
 # Build configurations.
 module.exports = (grunt) ->
     grunt.initConfig
+
+        # Metadata
+        pkg: grunt.file.readJSON('package.json'),
+
+        banner:  '/*\n' +
+                    ' <%= pkg.name %> v<%= pkg.version %>\n' +
+                    ' <%= pkg.homepage %>\n' +
+                    '*/\n'
+
         # Deletes built file and temp directories.
         clean:
             working:
@@ -11,16 +20,22 @@ module.exports = (grunt) ->
                 ]
 
         uglify:
+
             # concat js files before minification
             js:
                 src: ['angular-file-upload.js']
                 dest: 'angular-file-upload.min.js'
                 options:
-                  sourceMap: (fileName) ->
-                    fileName.replace /\.js$/, '.map'
+                    banner: '<%= banner %>'
+                    sourceMap: (fileName) ->
+                        fileName.replace /\.js$/, '.map'
         concat:
+
             # concat js files before minification
             js:
+                options:
+                    banner: '<%= banner %>'
+                    stripBanners: true
                 src: [
                     'src/scripts/intro.js',
                     'src/scripts/app.js',
