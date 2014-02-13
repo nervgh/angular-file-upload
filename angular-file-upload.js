@@ -10,14 +10,14 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.3, 2014-01-03
+ * @version: 0.3.1, 2014-01-05
  */
 var app = angular.module('angularFileUpload', []);
 
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.3, 2014-01-03
+ * @version: 0.3.1, 2014-01-05
  */
 
 // It is attached to an element that catches the event drop file
@@ -57,7 +57,7 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.3, 2014-01-03
+ * @version: 0.3.1, 2014-01-05
  */
 
 // It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"
@@ -78,7 +78,7 @@ app.directive('ngFileOver', function () {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.3, 2014-01-03
+ * @version: 0.3.1, 2014-01-05
  */
 
 // It is attached to <input type="file"> element like <ng-file-select="options">
@@ -101,7 +101,7 @@ app.directive('ngFileSelect', [ '$fileUploader', function ($fileUploader) {
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.3, 2014-01-03
+ * @version: 0.3.1, 2014-01-05
  */
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
     'use strict';
@@ -211,7 +211,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             }, this);
 
             if (this.queue.length !== length) {
-                this.trigger('after:adding:all', this.queue);
+                this.trigger('afteraddingall', this.queue);
                 this.progress = this._getTotalProgress();
             }
 
@@ -525,8 +525,8 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             params.file = {
                 lastModifiedDate: null,
                 size: null,
-                type: 'like/' + value.replace(/^.+\.(?!\.)|.*/, ''),
-                name: value.match(/[^\\]+$/)[ 0 ]
+                type: 'like/' + value.slice(value.lastIndexOf('.') + 1).toLowerCase(),
+                name: value.slice(value.lastIndexOf('/') + value.lastIndexOf('\\') + 2)
             };
 
             params._input = input;

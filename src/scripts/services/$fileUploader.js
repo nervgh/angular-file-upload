@@ -111,7 +111,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             }, this);
 
             if (this.queue.length !== length) {
-                this.trigger('after:adding:all', this.queue);
+                this.trigger('afteraddingall', this.queue);
                 this.progress = this._getTotalProgress();
             }
 
