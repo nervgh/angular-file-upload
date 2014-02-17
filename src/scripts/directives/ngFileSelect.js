@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.3.1, 2014-01-05
+ * @version: 0.3.2, 2014-02-18
  */
 
 // It is attached to <input type="file"> element like <ng-file-select="options">
@@ -14,7 +14,7 @@ app.directive('ngFileSelect', [ '$fileUploader', function ($fileUploader) {
 
             element.bind('change', function () {
                 scope.$emit('file:add', $fileUploader.isHTML5 ? this.files : this, scope.$eval(attributes.ngFileSelect));
-                $fileUploader.isHTML5 && element.prop('value', null);
+                ($fileUploader.isHTML5 && element.attr('multiple')) && element.prop('value', null);
             });
 
             element.prop('value', null); // FF fix

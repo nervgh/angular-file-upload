@@ -1,3 +1,7 @@
+/*
+ Angular File Upload v0.3.2
+ https://github.com/nervgh/angular-file-upload
+*/
 (function(angular, factory) {
     if (typeof define === 'function' && define.amd) {
         define('angular-file-upload', ['angular'], function(angular) {
@@ -7,18 +11,7 @@
         return factory(angular);
     }
 }(angular || null, function(angular) {
-/**
- * The angular file upload module
- * @author: nerv
- * @version: 0.3.1, 2014-01-05
- */
 var app = angular.module('angularFileUpload', []);
-
-/**
- * The angular file upload module
- * @author: nerv
- * @version: 0.3.1, 2014-01-05
- */
 
 // It is attached to an element that catches the event drop file
 app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
@@ -54,12 +47,6 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
         }
     };
 }])
-/**
- * The angular file upload module
- * @author: nerv
- * @version: 0.3.1, 2014-01-05
- */
-
 // It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"
 app.directive('ngFileOver', function () {
     'use strict';
@@ -75,12 +62,6 @@ app.directive('ngFileOver', function () {
         }
     };
 });
-/**
- * The angular file upload module
- * @author: nerv
- * @version: 0.3.1, 2014-01-05
- */
-
 // It is attached to <input type="file"> element like <ng-file-select="options">
 app.directive('ngFileSelect', [ '$fileUploader', function ($fileUploader) {
     'use strict';
@@ -91,18 +72,13 @@ app.directive('ngFileSelect', [ '$fileUploader', function ($fileUploader) {
 
             element.bind('change', function () {
                 scope.$emit('file:add', $fileUploader.isHTML5 ? this.files : this, scope.$eval(attributes.ngFileSelect));
-                $fileUploader.isHTML5 && element.prop('value', null);
+                ($fileUploader.isHTML5 && element.attr('multiple')) && element.prop('value', null);
             });
 
             element.prop('value', null); // FF fix
         }
     };
 }]);
-/**
- * The angular file upload module
- * @author: nerv
- * @version: 0.3.1, 2014-01-05
- */
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
     'use strict';
 
