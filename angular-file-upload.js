@@ -445,7 +445,9 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             });
 
             iframe.bind('load', function () {
-                var xhr = { response: iframe.contents()[ 0 ].body.innerHTML, status: 200, dummy: true };
+                // fixed angular.contents() for iframes
+                var html = (iframe[0].contentDocument || iframe[0].contentWindow.document).body.innerHTML;
+                var xhr = { response: html, status: 200, dummy: true };
                 var response = that._transformResponse(xhr.response);
                 that.trigger('in:success', xhr, item, response);
                 that.trigger('in:complete', xhr, item, response);
@@ -507,7 +509,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
 
             params._input = input;
             clone.prop('value', null); // FF fix
-            input.hide().after(clone);
+            input.css('display', 'none').after(clone); // remove jquery dependency
         }
 
         angular.extend(this, {
