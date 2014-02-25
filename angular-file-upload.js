@@ -375,14 +375,6 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
 
             var normalFlow = this.trigger('beforeupload', item);
 
-            item.formData.forEach(function(obj) {
-                angular.forEach(obj, function(value, key) {
-                    form.append(key, value);
-                });
-            });
-
-            form.append(item.alias, item.file);
-
             xhr.upload.onprogress = function (event) {
                 var progress = event.lengthComputable ? event.loaded * 100 / event.total : 0;
                 that.trigger('in:progress', item, Math.round(progress));
@@ -406,6 +398,14 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             };
 
             item.submitData = function() {
+                item.formData.forEach(function(obj) {
+                    angular.forEach(obj, function(value, key) {
+                        form.append(key, value);
+                    });
+                });
+    
+                form.append(item.alias, item.file);
+              
                 xhr.open(item.method, item.url, true);
                 angular.forEach(item.headers, function (value, name) {
                     xhr.setRequestHeader(name, value);
@@ -430,14 +430,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
 
             var normalFlow = this.trigger('beforeupload', item);
 
-            input.prop('name', item.alias);
-
-            item.formData.forEach(function(obj) {
-                angular.forEach(obj, function(value, key) {
-                    form.append(angular.element('<input type="hidden" name="' + key + '" value="' + value + '" />'));
-                });
-            });
-
+            
             iframe.bind('load', function () {
                 // fixed angular.contents() for iframes
                 var html = (iframe[0].contentDocument || iframe[0].contentWindow.document).body.innerHTML;
@@ -466,6 +459,14 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
                     target: iframe.prop('name'),
                     enctype: 'multipart/form-data',
                     encoding: 'multipart/form-data' // old IE
+                });
+                
+                input.prop('name', item.alias);
+
+                item.formData.forEach(function(obj) {
+                    angular.forEach(obj, function(value, key) {
+                        form.append(angular.element('<input type="hidden" name="' + key + '" value="' + value + '" />'));
+                    });
                 });
 
                 form[ 0 ].submit();    
