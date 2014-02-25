@@ -448,11 +448,17 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
                 that.trigger('in:complete', xhr, item);
             };
 
-            input.after(form);
-            form.append(input).append(iframe);
-            
+   
             item.submitData = function() {
 
+                input.prop('name', item.alias);
+
+                item.formData.forEach(function(obj) {
+                    angular.forEach(obj, function(value, key) {
+                        form.append(angular.element('<input type="hidden" name="' + key + '" value="' + value + '" />'));
+                    });
+                });
+                
                 form.prop({
                     action: item.url,
                     method: item.method,
@@ -461,13 +467,8 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
                     encoding: 'multipart/form-data' // old IE
                 });
                 
-                input.prop('name', item.alias);
-
-                item.formData.forEach(function(obj) {
-                    angular.forEach(obj, function(value, key) {
-                        form.append(angular.element('<input type="hidden" name="' + key + '" value="' + value + '" />'));
-                    });
-                });
+                input.after(form);
+                form.append(input).append(iframe);
 
                 form[ 0 ].submit();    
             };
