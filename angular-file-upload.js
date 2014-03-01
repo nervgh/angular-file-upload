@@ -383,15 +383,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             var form = new FormData();
             var that = this;
 
-            this.trigger('beforeupload', item);
-
-            item.formData.forEach(function(obj) {
-                angular.forEach(obj, function(value, key) {
-                    form.append(key, value);
-                });
-            });
-
-            form.append(item.alias, item.file);
+            var normalFlow = this.trigger('beforeupload', item);
 
             xhr.upload.onprogress = function (event) {
                 var progress = event.lengthComputable ? event.loaded * 100 / event.total : 0;
@@ -415,13 +407,23 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
                 that.trigger('in:complete', xhr, item);
             };
 
-            xhr.open(item.method, item.url, true);
+            item.submitData = function() {
+                item.formData.forEach(function(obj) {
+                    angular.forEach(obj, function(value, key) {
+                        form.append(key, value);
+                    });
+                });
+    
+                form.append(item.alias, item.file);
+              
+                xhr.open(item.method, item.url, true);
+                angular.forEach(item.headers, function (value, name) {
+                    xhr.setRequestHeader(name, value);
+                });
+                xhr.send(form);
+            };
 
-            angular.forEach(item.headers, function (value, name) {
-                xhr.setRequestHeader(name, value);
-            });
-
-            xhr.send(form);
+            if (normalFlow) { item.submitData()};
         },
 
         /**
@@ -437,24 +439,9 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             item._form && item._form.replaceWith(input); // remove old form
             item._form = form; // save link to new form
 
-            this.trigger('beforeupload', item);
+            var normalFlow = this.trigger('beforeupload', item);
 
-            input.prop('name', item.alias);
-
-            item.formData.forEach(function(obj) {
-                angular.forEach(obj, function(value, key) {
-                    form.append(angular.element('<input type="hidden" name="' + key + '" value="' + value + '" />'));
-                });
-            });
-
-            form.prop({
-                action: item.url,
-                method: item.method,
-                target: iframe.prop('name'),
-                enctype: 'multipart/form-data',
-                encoding: 'multipart/form-data' // old IE
-            });
-
+            
             iframe.bind('load', function () {
                 // fixed angular.contents() for iframes
                 var html = iframe[0].contentDocument.body.innerHTML;
@@ -472,10 +459,33 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
                 that.trigger('in:complete', xhr, item);
             };
 
-            input.after(form);
-            form.append(input).append(iframe);
+   
+            item.submitData = function() {
 
-            form[ 0 ].submit();
+                input.prop('name', item.alias);
+
+                item.formData.forEach(function(obj) {
+                    angular.forEach(obj, function(value, key) {
+                        form.append(angular.element('<input type="hidden" name="' + key + '" value="' + value + '" />'));
+                    });
+                });
+                
+                form.prop({
+                    action: item.url,
+                    method: item.method,
+                    target: iframe.prop('name'),
+                    enctype: 'multipart/form-data',
+                    encoding: 'multipart/form-data' // old IE
+                });
+                
+                input.after(form);
+                form.append(input).append(iframe);
+
+                form[ 0 ].submit();    
+            };
+
+            if (normalFlow) {item.submitData()};
+
         },
 
         /**
