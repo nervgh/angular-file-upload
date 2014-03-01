@@ -3,9 +3,9 @@
     "version": "0.3.3.1",
     "main": "angular-file-upload.js",
     "homepage": "https://github.com/nervgh/angular-file-upload",
-    "ignore": [],
+    "ignore": ["examples"],
     "dependencies": {
-        "angular": "~1.2.0rc.1",
+        "angular": "~1.2.11",
         "es5-shim": "~2.1.0",
         "jquery": "1.8.3"
     },
