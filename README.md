@@ -24,13 +24,13 @@ When files are selected or dropped into the component, one or more filters are a
 
 ### Directives
 
-- **ngFileSelect**: Should be applied to `<input type="file" />`. The selected files are added to the uploaded queue if they have passed the filters.
+- **nrvFileSelect**: Should be applied to `<input type="file" />`. The selected files are added to the uploaded queue if they have passed the filters.
 - **nrvFileDrop**: Set up a drop area. Usually applied to the entire document. Caught files are added to the uploaded queue if they have passed the filters.
 - **nrvFileOver**: Should be applied to the element which will change class when files are about to be placed on the drop area. By default it adds the class `nrv-file-over` but a different class can be specified with the parameter attribute `nrv-file-over="className"`.
 
 ### Service
 
-- **$fileUploader**: Manages the upload queue and the uploading of files
+- **fileUploader**: Manages the upload queue and the uploading of files
 
 
 ### The Uploader API:
@@ -97,7 +97,7 @@ When files are selected or dropped into the component, one or more filters are a
 ### Register a filter
 
 ```javascript
-var uploader = $fileUploader.create({
+var uploader = fileUploader.create({
     filters: [
         function( item ) {                    // A user-defined filter
             console.log( 'filter1' );
@@ -141,7 +141,7 @@ function( item ) {
 ### Registering event handlers
 
 ```javascript
-var uploader = $fileUploader.create();
+var uploader = fileUploader.create();
 
 uploader.bind( 'progress', function( event, item, progress ) {
     console.log( 'Progress: ' + progress );
@@ -168,7 +168,7 @@ uploader.bind( 'progress', function( event, item, progress ) {
     ```javascript
     var csrf_token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    var uploader = $scope.uploader = $fileUploader.create({
+    var uploader = $scope.uploader = fileUploader.create({
           // your code here...
           headers : {
             'X-CSRF-TOKEN' : csrf_token // X-CSRF-TOKEN is used for Ruby on Rails Tokens
@@ -199,13 +199,13 @@ uploader.bind( 'progress', function( event, item, progress ) {
 
 ### Директивы
 
-- **ngFileSelect** - применяется к`<input type="file" />`. Выбранные файлы добавляются в очередь загрузки, если они прошли фильтры.
+- **nrvFileSelect** - применяется к`<input type="file" />`. Выбранные файлы добавляются в очередь загрузки, если они прошли фильтры.
 - **nrvFileDrop** - задает область сброса файлов / элемент, который будет ловить файлы. Как правило, применяется ко всему документу. Пойманные файлы добавляются в очередь загрузки, если они прошли фильтры.
 - **nrvFileOver** - применяется к элементу, который будет реагировать (менять класс), когда файлы находятся над областью сброса. По умолчанию добавляется класс `nrv-file-over`. Другой класс можно задать в параметре атрибута `nrv-file-over="className"`.
 
 ### Сервис
 
-- **$fileUploader** - управляет очередью и загрузкой файлов
+- **fileUploader** - управляет очередью и загрузкой файлов
 
 ### Загрузчик API:
 
@@ -271,7 +271,7 @@ uploader.bind( 'progress', function( event, item, progress ) {
 ### Добавить фильтр
 
 ```javascript
-var uploader = $fileUploader.create({
+var uploader = fileUploader.create({
     filters: [
         function( item ) {                    // first user filter
             console.log( 'filter1' );
@@ -314,7 +314,7 @@ function( item ) {
 ### Подписка на событие
 
 ```javascript
-var uploader = $fileUploader.create();
+var uploader = fileUploader.create();
 
 uploader.bind( 'progress', function( event, item, progress ) {
     console.log( 'Progress: ' + progress );

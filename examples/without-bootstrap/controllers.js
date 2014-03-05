@@ -1,11 +1,11 @@
 angular.module('app', ['angularFileUpload'])
 
     // The example of the full functionality
-    .controller('TestController', function ($scope, $fileUploader) {
+    .controller('TestController', function ($scope, fileUploader) {
         'use strict';
 
         // create a uploader with options
-        var uploader = $scope.uploader = $fileUploader.create({
+        var uploader = $scope.uploader = fileUploader.create({
             scope: $scope,                          // to automatically update the html. Default: $rootScope
             url: 'upload.php'
         });

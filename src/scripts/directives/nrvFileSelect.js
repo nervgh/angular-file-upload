@@ -4,8 +4,8 @@
  * @version: 0.3.3.1, 2014-02-28
  */
 
-// It is attached to <input type="file"> element like <ng-file-select="options">
-app.directive('ngFileSelect', [ 'fileUploader', function (fileUploader) {
+// It is attached to <input type="file"> element like <nrv-file-select="options">
+app.directive('nrvFileSelect', [ 'fileUploader', function (fileUploader) {
     'use strict';
 
     return {
@@ -13,7 +13,7 @@ app.directive('ngFileSelect', [ 'fileUploader', function (fileUploader) {
             fileUploader.isHTML5 || element.removeAttr('multiple');
 
             element.bind('change', function () {
-                scope.$emit('file:add', fileUploader.isHTML5 ? this.files : this, scope.$eval(attributes.ngFileSelect));
+                scope.$emit('file:add', fileUploader.isHTML5 ? this.files : this, scope.$eval(attributes.nrvFileSelect));
                 (fileUploader.isHTML5 && element.attr('multiple')) && element.prop('value', null);
             });
 
