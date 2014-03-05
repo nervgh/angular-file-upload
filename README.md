@@ -26,7 +26,7 @@ When files are selected or dropped into the component, one or more filters are a
 
 - **ngFileSelect**: Should be applied to `<input type="file" />`. The selected files are added to the uploaded queue if they have passed the filters.
 - **nrvFileDrop**: Set up a drop area. Usually applied to the entire document. Caught files are added to the uploaded queue if they have passed the filters.
-- **ngFileOver**: Should be applied to the element which will change class when files are about to be placed on the drop area. By default it adds the class `ng-file-over` but a different class can be specified with the parameter attribute `ng-file-over="className"`.
+- **nrvFileOver**: Should be applied to the element which will change class when files are about to be placed on the drop area. By default it adds the class `nrv-file-over` but a different class can be specified with the parameter attribute `nrv-file-over="className"`.
 
 ### Service
 
@@ -201,7 +201,7 @@ uploader.bind( 'progress', function( event, item, progress ) {
 
 - **ngFileSelect** - применяется к`<input type="file" />`. Выбранные файлы добавляются в очередь загрузки, если они прошли фильтры.
 - **nrvFileDrop** - задает область сброса файлов / элемент, который будет ловить файлы. Как правило, применяется ко всему документу. Пойманные файлы добавляются в очередь загрузки, если они прошли фильтры.
-- **ngFileOver** - применяется к элементу, который будет реагировать (менять класс), когда файлы находятся над областью сброса. По умолчанию добавляется класс `ng-file-over`. Другой класс можно задать в параметре атрибута `ng-file-over="className"`.
+- **nrvFileOver** - применяется к элементу, который будет реагировать (менять класс), когда файлы находятся над областью сброса. По умолчанию добавляется класс `nrv-file-over`. Другой класс можно задать в параметре атрибута `nrv-file-over="className"`.
 
 ### Сервис
 
