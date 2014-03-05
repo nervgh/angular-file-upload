@@ -5,12 +5,12 @@
  */
 
 // It is attached to an element that catches the event drop file
-app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
+app.directive('ngFileDrop', [ 'fileUploader', function (fileUploader) {
     'use strict';
 
     return {
         // don't use drag-n-drop files in IE9, because not File API support
-        link: !$fileUploader.isHTML5 ? angular.noop : function (scope, element, attributes) {
+        link: !fileUploader.isHTML5 ? angular.noop : function (scope, element, attributes) {
             element
                 .bind('drop', function (event) {
                     var dataTransfer = event.dataTransfer ?
