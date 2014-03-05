@@ -5,7 +5,7 @@
  */
 
 // It is attached to an element that catches the event drop file
-app.directive('ngFileDrop', [ 'fileUploader', function (fileUploader) {
+app.directive('nrvFileDrop', [ 'fileUploader', function (fileUploader) {
     'use strict';
 
     return {
@@ -20,7 +20,7 @@ app.directive('ngFileDrop', [ 'fileUploader', function (fileUploader) {
                     event.preventDefault();
                     event.stopPropagation();
                     scope.$broadcast('file:removeoverclass');
-                    scope.$emit('file:add', dataTransfer.files, scope.$eval(attributes.ngFileDrop));
+                    scope.$emit('file:add', dataTransfer.files, scope.$eval(attributes.nrvFileDrop));
                 })
                 .bind('dragover', function (event) {
                     var dataTransfer = event.dataTransfer ?

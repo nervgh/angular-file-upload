@@ -16,8 +16,8 @@
         <script src="directives.js"></script>
     </head>
 
-    <!-- 1. ng-file-drop | ng-file-drop="options" -->
-    <body ng-controller="TestController" ng-file-drop>
+    <!-- 1. nrv-file-drop | nrv-file-drop="options" -->
+    <body ng-controller="TestController" nrv-file-drop>
 
         <h1>Without bootstrap example</h1>
 
@@ -36,8 +36,8 @@
             <div class="over-zone zone" ng-file-over style="float: left">
                 Base drop zone indication
             </div>
-            <!-- Example: ng-file-drop | ng-file-drop="options" -->
-            <div ng-file-drop="{ url: '/foo' }" ng-file-over="other-over-zone" class="other-drop-zone zone" style="float: right">
+            <!-- Example: nrv-file-drop | nrv-file-drop="options" -->
+            <div nrv-file-drop="{ url: '/foo' }" ng-file-over="other-over-zone" class="other-drop-zone zone" style="float: right">
                 One more drop zone with its own settings (and indication)
             </div>
             <div style="clear: both"></div>
