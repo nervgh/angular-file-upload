@@ -14,12 +14,12 @@
 var app = angular.module('angularFileUpload', []);
 
 // It is attached to an element that catches the event drop file
-app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
+app.directive('nrvFileDrop', [ 'fileUploader', function (fileUploader) {
     'use strict';
 
     return {
         // don't use drag-n-drop files in IE9, because not File API support
-        link: !$fileUploader.isHTML5 ? angular.noop : function (scope, element, attributes) {
+        link: !fileUploader.isHTML5 ? angular.noop : function (scope, element, attributes) {
             element
                 .bind('drop', function (event) {
                     var dataTransfer = event.dataTransfer ?
@@ -29,7 +29,7 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
                     event.preventDefault();
                     event.stopPropagation();
                     scope.$broadcast('file:removeoverclass');
-                    scope.$emit('file:add', dataTransfer.files, scope.$eval(attributes.ngFileDrop));
+                    scope.$emit('file:add', dataTransfer.files, scope.$eval(attributes.nrvFileDrop));
                 })
                 .bind('dragover', function (event) {
                     var dataTransfer = event.dataTransfer ?
@@ -47,39 +47,39 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
         }
     };
 }])
-// It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"
-app.directive('ngFileOver', function () {
+// It is attached to an element which will be assigned to a class "nrv-file-over" or nrv-file-over="className"
+app.directive('nrvFileOver', function () {
     'use strict';
 
     return {
         link: function (scope, element, attributes) {
             scope.$on('file:addoverclass', function () {
-                element.addClass(attributes.ngFileOver || 'ng-file-over');
+                element.addClass(attributes.nrvFileOver || 'nrv-file-over');
             });
             scope.$on('file:removeoverclass', function () {
-                element.removeClass(attributes.ngFileOver || 'ng-file-over');
+                element.removeClass(attributes.nrvFileOver || 'nrv-file-over');
             });
         }
     };
 });
-// It is attached to <input type="file"> element like <ng-file-select="options">
-app.directive('ngFileSelect', [ '$fileUploader', function ($fileUploader) {
+// It is attached to <input type="file"> element like <nrv-file-select="options">
+app.directive('nrvFileSelect', [ 'fileUploader', function (fileUploader) {
     'use strict';
 
     return {
         link: function (scope, element, attributes) {
-            $fileUploader.isHTML5 || element.removeAttr('multiple');
+            fileUploader.isHTML5 || element.removeAttr('multiple');
 
             element.bind('change', function () {
-                scope.$emit('file:add', $fileUploader.isHTML5 ? this.files : this, scope.$eval(attributes.ngFileSelect));
-                ($fileUploader.isHTML5 && element.attr('multiple')) && element.prop('value', null);
+                scope.$emit('file:add', fileUploader.isHTML5 ? this.files : this, scope.$eval(attributes.nrvFileSelect));
+                (fileUploader.isHTML5 && element.attr('multiple')) && element.prop('value', null);
             });
 
             element.prop('value', null); // FF fix
         }
     };
 }]);
-app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
+app.factory('fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
     'use strict';
 
     /**

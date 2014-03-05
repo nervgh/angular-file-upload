@@ -3,7 +3,7 @@
  * @author: nerv
  * @version: 0.3.3.1, 2014-02-28
  */
-app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
+app.factory('fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
     'use strict';
 
     /**

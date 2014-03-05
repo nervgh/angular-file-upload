@@ -18,7 +18,7 @@
 
         <style>
             .my-drop-zone { border: dotted 3px lightgray; }
-            .ng-file-over { border: dotted 3px red; } /* Default class applied to drop zones on over */
+            .nrv-file-over { border: dotted 3px red; } /* Default class applied to drop zones on over */
             .another-file-over-class { border: dotted 3px green; }
 
             html, body { height: 100%; }
@@ -26,8 +26,8 @@
 
     </head>
 
-    <!-- 1. ng-file-drop | ng-file-drop="options" -->
-    <body ng-controller="TestController" ng-file-drop>
+    <!-- 1. nrv-file-drop | nrv-file-drop="options" -->
+    <body ng-controller="TestController" nrv-file-drop>
 
         <div class="container">
 
@@ -58,23 +58,23 @@
                     <h3>Select files</h3>
 
                     <div ng-show="uploader.isHTML5">
-                        <!-- 3. ng-file-over | ng-file-over="className" -->
-                        <div class="well my-drop-zone" ng-file-over>
+                        <!-- 3. nrv-file-over | nrv-file-over="className" -->
+                        <div class="well my-drop-zone" nrv-file-over>
                             Base drop zone
                         </div>
 
-                        <!-- Example: ng-file-drop | ng-file-drop="options" -->
-                        <div class="well my-drop-zone" ng-file-drop="{ url: '/foo' }" ng-file-over="another-file-over-class">
+                        <!-- Example: nrv-file-drop | nrv-file-drop="options" -->
+                        <div class="well my-drop-zone" nrv-file-drop="{ url: '/foo' }" nrv-file-over="another-file-over-class">
                             Another drop zone with its own settings
                         </div>
                     </div>
 
-                    <!-- 2. ng-file-select | ng-file-select="options" -->
+                    <!-- 2. nrv-file-select | nrv-file-select="options" -->
                     Multiple
-                    <input ng-file-select type="file" multiple  /><br/>
+                    <input nrv-file-select type="file" multiple  /><br/>
 
                     Single
-                    <input ng-file-select type="file" />
+                    <input nrv-file-select type="file" />
                 </div>
 
                 <div class="col-md-9" style="margin-bottom: 40px">

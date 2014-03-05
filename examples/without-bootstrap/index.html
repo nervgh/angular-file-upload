@@ -16,8 +16,8 @@
         <script src="directives.js"></script>
     </head>
 
-    <!-- 1. ng-file-drop | ng-file-drop="options" -->
-    <body ng-controller="TestController" ng-file-drop>
+    <!-- 1. nrv-file-drop | nrv-file-drop="options" -->
+    <body ng-controller="TestController" nrv-file-drop>
 
         <h1>Without bootstrap example</h1>
 
@@ -31,13 +31,13 @@
         <br />
         <br />
 
-        <!-- 3. ng-file-over | ng-file-over="className" -->
+        <!-- 3. nrv-file-over | nrv-file-over="className" -->
         <div ng-show="uploader.isHTML5">
-            <div class="over-zone zone" ng-file-over style="float: left">
+            <div class="over-zone zone" nrv-file-over style="float: left">
                 Base drop zone indication
             </div>
-            <!-- Example: ng-file-drop | ng-file-drop="options" -->
-            <div ng-file-drop="{ url: '/foo' }" ng-file-over="other-over-zone" class="other-drop-zone zone" style="float: right">
+            <!-- Example: nrv-file-drop | nrv-file-drop="options" -->
+            <div nrv-file-drop="{ url: '/foo' }" nrv-file-over="other-over-zone" class="other-drop-zone zone" style="float: right">
                 One more drop zone with its own settings (and indication)
             </div>
             <div style="clear: both"></div>
@@ -45,8 +45,8 @@
 
         <br />
 
-        <!-- 2. ng-file-select | ng-file-select="options" -->
-        <input ng-file-select type="file" multiple />
+        <!-- 2. nrv-file-select | nrv-file-select="options" -->
+        <input nrv-file-select type="file" multiple />
 
         <h2>The queue. Length: {{ uploader.queue.length }}</h2>
         <ul>
