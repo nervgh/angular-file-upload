@@ -23,13 +23,17 @@ angular.module('app', ['angularFileUpload'])
 
         uploader.filters.push(function (item) { // second user filter
             console.info('filter2');
-            return true;
+            return false;
         });
 
         // REGISTER HANDLERS
 
         uploader.bind('afteraddingfile', function (event, item) {
             console.info('After adding a file', item);
+        });
+
+        uploader.bind('whenaddingfilefailed', function (event, item) {
+            console.info('When adding a file failed', item);
         });
 
         uploader.bind('afteraddingall', function (event, items) {

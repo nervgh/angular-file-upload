@@ -176,24 +176,28 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             var list = 'length' in items ? items : [items];
 
             angular.forEach(list, function (file) {
+                // check a [File|HTMLInputElement]
                 var isValid = !this.filters.length ? true : this.filters.every(function (filter) {
                     return filter.call(this, file);
                 }, this);
 
-                if (isValid) {
-                    var item = new Item(angular.extend({
-                        url: this.url,
-                        alias: this.alias,
-                        headers: angular.copy(this.headers),
-                        formData: angular.copy(this.formData),
-                        removeAfterUpload: this.removeAfterUpload,
-                        method: this.method,
-                        uploader: this,
-                        file: file
-                    }, options));
+                // create new item
+                var item = new Item(angular.extend({
+                    url: this.url,
+                    alias: this.alias,
+                    headers: angular.copy(this.headers),
+                    formData: angular.copy(this.formData),
+                    removeAfterUpload: this.removeAfterUpload,
+                    method: this.method,
+                    uploader: this,
+                    file: file
+                }, options));
 
+                if (isValid) {
                     this.queue.push(item);
                     this.trigger('afteraddingfile', item);
+                } else {
+                    this.trigger('whenaddingfilefailed', item);
                 }
             }, this);
 

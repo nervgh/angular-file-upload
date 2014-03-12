@@ -23,6 +23,10 @@ angular.module('app', ['angularFileUpload'])
             console.info('After adding a file', item);
         });
 
+        uploader.bind('whenaddingfilefailed', function (event, item) {
+            console.info('When adding a file failed', item);
+        });
+
         uploader.bind('afteraddingall', function (event, items) {
             console.info('After adding all files', items);
         });

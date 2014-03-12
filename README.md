@@ -128,7 +128,8 @@ function( item ) {
 ### Supported events
 
 - **afteraddingfile** `function( event, item ) {`: Fires after adding a single file to the queue
-- **afteraddingall** `function( event, items ) {`: Fires after adding all the dragged or selected files to the queue 
+- **whenaddingfilefailed** `function( event, item ) {`: When adding a file failed
+- **afteraddingall** `function( event, items ) {`: Fires after adding all the dragged or selected files to the queue
 - **beforeupload** `function( event, item ) {`: Fires before uploading an item
 - **progress** `function( event, item, progress ) {`: On file upload progress
 - **success** `function( event, xhr, item, response ) {`: On file successfully uploaded
@@ -301,6 +302,7 @@ function( item ) {
 ### Список событий
 
 - **afteraddingfile** `function( event, item ) {` - после добавления файла в очередь
+- **whenaddingfilefailed** `function( event, item ) {`: когда добавление файла в очередь не удалось
 - **afteraddingall** `function( event, items ) {` - после добавления всех файлов в очередь
 - **beforeupload** `function( event, item ) {` - перед загрузкой файла
 - **progress** `function( event, item, progress ) {` - прогресс загрузки файла
