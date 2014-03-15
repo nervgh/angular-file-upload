@@ -23,7 +23,7 @@ angular.module('app', ['angularFileUpload'])
 
         uploader.filters.push(function (item) { // second user filter
             console.info('filter2');
-            return false;
+            return true;
         });
 
         // REGISTER HANDLERS
