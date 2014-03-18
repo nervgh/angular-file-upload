@@ -142,6 +142,7 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             var index = this.getIndexOfItem(value);
             var item = this.queue[ index ];
             item.isUploading && item.cancel();
+            this.trigger('onitemremove', item);
             this.queue.splice(index, 1);
             item._destroy();
             this.progress = this._getTotalProgress();
