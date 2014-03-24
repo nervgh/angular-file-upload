@@ -26,7 +26,8 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             formData: [],
             isUploading: false,
             _nextIndex: 0,
-            _timestamp: Date.now()
+            _timestamp: Date.now(),
+            queueLimit: -1
         }, params);
 
         // add the base filter
@@ -34,7 +35,12 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
 
         this.scope.$on('file:add', function (event, items, options) {
             event.stopPropagation();
-            this.addToQueue(items, options);
+            var qLimit= this.queueLimit, 
+                qLength= this.queue.length;
+            if (qLimit === -1 || qLength < qLimit) {
+              this.addToQueue(items, options);
+            }
+            return;
         }.bind(this));
 
         this.bind('beforeupload', Item.prototype._beforeupload);
