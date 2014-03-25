@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.4.0, 2014-03-12
+ * @version: 0.4.1, 2014-03-25
  */
 app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', function ($compile, $rootScope, $http, $window) {
     'use strict';
@@ -25,12 +25,14 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             filters: [],
             formData: [],
             isUploading: false,
+            queueLimit: Number.MAX_VALUE,
             _nextIndex: 0,
             _timestamp: Date.now()
         }, params);
 
-        // add the base filter
-        this.filters.unshift(this._filter);
+        // add default filters
+        this.filters.unshift(this._emptyFileFilter);
+        this.filters.unshift(this._queueLimitFilter);
 
         this.scope.$on('file:add', function (event, items, options) {
             event.stopPropagation();
@@ -54,13 +56,22 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
         constructor: Uploader,
 
         /**
-         * The base filter. If returns "true" an item will be added to the queue
+         * Returns "true" if item is DOMElement or a file with size > 0
          * @param {File|Input} item
-         * @returns {boolean}
+         * @returns {Boolean}
          * @private
          */
-        _filter: function (item) {
+        _emptyFileFilter: function (item) {
             return angular.isElement(item) ? true : !!item.size;
+        },
+
+        /**
+         * Returns "true" if the limit has not been reached
+         * @returns {Boolean}
+         * @private
+         */
+        _queueLimitFilter: function() {
+            return this.queue.length < this.queueLimit;
         },
 
         /**
