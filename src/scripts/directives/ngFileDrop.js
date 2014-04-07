@@ -20,7 +20,7 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
                     event.preventDefault();
                     event.stopPropagation();
                     scope.$broadcast('file:removeoverclass');
-                    scope.$emit('file:add', dataTransfer.files, scope.$eval(attributes.ngFileDrop));
+                    scope.$emit('file:add', dataTransfer.files, scope.$eval(attributes.ngFileDrop), this);
                 })
                 .bind('dragover', function (event) {
                     var dataTransfer = event.dataTransfer ?

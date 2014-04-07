@@ -1,5 +1,5 @@
 /*
- Angular File Upload v0.4.0
+ Angular File Upload v0.4.1
  https://github.com/nervgh/angular-file-upload
 */
 (function(angular, factory) {
@@ -29,7 +29,7 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
                     event.preventDefault();
                     event.stopPropagation();
                     scope.$broadcast('file:removeoverclass');
-                    scope.$emit('file:add', dataTransfer.files, scope.$eval(attributes.ngFileDrop));
+                    scope.$emit('file:add', dataTransfer.files, scope.$eval(attributes.ngFileDrop), this);
                 })
                 .bind('dragover', function (event) {
                     var dataTransfer = event.dataTransfer ?
@@ -71,7 +71,7 @@ app.directive('ngFileSelect', [ '$fileUploader', function ($fileUploader) {
             $fileUploader.isHTML5 || element.removeAttr('multiple');
 
             element.bind('change', function () {
-                scope.$emit('file:add', $fileUploader.isHTML5 ? this.files : this, scope.$eval(attributes.ngFileSelect));
+                scope.$emit('file:add', $fileUploader.isHTML5 ? this.files : this, scope.$eval(attributes.ngFileSelect), this);
                 ($fileUploader.isHTML5 && element.attr('multiple')) && element.prop('value', null);
             });
 
@@ -110,9 +110,9 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
         this.filters.unshift(this._emptyFileFilter);
         this.filters.unshift(this._queueLimitFilter);
 
-        this.scope.$on('file:add', function (event, items, options) {
+        this.scope.$on('file:add', function (event, items, options, element) {
             event.stopPropagation();
-            this.addToQueue(items, options);
+            this.addToQueue(items, options, element);
         }.bind(this));
 
         this.bind('beforeupload', Item.prototype._beforeupload);
@@ -181,8 +181,9 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          * Adds items to the queue
          * @param {FileList|File|HTMLInputElement} items
          * @param {Object} [options]
+         * @param {HTMLNode} element
          */
-        addToQueue: function (items, options) {
+        addToQueue: function (items, options, element) {
             var length = this.queue.length;
             var list = 'length' in items ? items : [items];
 
@@ -206,14 +207,14 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
 
                 if (isValid) {
                     this.queue.push(item);
-                    this.trigger('afteraddingfile', item);
+                    this.trigger('afteraddingfile', item, element);
                 } else {
-                    this.trigger('whenaddingfilefailed', item);
+                    this.trigger('whenaddingfilefailed', item, element);
                 }
             }, this);
 
             if (this.queue.length !== length) {
-                this.trigger('afteraddingall', this.queue);
+                this.trigger('afteraddingall', this.queue, element);
                 this.progress = this._getTotalProgress();
             }
 

@@ -13,7 +13,7 @@ app.directive('ngFileSelect', [ '$fileUploader', function ($fileUploader) {
             $fileUploader.isHTML5 || element.removeAttr('multiple');
 
             element.bind('change', function () {
-                scope.$emit('file:add', $fileUploader.isHTML5 ? this.files : this, scope.$eval(attributes.ngFileSelect));
+                scope.$emit('file:add', $fileUploader.isHTML5 ? this.files : this, scope.$eval(attributes.ngFileSelect), this);
                 ($fileUploader.isHTML5 && element.attr('multiple')) && element.prop('value', null);
             });
 
