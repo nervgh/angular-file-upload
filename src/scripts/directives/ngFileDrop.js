@@ -16,7 +16,7 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
                     var dataTransfer = event.dataTransfer ?
                         event.dataTransfer :
                         event.originalEvent.dataTransfer; // jQuery fix;
-                    if (!dataTransfer) return;
+                    if (!dataTransfer || !dataTransfer.types.contains('Files')) return;
                     event.preventDefault();
                     event.stopPropagation();
                     scope.$broadcast('file:removeoverclass');
@@ -26,13 +26,17 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
                     var dataTransfer = event.dataTransfer ?
                         event.dataTransfer :
                         event.originalEvent.dataTransfer; // jQuery fix;
-
+                    if(!dataTransfer.types.contains('Files')) return false;
                     event.preventDefault();
                     event.stopPropagation();
                     dataTransfer.dropEffect = 'copy';
                     scope.$broadcast('file:addoverclass');
                 })
                 .bind('dragleave', function () {
+                    var dataTransfer = event.dataTransfer ?
+                        event.dataTransfer :
+                        event.originalEvent.dataTransfer; // jQuery fix;
+                    if(!dataTransfer.types.contains('Files')) return false;
                     scope.$broadcast('file:removeoverclass');
                 });
         }
