@@ -20,12 +20,19 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
     return {
         // don't use drag-n-drop files in IE9, because not File API support
         link: !$fileUploader.isHTML5 ? angular.noop : function (scope, element, attributes) {
+            var filesCheck = function(types){
+                var ret;
+                if('contains' in types)ret = types.contains('Files')
+                if('indexOf' in types)ret = types.indexOf('Files') != -1
+                return ret;
+            }
+
             element
                 .bind('drop', function (event) {
                     var dataTransfer = event.dataTransfer ?
                         event.dataTransfer :
                         event.originalEvent.dataTransfer; // jQuery fix;
-                    if (!dataTransfer || !dataTransfer.types.contains('Files')) return;
+                    if (!dataTransfer || !filesCheck(dataTransfer.types)) return;
                     event.preventDefault();
                     event.stopPropagation();
                     scope.$broadcast('file:removeoverclass');
@@ -35,17 +42,17 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
                     var dataTransfer = event.dataTransfer ?
                         event.dataTransfer :
                         event.originalEvent.dataTransfer; // jQuery fix;
-                    if(!dataTransfer.types.contains('Files')) return false;
+                    if(!filesCheck(dataTransfer.types)) return false;
                     event.preventDefault();
                     event.stopPropagation();
                     dataTransfer.dropEffect = 'copy';
                     scope.$broadcast('file:addoverclass');
                 })
-                .bind('dragleave', function () {
+                .bind('dragleave', function (event) {
                     var dataTransfer = event.dataTransfer ?
                         event.dataTransfer :
                         event.originalEvent.dataTransfer; // jQuery fix;
-                    if(!dataTransfer.types.contains('Files')) return false;
+                    if(!filesCheck(dataTransfer.types)) return false;
                     scope.$broadcast('file:removeoverclass');
                 });
         }
