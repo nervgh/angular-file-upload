@@ -34,9 +34,9 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
         this.filters.unshift(this._emptyFileFilter);
         this.filters.unshift(this._queueLimitFilter);
 
-        this.scope.$on('file:add', function (event, items, options) {
+        this.scope.$on('file:add', function (event, items, options, element) {
             event.stopPropagation();
-            this.addToQueue(items, options);
+            this.addToQueue(items, options, element);
         }.bind(this));
 
         this.bind('beforeupload', Item.prototype._beforeupload);
@@ -105,8 +105,9 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
          * Adds items to the queue
          * @param {FileList|File|HTMLInputElement} items
          * @param {Object} [options]
+         * @param {HTMLNode} element
          */
-        addToQueue: function (items, options) {
+        addToQueue: function (items, options, element) {
             var length = this.queue.length;
             var list = 'length' in items ? items : [items];
 
@@ -130,14 +131,14 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
 
                 if (isValid) {
                     this.queue.push(item);
-                    this.trigger('afteraddingfile', item);
+                    this.trigger('afteraddingfile', item, element);
                 } else {
-                    this.trigger('whenaddingfilefailed', item);
+                    this.trigger('whenaddingfilefailed', item, element);
                 }
             }, this);
 
             if (this.queue.length !== length) {
-                this.trigger('afteraddingall', this.queue);
+                this.trigger('afteraddingall', this.queue, element);
                 this.progress = this._getTotalProgress();
             }
 

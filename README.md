@@ -128,9 +128,9 @@ function( item ) {
 
 ### Supported events
 
-- **afteraddingfile** `function( event, item ) {`: Fires after adding a single file to the queue
-- **whenaddingfilefailed** `function( event, item ) {`: When adding a file failed
-- **afteraddingall** `function( event, items ) {`: Fires after adding all the dragged or selected files to the queue
+- **afteraddingfile** `function( event, item element ) {`: Fires after adding a single file to the queue. `element`<sup>1</sup> holds the html-element on which the file was dropped.
+- **whenaddingfilefailed** `function( event, item, element ) {`: When adding a file failed. `element`<sup>1</sup> holds the html-element on which the file was dropped.
+- **afteraddingall** `function( event, items, element) {`: Fires after adding all the dragged or selected files to the queue. `element`<sup>1</sup> holds the html-element on which the file was dropped.
 - **beforeupload** `function( event, item ) {`: Fires before uploading an item
 - **progress** `function( event, item, progress ) {`: On file upload progress
 - **success** `function( event, xhr, item, response ) {`: On file successfully uploaded
@@ -139,6 +139,8 @@ function( item ) {
 - **complete** `function( event, xhr, item, response ) {`: On file upload complete (independently of the sucess of the operation)
 - **progressall** `function( event, progress ) {`: On upload queue progress
 - **completeall** `function( event, items ) {`: On all loaded when uploading an entire queue, or on file loaded when uploading a single independent file
+
+<sup>1</sup> The `$scope` of an element can be entered with `angular.element(element).scope()`
 
 ### Registering event handlers
 
