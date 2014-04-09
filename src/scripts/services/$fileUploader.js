@@ -27,11 +27,13 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             isUploading: false,
             queueLimit: Number.MAX_VALUE,
             _nextIndex: 0,
-            _timestamp: Date.now()
+            _timestamp: Date.now(),
+            skipEmptyFiles: false
         }, params);
 
         // add default filters
-        this.filters.unshift(this._emptyFileFilter);
+        if(this.skipEmptyFiles)
+            this.filters.unshift(this._emptyFileFilter);
         this.filters.unshift(this._queueLimitFilter);
 
         this.scope.$on('file:add', function (event, items, options) {
