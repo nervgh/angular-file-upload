@@ -1,5 +1,5 @@
 /*
- Angular File Upload v0.4.0
+ Angular File Upload v0.4.1
  https://github.com/nervgh/angular-file-upload
 */
 (function(angular, factory) {
@@ -20,12 +20,19 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
     return {
         // don't use drag-n-drop files in IE9, because not File API support
         link: !$fileUploader.isHTML5 ? angular.noop : function (scope, element, attributes) {
+            var filesCheck = function(types){
+                var ret;
+                if('contains' in types)ret = types.contains('Files')
+                if('indexOf' in types)ret = types.indexOf('Files') != -1
+                return ret;
+            }
+
             element
                 .bind('drop', function (event) {
                     var dataTransfer = event.dataTransfer ?
                         event.dataTransfer :
                         event.originalEvent.dataTransfer; // jQuery fix;
-                    if (!dataTransfer) return;
+                    if (!dataTransfer || !filesCheck(dataTransfer.types)) return;
                     event.preventDefault();
                     event.stopPropagation();
                     scope.$broadcast('file:removeoverclass');
@@ -35,13 +42,17 @@ app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
                     var dataTransfer = event.dataTransfer ?
                         event.dataTransfer :
                         event.originalEvent.dataTransfer; // jQuery fix;
-
+                    if(!filesCheck(dataTransfer.types)) return false;
                     event.preventDefault();
                     event.stopPropagation();
                     dataTransfer.dropEffect = 'copy';
                     scope.$broadcast('file:addoverclass');
                 })
-                .bind('dragleave', function () {
+                .bind('dragleave', function (event) {
+                    var dataTransfer = event.dataTransfer ?
+                        event.dataTransfer :
+                        event.originalEvent.dataTransfer; // jQuery fix;
+                    if(!filesCheck(dataTransfer.types)) return false;
                     scope.$broadcast('file:removeoverclass');
                 });
         }
@@ -103,11 +114,13 @@ app.factory('$fileUploader', [ '$compile', '$rootScope', '$http', '$window', fun
             isUploading: false,
             queueLimit: Number.MAX_VALUE,
             _nextIndex: 0,
-            _timestamp: Date.now()
+            _timestamp: Date.now(),
+            skipEmptyFiles: false
         }, params);
 
         // add default filters
-        this.filters.unshift(this._emptyFileFilter);
+        if(this.skipEmptyFiles)
+            this.filters.unshift(this._emptyFileFilter);
         this.filters.unshift(this._queueLimitFilter);
 
         this.scope.$on('file:add', function (event, items, options) {
