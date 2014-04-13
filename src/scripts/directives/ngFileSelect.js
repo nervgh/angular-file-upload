@@ -5,16 +5,24 @@
  */
 
 // It is attached to <input type="file"> element like <ng-file-select="options">
-app.directive('ngFileSelect', [ '$fileUploader', function ($fileUploader) {
+app.directive('ngFileSelect', ['$fileUploader', function($fileUploader) {
     'use strict';
 
     return {
-        link: function (scope, element, attributes) {
-            $fileUploader.isHTML5 || element.removeAttr('multiple');
+        link: function(scope, element, attributes) {
+            if(!$fileUploader.isHTML5) {
+                element.removeAttr('multiple');
+            }
 
-            element.bind('change', function () {
-                scope.$emit('file:add', $fileUploader.isHTML5 ? this.files : this, scope.$eval(attributes.ngFileSelect));
-                ($fileUploader.isHTML5 && element.attr('multiple')) && element.prop('value', null);
+            element.bind('change', function() {
+                var data = $fileUploader.isHTML5 ? this.files : this;
+                var options = scope.$eval(attributes.ngFileSelect);
+
+                scope.$emit('file:add', data, options);
+
+                if(!$fileUploader.isHTML5 && !element.attr('multiple')) {
+                    element.prop('value', null);
+                }
             });
 
             element.prop('value', null); // FF fix

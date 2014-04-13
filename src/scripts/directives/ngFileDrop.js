@@ -5,7 +5,7 @@
  */
 
 // It is attached to an element that catches the event drop file
-app.directive('ngFileDrop', [ '$fileUploader', function ($fileUploader) {
+app.directive('ngFileDrop', ['$fileUploader', function ($fileUploader) {
     'use strict';
 
     return {
