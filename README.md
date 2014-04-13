@@ -51,6 +51,7 @@ When files are selected or dropped into the component, one or more filters are a
 - **isHTML5** `{Boolean}`: `true` if uploader is html5-uploader. Read only.
 - **isUploading** `{Boolean}`: `true` if an upload is in progress. Read only.
 - **queueLimit** `{Number}` : maximum count of files
+- **withCredentials** `{Boolean}` : enable CORS. HTML5 browsers only.
 
 #### Methods
 
@@ -76,6 +77,7 @@ When files are selected or dropped into the component, one or more filters are a
 - **headers** `{Object}`: Headers to be sent along with this file. HTML5 browsers only.
 - **formData** `{Array}`: Data to be sent along with this file
 - **method** `{String}`: It's a request method. By default `POST`. HTML5 browsers only.
+- **withCredentials** `{Boolean}` : enable CORS. HTML5 browsers only.
 - **removeAfterUpload** `{Boolean}`: Remove this file from the queue after uploading
 - **index** `{Number}` - A sequence number upload. Read only.
 - **progress** `{Number}`: File upload progress percentage. Read only.
@@ -236,6 +238,7 @@ var uploader = $scope.uploader = $fileUploader.create({
 - **isHTML5** `{Boolean}` - `true`, если это html5-загрузчик. Только для чтения.
 - **isUploading** `{Boolean}` - загрузчик в процессе загрузки. Только для чтения.
 - **queueLimit** `{Number}` - максимальное количество файлов
+- **withCredentials** `{Boolean}` : включить CORS. Только для HTML5 браузеров.
 
 #### Методы
 
@@ -261,6 +264,7 @@ var uploader = $scope.uploader = $fileUploader.create({
 - **headers** `{Object}` - заголовки, которые будут переданы вместе с файлом. Только для HTML5 браузеров.
 - **formData** `{Array}` - данные, отправляемые вместе с файлом
 - **method** `{String}`: - метод запроса. По умолчанию `POST`. Только для HTML5 браузеров.
+- **withCredentials** `{Boolean}` : включить CORS. Только для HTML5 браузеров.
 - **removeAfterUpload** `{Boolean}` - удалить файл после загрузки
 - **index** `{Number}` - индекс / порядковый номер загрузки. Только для чтения.
 - **progress** `{Number}` - прогресс загрузки файла. Только для чтения.

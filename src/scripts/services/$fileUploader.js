@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.4.3, 2014-04-13
+ * @version: 0.5.3, 2014-04-13
  */
 app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', function($compile, $rootScope, $http, $window) {
     'use strict';
@@ -26,6 +26,7 @@ app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', func
             formData: [],
             isUploading: false,
             queueLimit: Number.MAX_VALUE,
+            withCredentials: false,
             _nextIndex: 0,
             _timestamp: Date.now()
         }, params);
@@ -123,6 +124,7 @@ app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', func
                     headers: angular.copy(this.headers),
                     formData: angular.copy(this.formData),
                     removeAfterUpload: this.removeAfterUpload,
+                    withCredentials: this.withCredentials,
                     method: this.method,
                     uploader: this,
                     file: file
@@ -326,6 +328,8 @@ app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', func
             });
 
             form.append(item.alias, item.file);
+
+            xhr.withCredentials = item.withCredentials;
 
             xhr.upload.onprogress = function(event) {
                 var progress = event.lengthComputable ? event.loaded * 100 / event.total : 0;
