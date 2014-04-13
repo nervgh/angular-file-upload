@@ -149,41 +149,41 @@ uploader.bind('progress', function(event, item, progress) {
 ### FAQ
 1. How to add the previously uploaded files in the queue?
 
-```javascript
-// Add a item to the queue
-var item = {
-    file: {
-        name: 'Your file name',
-        size: 1e6
-    },
-    progress: 100,
-    isUploaded: true,
-    isSuccess: true
-};
-item.remove = function() {
-    uploader.removeFromQueue(this);
-};
-uploader.queue.push(item);
-uploader.progress = 100;
-```
+    ```javascript
+    // Add a item to the queue
+    var item = {
+        file: {
+            name: 'Your file name',
+            size: 1e6
+        },
+        progress: 100,
+        isUploaded: true,
+        isSuccess: true
+    };
+    item.remove = function() {
+        uploader.removeFromQueue(this);
+    };
+    uploader.queue.push(item);
+    uploader.progress = 100;
+    ```
 
 2. How do I deal with Cross Site Request Forgery protection?
 
-See this issue: [#40](https://github.com/nervgh/angular-file-upload/issues/40)
+    See this issue: [#40](https://github.com/nervgh/angular-file-upload/issues/40)
 
-For example, in Ruby on Rails, add an additional header, and use [this method](http://stackoverflow.com/questions/14734243/rails-csrf-protection-angular-js-protect-from-forgery-makes-me-to-log-out-on#answers) for verifying XSRF:
+    For example, in Ruby on Rails, add an additional header, and use [this method](http://stackoverflow.com/questions/14734243/rails-csrf-protection-angular-js-protect-from-forgery-makes-me-to-log-out-on#answers) for verifying XSRF:
 
-```javascript
-var csrf_token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    ```javascript
+    var csrf_token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-var uploader = $scope.uploader = $fileUploader.create({
-      // your code here...
-      headers : {
-        'X-CSRF-TOKEN' : csrf_token // X-CSRF-TOKEN is used for Ruby on Rails Tokens
-      },
-      //...
-  });
-```
+    var uploader = $scope.uploader = $fileUploader.create({
+          // your code here...
+          headers : {
+            'X-CSRF-TOKEN' : csrf_token // X-CSRF-TOKEN is used for Ruby on Rails Tokens
+          },
+          //...
+      });
+    ```
 
 ---
 
@@ -331,20 +331,20 @@ uploader.bind('progress', function(event, item, progress) {
 ### FAQ / Вопросы и ответы
 1. Как добавить ранее загруженные файлы в очередь?
 
-```javascript
-// Add a item to the queue
-var item = {
-    file: {
-        name: 'Your file name',
-        size: 1e6
-    },
-    progress: 100,
-    isUploaded: true,
-    isSuccess: true
-};
-item.remove = function() {
-    uploader.removeFromQueue(this);
-};
-uploader.queue.push(item);
-uploader.progress = 100;
+    ```javascript
+    // Add a item to the queue
+    var item = {
+        file: {
+            name: 'Your file name',
+            size: 1e6
+        },
+        progress: 100,
+        isUploaded: true,
+        isSuccess: true
+    };
+    item.remove = function() {
+        uploader.removeFromQueue(this);
+    };
+    uploader.queue.push(item);
+    uploader.progress = 100;
 ```
