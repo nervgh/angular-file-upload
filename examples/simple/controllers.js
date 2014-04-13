@@ -19,6 +19,24 @@ angular.module('app', ['angularFileUpload'])
             ]
         });
 
+
+        // FAQ #1
+        var item = {
+            file: {
+                name: 'Previously uploaded file',
+                size: 1e6
+            },
+            progress: 100,
+            isUploaded: true,
+            isSuccess: true
+        };
+        item.remove = function() {
+            uploader.removeFromQueue(this);
+        };
+        uploader.queue.push(item);
+        uploader.progress = 100;
+
+
         // ADDING FILTERS
 
         uploader.filters.push(function (item) { // second user filter

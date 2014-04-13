@@ -41,30 +41,30 @@ When files are selected or dropped into the component, one or more filters are a
 - **url** `{String}`: Path on the server to upload files
 - **alias** `{String}`: Name of the field which will contain the file, default is `file`
 - **queue** `{Array}`: Items to be uploaded
-- **progress** `{Number}`: Upload queue progress percentage
-- **headers** `{Object}`: Headers to be sent along with the files
+- **progress** `{Number}`: Upload queue progress percentage. Read only.
+- **headers** `{Object}`: Headers to be sent along with the files. HTML5 browsers only.
 - **formData** `{Array}`: Data to be sent along with the files
 - **filters** `{Array}`: Filters to be applied to the files before adding them to the queue. If the filter returns `true` the file will be added to the queue
 - **autoUpload** `{Boolean}`: Automatically upload files after adding them to the queue
 - **method** `{String}`: It's a request method. By default `POST`. HTML5 browsers only.
 - **removeAfterUpload** `{Boolean}`: Remove files from the queue after uploading
-- **isHTML5** `{Boolean}`: `true` if uploader is html5-uploader. Readonly.
-- **isUploading** `{Boolean}`: `true` if an upload is in progress
+- **isHTML5** `{Boolean}`: `true` if uploader is html5-uploader. Read only.
+- **isUploading** `{Boolean}`: `true` if an upload is in progress. Read only.
 - **queueLimit** `{Number}` : maximum count of files
 
 #### Methods
 
-- **bind** `function( event, handler ) {`: Registers an event handler
-- **trigger** `function( event[, params ]) {`: Executes all handlers bound to this event
-- **addToQueue** `function( items, options ) {`: Add items to the queue, where `items` is a `FileList`, `File` or `Input`, and `options` is an `Object`
-- **removeFromQueue** `function( value ) {`: Remove an item from the queue, where `value` is a queue element `Item` or index
+- **bind** `function(event, handler) {`: Registers an event handler
+- **trigger** `function(event[, params ]) {`: Executes all handlers bound to this event
+- **addToQueue** `function(items, options) {`: Add items to the queue, where `items` is a `FileList`, `File` or `Input`, and `options` is an `Object`
+- **removeFromQueue** `function({Item|Index}) {`: Remove an item from the queue, where `value` is a queue element `Item` or index
 - **clearQueue** `function() {`: Removes all elements from the queue
-- **getIndexOfItem** `function( Item ) { return [Number]; }`: Returns the index of the `Item` queue element
-- **getReadyItems** `function() { return [Array]; }`: Return items are ready to upload
-- **getNotUploadedItems** `function() { return [Array]; }`: Return an array of all pending items on the queue
-- **uploadItem** `function( value ) {`: Uploads an item, where `value` is a queue element `Item` or index
+- **getIndexOfItem** `function({Item}) {return {Number};}`: Returns the index of the `Item` queue element
+- **getReadyItems** `function() {return {Array};}`: Return items are ready to upload
+- **getNotUploadedItems** `function() {return {Array};}`: Return an array of all pending items on the queue
+- **uploadItem** `function({Item|Index}) {`: Uploads an item, where `value` is a queue element `Item` or index
 - **uploadAll** `function() {`: Upload all pending items on the queue
-- **cancelItem** `function( value ) {`: Cancels uploading of item, where `value` is a queue element `Item` or index
+- **cancelItem** `function({Item|Index}) {`: Cancels uploading of item, where `value` is a queue element `Item` or index
 - **cancelAll** `function() {`: Cancels all current uploads
 
 ### The Item API:
@@ -73,19 +73,19 @@ When files are selected or dropped into the component, one or more filters are a
 
 - **url** `{String}`: Path on the server in which this file will be uploaded
 - **alias** `{String}`: Name of the field which will contain the file, default is `file` 
-- **headers** `{Object}`: Headers to be sent along with this file
+- **headers** `{Object}`: Headers to be sent along with this file. HTML5 browsers only.
 - **formData** `{Array}`: Data to be sent along with this file
 - **method** `{String}`: It's a request method. By default `POST`. HTML5 browsers only.
 - **removeAfterUpload** `{Boolean}`: Remove this file from the queue after uploading
-- **index** `{Number}` - A sequence number upload
-- **progress** `{Number}`: File upload progress percentage
-- **isReady** `{Boolean}` - File is ready to upload
-- **isUploading** `{Boolean}`: `true` if the file is being uploaded
-- **isUploaded** `{Boolean}`: `true` if the file was uploaded
-- **isSuccess** `{Boolean}`: `true` if the file was uploaded successfully
-- **isCancel** `{Boolean}` : `true` if uploading was canceled
-- **isError** `{Boolean}` - `true` if occurred error while file uploading
-- **uploader** `{Object}`: Reference to the parent `Uploader` object for this file
+- **index** `{Number}` - A sequence number upload. Read only.
+- **progress** `{Number}`: File upload progress percentage. Read only.
+- **isReady** `{Boolean}` - File is ready to upload. Read only.
+- **isUploading** `{Boolean}`: `true` if the file is being uploaded. Read only.
+- **isUploaded** `{Boolean}`: `true` if the file was uploaded. Read only.
+- **isSuccess** `{Boolean}`: `true` if the file was uploaded successfully. Read only.
+- **isCancel** `{Boolean}` : `true` if uploading was canceled. Read only.
+- **isError** `{Boolean}` - `true` if occurred error while file uploading. Read only.
+- **uploader** `{Object}`: Reference to the parent `Uploader` object for this file. Read only.
 
 #### Methods
 
@@ -99,17 +99,16 @@ When files are selected or dropped into the component, one or more filters are a
 
 ```javascript
 var uploader = $fileUploader.create({
+    scope: $scope,
     filters: [
-        function( item ) {                    // A user-defined filter
-            console.log( 'filter1' );
+        function(item) {                    // A user-defined filter
             return true;
         }
     ]
 });
 
 // Another user-defined filter
-uploader.filters.push(function( item ) {
-    console.log( 'filter2' );
+uploader.filters.push(function(item) {
     return true;
 });
 ```
@@ -119,8 +118,8 @@ uploader.filters.push(function( item ) {
 The queue already has registered a default filter that looks like this: 
 
 ```javascript
-function( item ) { 
-	return angular.isElement( item ) ? true : !!item.size;
+function(item) {
+	return angular.isElement(item) ? true : !!item.size;
 }
 ```
 
@@ -128,56 +127,66 @@ function( item ) {
 
 ### Supported events
 
-- **afteraddingfile** `function( event, item ) {`: Fires after adding a single file to the queue
-- **whenaddingfilefailed** `function( event, item ) {`: When adding a file failed
-- **afteraddingall** `function( event, items ) {`: Fires after adding all the dragged or selected files to the queue
-- **beforeupload** `function( event, item ) {`: Fires before uploading an item
-- **progress** `function( event, item, progress ) {`: On file upload progress
-- **success** `function( event, xhr, item, response ) {`: On file successfully uploaded
-- **cancel** `function( event, xhr, item ) {` - On cancel uploading
-- **error** `function( event, xhr, item[, response ]) {`: On upload error
-- **complete** `function( event, xhr, item, response ) {`: On file upload complete (independently of the sucess of the operation)
-- **progressall** `function( event, progress ) {`: On upload queue progress
-- **completeall** `function( event, items ) {`: On all loaded when uploading an entire queue, or on file loaded when uploading a single independent file
+- **afteraddingfile** `function(event, item) {`: Fires after adding a single file to the queue
+- **whenaddingfilefailed** `function(event, item) {`: When adding a file failed
+- **afteraddingall** `function(event, items) {`: Fires after adding all the dragged or selected files to the queue
+- **beforeupload** `function(event, item) {`: Fires before uploading an item
+- **progress** `function(event, item, progress) {`: On file upload progress
+- **success** `function(event, xhr, item, response) {`: On file successfully uploaded
+- **cancel** `function(event, xhr, item) {` - On cancel uploading
+- **error** `function(event, xhr, item[, response ]) {`: On upload error
+- **complete** `function(event, xhr, item, response) {`: On file upload complete (independently of the sucess of the operation)
+- **progressall** `function(event, progress) {`: On upload queue progress
+- **completeall** `function(event, items) {`: On all loaded when uploading an entire queue, or on file loaded when uploading a single independent file
 
 ### Registering event handlers
 
 ```javascript
-var uploader = $fileUploader.create();
+var uploader = $fileUploader.create({scope: $scope});
 
-uploader.bind( 'progress', function( event, item, progress ) {
-    console.log( 'Progress: ' + progress );
+uploader.bind('progress', function(event, item, progress) {
+    console.log('Progress: ' + progress);
 });
 ```
 
 ### FAQ
 1. How to add the previously uploaded files in the queue?
 
-    ```javascript
-    // Add a item to the queue
-    uploader.queue.push({
-        example: {},      // your data here
-        isUploaded: true
-    });
-    ```
+```javascript
+// Add a item to the queue
+var item = {
+    file: {
+        name: 'Your file name',
+        size: 1e6
+    },
+    progress: 100,
+    isUploaded: true,
+    isSuccess: true
+};
+item.remove = function() {
+    uploader.removeFromQueue(this);
+};
+uploader.queue.push(item);
+uploader.progress = 100;
+```
 
 2. How do I deal with Cross Site Request Forgery protection?
 
-    See this issue: [#40](https://github.com/nervgh/angular-file-upload/issues/40)
+See this issue: [#40](https://github.com/nervgh/angular-file-upload/issues/40)
 
-    For example, in Ruby on Rails, add an additional header, and use [this method](http://stackoverflow.com/questions/14734243/rails-csrf-protection-angular-js-protect-from-forgery-makes-me-to-log-out-on#answers) for verifying XSRF:
+For example, in Ruby on Rails, add an additional header, and use [this method](http://stackoverflow.com/questions/14734243/rails-csrf-protection-angular-js-protect-from-forgery-makes-me-to-log-out-on#answers) for verifying XSRF:
 
-    ```javascript
-    var csrf_token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+```javascript
+var csrf_token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    var uploader = $scope.uploader = $fileUploader.create({
-          // your code here...
-          headers : {
-            'X-CSRF-TOKEN' : csrf_token // X-CSRF-TOKEN is used for Ruby on Rails Tokens
-          },
-          //...
-      });
-    ```
+var uploader = $scope.uploader = $fileUploader.create({
+      // your code here...
+      headers : {
+        'X-CSRF-TOKEN' : csrf_token // X-CSRF-TOKEN is used for Ruby on Rails Tokens
+      },
+      //...
+  });
+```
 
 ---
 
@@ -217,30 +226,30 @@ uploader.bind( 'progress', function( event, item, progress ) {
 - **url** `{String}` - путь на сервере, по которому будут загружаться файлы
 - **alias** `{String}` - псевдоним файла
 - **queue** `{Array}`- очередь загрузки
-- **progress** `{Number}`- прогресс загрузки очереди
-- **headers** `{Object}` - заголовки, которые будут переданы вместе с файлами
+- **progress** `{Number}`- прогресс загрузки очереди. Только для чтения.
+- **headers** `{Object}` - заголовки, которые будут переданы вместе с файлами. Только для HTML5 браузеров.
 - **formData** `{Array}` - данные, отправляемые вместе с файлами
 - **filters** `{Array}` - фильтры, применяемые к [файлу|элементу] перед добавлением его в очередь. Если фильтр возвращает `true`, [файл|элемент] будет добавлен в очередь
 - **autoUpload** `{Boolean}` - загружать автоматически после добавления элемента в очередь
 - **method** `{String}`: - метод запроса. По умолчанию `POST`. Только для HTML5 браузеров.
 - **removeAfterUpload** `{Boolean}` - удалить файлы после загрузки
-- **isHTML5** `{Boolean}` - `true`, если это html5-загрузчик. Только для чтения
-- **isUploading** `{Boolean}` - загрузчик в процессе загрузки
+- **isHTML5** `{Boolean}` - `true`, если это html5-загрузчик. Только для чтения.
+- **isUploading** `{Boolean}` - загрузчик в процессе загрузки. Только для чтения.
 - **queueLimit** `{Number}` - максимальное количество файлов
 
 #### Методы
 
-- **bind** `function( event, handler ) {` - регистрирует обработчик события
-- **trigger** `function( event[, params ]) {` - выполняет все обработчики, связанные с данным событием
-- **addToQueue** `function( items, options ) {` - где _items_ [FileList|File|Input], _options_ [Object]
-- **removeFromQueue** `function( value ) {` - где _value_ элемент очереди или его индекс [Item|Index]
+- **bind** `function(event, handler) {` - регистрирует обработчик события
+- **trigger** `function(event[, params ]) {` - выполняет все обработчики, связанные с данным событием
+- **addToQueue** `function(items, options) {` - где _items_ [FileList|File|Input], _options_ [Object]
+- **removeFromQueue** `function({Item|Index}) {` - где _value_ элемент очереди или его индекс [Item|Index]
 - **clearQueue** `function() {` - удаляет все элементы из очереди
-- **getIndexOfItem** `function( item ) { return [Number]; }` - где _item_ элемент очереди
-- **getReadyItems** `function() { return [Array]; }`- Возвращает элементы готовые к загрузке
-- **getNotUploadedItems** `function() { return [Array]; }` - возвращает массив не загруженных элементов
-- **uploadItem** `function( value ) {` - где _value_ элемент очереди или его индекс [Item|Index]
+- **getIndexOfItem** `function(item) {return {Number};}` - где _item_ элемент очереди
+- **getReadyItems** `function() {return {Array};}`- Возвращает элементы готовые к загрузке
+- **getNotUploadedItems** `function() { return {Array};}` - возвращает массив не загруженных элементов
+- **uploadItem** `function({Item|Index}) {` - где _value_ элемент очереди или его индекс [Item|Index]
 - **uploadAll** `function() {` - загружает все незагруженные элементы
-- **cancelItem** `function( value ) {` - где _value_ элемент очереди или его индекс [Item|Index]
+- **cancelItem** `function({Item|Index}) {` - где _value_ элемент очереди или его индекс [Item|Index]
 - **cancelAll** `function() {` - отменяет все текущие загрузки
 
 ### Элемент очереди API:
@@ -249,19 +258,19 @@ uploader.bind( 'progress', function( event, item, progress ) {
 
 - **url** `{String}` - путь на сервере, по которому будет загружен файл
 - **alias** `{String}` - псевдоним файла
-- **headers** `{Object}` - заголовки, которые будут переданы вместе с файлом
+- **headers** `{Object}` - заголовки, которые будут переданы вместе с файлом. Только для HTML5 браузеров.
 - **formData** `{Array}` - данные, отправляемые вместе с файлом
 - **method** `{String}`: - метод запроса. По умолчанию `POST`. Только для HTML5 браузеров.
 - **removeAfterUpload** `{Boolean}` - удалить файл после загрузки
-- **index** `{Number}` - индекс / порядковый номер загрузки
-- **progress** `{Number}` - прогресс загрузки файла
-- **isReady** `{Boolean}` - файл готов к загрузке
-- **isUploading** `{Boolean}` - файл в процессе загрузки
-- **isUploaded** `{Boolean}` - файл загружен
-- **isSuccess** `{Boolean}` - файл успешно загружен
-- **isCancel** `{Boolean}` - загрузка файла была отменена
-- **isError** `{Boolean}` - при загрузке файла произошла ошибка
-- **uploader** `{Object}` - ссылка на загрузчик
+- **index** `{Number}` - индекс / порядковый номер загрузки. Только для чтения.
+- **progress** `{Number}` - прогресс загрузки файла. Только для чтения.
+- **isReady** `{Boolean}` - файл готов к загрузке. Только для чтения.
+- **isUploading** `{Boolean}` - файл в процессе загрузки. Только для чтения.
+- **isUploaded** `{Boolean}` - файл загружен. Только для чтения.
+- **isSuccess** `{Boolean}` - файл успешно загружен. Только для чтения.
+- **isCancel** `{Boolean}` - загрузка файла была отменена. Только для чтения.
+- **isError** `{Boolean}` - при загрузке файла произошла ошибка. Только для чтения.
+- **uploader** `{Object}` - ссылка на загрузчик. Только для чтения.
 
 #### Методы
 
@@ -275,17 +284,16 @@ uploader.bind( 'progress', function( event, item, progress ) {
 
 ```javascript
 var uploader = $fileUploader.create({
+    scope: $scope,
     filters: [
-        function( item ) {                    // first user filter
-            console.log( 'filter1' );
+        function(item) {                    // first user filter
             return true;
         }
     ]
 });
 
 // second user filter
-uploader.filters.push(function( item ) {
-    console.log( 'filter2' );
+uploader.filters.push(function(item) {
     return true;
 });
 ```
@@ -294,8 +302,8 @@ uploader.filters.push(function( item ) {
 
 По умолчанию в массиве фильтров уже присутствует один фильтр, который имеет вид:
 ```javascript
-function( item ) { 
-	return angular.isElement( item ) ? true : !!item.size;
+function(item) {
+	return angular.isElement(item) ? true : !!item.size;
 }
 ```
 
@@ -303,25 +311,25 @@ function( item ) {
 
 ### Список событий
 
-- **afteraddingfile** `function( event, item ) {` - после добавления файла в очередь
-- **whenaddingfilefailed** `function( event, item ) {`: когда добавление файла в очередь не удалось
-- **afteraddingall** `function( event, items ) {` - после добавления всех файлов в очередь
-- **beforeupload** `function( event, item ) {` - перед загрузкой файла
-- **progress** `function( event, item, progress ) {` - прогресс загрузки файла
-- **success** `function( event, xhr, item, response ) {` - файл успешно загружен
-- **cancel** `function( event, xhr, item ) {` - отменяет загрузку файла
-- **error** `function( event, xhr, item[, response ]) {` - ошибка при загрузке
-- **complete** `function( event, xhr, item, response ) {` - файл загружен
-- **progressall** `function( event, progress ) {` - прогресс загрузки очереди
-- **completeall** `function( event, items ) {` - "очередь загружена", если была инициирована загрузка всей очереди; иначе "файл загружен", если была инициирована загрузка файла
+- **afteraddingfile** `function(event, item) {` - после добавления файла в очередь
+- **whenaddingfilefailed** `function(event, item) {`: когда добавление файла в очередь не удалось
+- **afteraddingall** `function(event, items) {` - после добавления всех файлов в очередь
+- **beforeupload** `function(event, item) {` - перед загрузкой файла
+- **progress** `function(event, item, progress) {` - прогресс загрузки файла
+- **success** `function(event, xhr, item, response) {` - файл успешно загружен
+- **cancel** `function(event, xhr, item) {` - отменяет загрузку файла
+- **error** `function(event, xhr, item[, response ]) {` - ошибка при загрузке
+- **complete** `function(event, xhr, item, response) {` - файл загружен
+- **progressall** `function(event, progress) {` - прогресс загрузки очереди
+- **completeall** `function(event, items) {` - "очередь загружена", если была инициирована загрузка всей очереди; иначе "файл загружен", если была инициирована загрузка файла
 
 ### Подписка на событие
 
 ```javascript
-var uploader = $fileUploader.create();
+var uploader = $fileUploader.create({scope: $scope});
 
-uploader.bind( 'progress', function( event, item, progress ) {
-    console.log( 'Progress: ' + progress );
+uploader.bind('progress', function(event, item, progress) {
+    console.log('Progress: ' + progress);
 });
 ```
 
@@ -330,8 +338,18 @@ uploader.bind( 'progress', function( event, item, progress ) {
 
 ```javascript
 // Add a item to the queue
-uploader.queue.push({
-    example: {},      // your data here
-    isUploaded: true
-});
+    var item = {
+        file: {
+            name: 'Your file name',
+            size: 1e6
+        },
+        progress: 100,
+        isUploaded: true,
+        isSuccess: true
+    };
+    item.remove = function() {
+        uploader.removeFromQueue(this);
+    };
+    uploader.queue.push(item);
+    uploader.progress = 100;
 ```
