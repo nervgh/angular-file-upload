@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.4.2, 2014-04-13
+ * @version: 0.4.3, 2014-04-13
  */
 app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', function($compile, $rootScope, $http, $window) {
     'use strict';
@@ -152,8 +152,8 @@ app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', func
         removeFromQueue: function(value) {
             var index = this.getIndexOfItem(value);
             var item = this.queue[index];
-            item.cancel();
-            item._destroy();
+            if (item.cancel) item.cancel();
+            if (item._destroy) item._destroy();
             this.queue.splice(index, 1);
             this.progress = this._getTotalProgress();
         },
@@ -439,7 +439,7 @@ app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', func
 
     /**
      * Create a item
-     * @param {Object} params
+     * @param {Object} [params]
      * @constructor
      */
     function Item(params) {
