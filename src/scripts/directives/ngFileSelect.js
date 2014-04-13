@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.4.1, 2014-03-25
+ * @version: 0.4.2, 2014-04-13
  */
 
 // It is attached to <input type="file"> element like <ng-file-select="options">

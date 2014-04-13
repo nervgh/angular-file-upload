@@ -252,39 +252,6 @@ app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', func
         },
 
         /**
-         * Returns a index of item from the queue
-         * @param {Item|Number} value
-         * @returns {Number}
-         */
-        getIndexOfItem: function(value) {
-            return angular.isNumber(value) ? value : this.queue.indexOf(value);
-        },
-
-        /**
-         * Returns not uploaded items
-         * @returns {Array}
-         */
-        getNotUploadedItems: function() {
-            return this.queue.filter(function(item) {
-                return !item.isUploaded;
-            });
-        },
-
-        /**
-         * Returns items ready for upload
-         * @returns {Array}
-         */
-        getReadyItems: function() {
-            return this.queue
-                .filter(function(item) {
-                    return item.isReady && !item.isUploading;
-                })
-                .sort(function(item1, item2) {
-                    return item1.index - item2.index;
-                });
-        },
-
-        /**
          * Uploads a item from the queue
          * @param {Item|Number} value
          */
@@ -334,6 +301,39 @@ app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', func
             this.getNotUploadedItems().forEach(function(item) {
                 this.cancelItem(item);
             }, this);
+        },
+
+        /**
+         * Returns a index of item from the queue
+         * @param {Item|Number} value
+         * @returns {Number}
+         */
+        getIndexOfItem: function(value) {
+            return angular.isNumber(value) ? value : this.queue.indexOf(value);
+        },
+
+        /**
+         * Returns not uploaded items
+         * @returns {Array}
+         */
+        getNotUploadedItems: function() {
+            return this.queue.filter(function(item) {
+                return !item.isUploaded;
+            });
+        },
+
+        /**
+         * Returns items ready for upload
+         * @returns {Array}
+         */
+        getReadyItems: function() {
+            return this.queue
+                .filter(function(item) {
+                    return item.isReady && !item.isUploading;
+                })
+                .sort(function(item1, item2) {
+                    return item1.index - item2.index;
+                });
         },
 
         /**
@@ -467,7 +467,7 @@ app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', func
 
             form.prop({
                 action: item.url,
-                method: item.method,
+                method: 'POST',
                 target: iframe.prop('name'),
                 enctype: 'multipart/form-data',
                 encoding: 'multipart/form-data' // old IE

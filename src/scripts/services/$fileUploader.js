@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.4.1, 2014-03-25
+ * @version: 0.4.2, 2014-04-13
  */
 app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', function($compile, $rootScope, $http, $window) {
     'use strict';
@@ -383,7 +383,7 @@ app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', func
 
             form.prop({
                 action: item.url,
-                method: item.method,
+                method: 'POST',
                 target: iframe.prop('name'),
                 enctype: 'multipart/form-data',
                 encoding: 'multipart/form-data' // old IE

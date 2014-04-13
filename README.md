@@ -46,7 +46,7 @@ When files are selected or dropped into the component, one or more filters are a
 - **formData** `{Array}`: Data to be sent along with the files
 - **filters** `{Array}`: Filters to be applied to the files before adding them to the queue. If the filter returns `true` the file will be added to the queue
 - **autoUpload** `{Boolean}`: Automatically upload files after adding them to the queue
-- **method** `{String}`: It's a request method. By default `POST`
+- **method** `{String}`: It's a request method. By default `POST`. HTML5 browsers only.
 - **removeAfterUpload** `{Boolean}`: Remove files from the queue after uploading
 - **isHTML5** `{Boolean}`: `true` if uploader is html5-uploader. Readonly.
 - **isUploading** `{Boolean}`: `true` if an upload is in progress
@@ -75,7 +75,7 @@ When files are selected or dropped into the component, one or more filters are a
 - **alias** `{String}`: Name of the field which will contain the file, default is `file` 
 - **headers** `{Object}`: Headers to be sent along with this file
 - **formData** `{Array}`: Data to be sent along with this file
-- **method** `{String}`: It's a request method. By default `POST`
+- **method** `{String}`: It's a request method. By default `POST`. HTML5 browsers only.
 - **removeAfterUpload** `{Boolean}`: Remove this file from the queue after uploading
 - **index** `{Number}` - A sequence number upload
 - **progress** `{Number}`: File upload progress percentage
@@ -222,7 +222,7 @@ uploader.bind( 'progress', function( event, item, progress ) {
 - **formData** `{Array}` - данные, отправляемые вместе с файлами
 - **filters** `{Array}` - фильтры, применяемые к [файлу|элементу] перед добавлением его в очередь. Если фильтр возвращает `true`, [файл|элемент] будет добавлен в очередь
 - **autoUpload** `{Boolean}` - загружать автоматически после добавления элемента в очередь
-- **method** `{String}`: - метод запроса. По умолчанию `POST`
+- **method** `{String}`: - метод запроса. По умолчанию `POST`. Только для HTML5 браузеров.
 - **removeAfterUpload** `{Boolean}` - удалить файлы после загрузки
 - **isHTML5** `{Boolean}` - `true`, если это html5-загрузчик. Только для чтения
 - **isUploading** `{Boolean}` - загрузчик в процессе загрузки
@@ -251,7 +251,7 @@ uploader.bind( 'progress', function( event, item, progress ) {
 - **alias** `{String}` - псевдоним файла
 - **headers** `{Object}` - заголовки, которые будут переданы вместе с файлом
 - **formData** `{Array}` - данные, отправляемые вместе с файлом
-- **method** `{String}`: - метод запроса. По умолчанию `POST`
+- **method** `{String}`: - метод запроса. По умолчанию `POST`. Только для HTML5 браузеров.
 - **removeAfterUpload** `{Boolean}` - удалить файл после загрузки
 - **index** `{Number}` - индекс / порядковый номер загрузки
 - **progress** `{Number}` - прогресс загрузки файла
