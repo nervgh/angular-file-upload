@@ -115,15 +115,10 @@ uploader.filters.push(function(item) {
 });
 ```
 
-### The default filter
+### Predefined filters
 
-The queue already has registered a default filter that looks like this: 
-
-```javascript
-function(item) {
-	return angular.isElement(item) ? true : !!item.size;
-}
-```
+1. [emptyFileFilter](https://github.com/nervgh/angular-file-upload/blob/v0.4.1/src/scripts/services/%24fileUploader.js#L58)
+2. [queueLimitFilter](https://github.com/nervgh/angular-file-upload/blob/v0.4.1/src/scripts/services/%24fileUploader.js#L68)
 
 ## Events
 
@@ -302,14 +297,10 @@ uploader.filters.push(function(item) {
 });
 ```
 
-### Стандартный фильтр
+### Предустановленные фильтры
 
-По умолчанию в массиве фильтров уже присутствует один фильтр, который имеет вид:
-```javascript
-function(item) {
-	return angular.isElement(item) ? true : !!item.size;
-}
-```
+1. [emptyFileFilter](https://github.com/nervgh/angular-file-upload/blob/v0.4.1/src/scripts/services/%24fileUploader.js#L58)
+2. [queueLimitFilter](https://github.com/nervgh/angular-file-upload/blob/v0.4.1/src/scripts/services/%24fileUploader.js#L68)
 
 ## События
 
@@ -342,18 +333,18 @@ uploader.bind('progress', function(event, item, progress) {
 
 ```javascript
 // Add a item to the queue
-    var item = {
-        file: {
-            name: 'Your file name',
-            size: 1e6
-        },
-        progress: 100,
-        isUploaded: true,
-        isSuccess: true
-    };
-    item.remove = function() {
-        uploader.removeFromQueue(this);
-    };
-    uploader.queue.push(item);
-    uploader.progress = 100;
+var item = {
+    file: {
+        name: 'Your file name',
+        size: 1e6
+    },
+    progress: 100,
+    isUploaded: true,
+    isSuccess: true
+};
+item.remove = function() {
+    uploader.removeFromQueue(this);
+};
+uploader.queue.push(item);
+uploader.progress = 100;
 ```

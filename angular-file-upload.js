@@ -1,5 +1,5 @@
 /*
- Angular File Upload v0.4.1
+ Angular File Upload v0.5.4
  https://github.com/nervgh/angular-file-upload
 */
 (function(angular, factory) {
@@ -116,8 +116,8 @@ app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', func
         }, params);
 
         // add default filters
-        this.filters.unshift(this._emptyFileFilter);
         this.filters.unshift(this._queueLimitFilter);
+        this.filters.unshift(this._emptyFileFilter);
 
         this.scope.$on('file:add', function(event, items, options) {
             event.stopPropagation();

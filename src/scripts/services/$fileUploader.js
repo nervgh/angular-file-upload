@@ -1,7 +1,7 @@
 /**
  * The angular file upload module
  * @author: nerv
- * @version: 0.5.3, 2014-04-13
+ * @version: 0.5.4, 2014-04-13
  */
 app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', function($compile, $rootScope, $http, $window) {
     'use strict';
@@ -32,8 +32,8 @@ app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', func
         }, params);
 
         // add default filters
-        this.filters.unshift(this._emptyFileFilter);
         this.filters.unshift(this._queueLimitFilter);
+        this.filters.unshift(this._emptyFileFilter);
 
         this.scope.$on('file:add', function(event, items, options) {
             event.stopPropagation();
