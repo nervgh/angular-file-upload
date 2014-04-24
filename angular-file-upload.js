@@ -1,5 +1,5 @@
 /*
- Angular File Upload v0.5.5
+ Angular File Upload v0.5.6
  https://github.com/nervgh/angular-file-upload
 */
 (function(angular, factory) {
@@ -78,7 +78,7 @@ app.directive('ngFileSelect', ['$fileUploader', function($fileUploader) {
 
                 scope.$emit('file:add', data, options);
 
-                if(!$fileUploader.isHTML5 && !element.attr('multiple')) {
+                if($fileUploader.isHTML5 && element.attr('multiple')) {
                     element.prop('value', null);
                 }
             });
