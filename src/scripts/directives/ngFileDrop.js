@@ -32,8 +32,10 @@ app.directive('ngFileDrop', ['$fileUploader', function ($fileUploader) {
                     dataTransfer.dropEffect = 'copy';
                     scope.$broadcast('file:addoverclass');
                 })
-                .bind('dragleave', function () {
-                    scope.$broadcast('file:removeoverclass');
+                .bind('dragleave', function (event) {
+                    if(event.target === element[0]) {
+                        scope.$broadcast('file:removeoverclass');
+                    }
                 });
         }
     };
