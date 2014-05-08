@@ -33,7 +33,7 @@ app.directive('ngFileDrop', ['$fileUploader', function ($fileUploader) {
                     scope.$broadcast('file:addoverclass');
                 })
                 .bind('dragleave', function (event) {
-                    if(event.target === element[0]) {
+                    if (event.target === element[0]) {
                         scope.$broadcast('file:removeoverclass');
                     }
                 });
