@@ -187,11 +187,11 @@ uploader.bind('progress', function(event, item, progress) {
 
 3. How to update options dynamically?
 
-    See this [comment](#issuecomment-39248062)
+    See this [comment](https://github.com/nervgh/angular-file-upload/issues/97#issuecomment-39248062)
 
 4. I need custom options. Are there they?
 
-    See this [comment](#issuecomment-39887419)
+    See this [comment](https://github.com/nervgh/angular-file-upload/pull/104#issuecomment-39887419)
 
 ---
 
@@ -363,8 +363,8 @@ uploader.bind('progress', function(event, item, progress) {
 
 3. Как динамически обновлять опции?
 
-    См. [комментарий](#issuecomment-39248062)
+    См. [комментарий](https://github.com/nervgh/angular-file-upload/issues/97#issuecomment-39248062)
 
 4. Мне нужны пользовательские опции. Они существуют?
 
-    См. [комментарий](#issuecomment-39887419)
+    См. [комментарий](https://github.com/nervgh/angular-file-upload/pull/104#issuecomment-39887419)
