@@ -185,6 +185,14 @@ uploader.bind('progress', function(event, item, progress) {
       });
     ```
 
+3. How to update options dynamically?
+
+    See this [comment](#issuecomment-39248062)
+
+4. I need custom options. Are there they?
+
+    See this [comment](#issuecomment-39887419)
+
 ---
 
 ## Русская документация
@@ -348,3 +356,15 @@ uploader.bind('progress', function(event, item, progress) {
     uploader.queue.push(item);
     uploader.progress = 100;
 ```
+
+2. Как работать с CSRF защитой?
+
+    См. [#40](https://github.com/nervgh/angular-file-upload/issues/40)
+
+3. Как динамически обновлять опции?
+
+    См. [комментарий](#issuecomment-39248062)
+
+4. Мне нужны пользовательские опции. Они существуют?
+
+    См. [комментарий](#issuecomment-39887419)
