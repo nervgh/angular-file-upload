@@ -1,5 +1,5 @@
 /*
- Angular File Upload v0.5.6
+ angular-file-upload v0.5.7
  https://github.com/nervgh/angular-file-upload
 */
 (function(angular, factory) {
@@ -41,12 +41,15 @@ app.directive('ngFileDrop', ['$fileUploader', function ($fileUploader) {
                     dataTransfer.dropEffect = 'copy';
                     scope.$broadcast('file:addoverclass');
                 })
-                .bind('dragleave', function () {
-                    scope.$broadcast('file:removeoverclass');
+                .bind('dragleave', function (event) {
+                    if (event.target === element[0]) {
+                        scope.$broadcast('file:removeoverclass');
+                    }
                 });
         }
     };
 }])
+
 // It is attached to an element which will be assigned to a class "ng-file-over" or ng-file-over="className"
 app.directive('ngFileOver', function () {
     'use strict';
