@@ -33,6 +33,15 @@ When files are selected or dropped into the component, one or more filters are a
 - **$fileUploader**: Manages the upload queue and the uploading of files
 
 
+### Service API:
+
+#### Properties
+- **isHTML5** `{Boolean}`: `true` if uploader is html5-uploader. Read only.
+
+#### Methods
+- **create**`function(params) {return {Uploader};}`: Creates an instance of uploader. [Params](https://github.com/nervgh/angular-file-upload#properties)
+
+
 ### The Uploader API:
 
 #### Properties
@@ -222,6 +231,16 @@ uploader.bind('progress', function(event, item, progress) {
 ### Сервис
 
 - **$fileUploader** - управляет очередью и загрузкой файлов
+
+
+### Service API:
+
+#### Properties
+- **isHTML5** `{Boolean}` - `true`, если это html5-загрузчик. Только для чтения.
+
+#### Methods
+- **create**`function(params) {return {Uploader};}`: Создает экземпляр загрузчика. [Params](https://github.com/nervgh/angular-file-upload#%D0%A1%D0%B2%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%B0)
+
 
 ### Загрузчик API:
 
