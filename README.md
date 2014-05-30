@@ -82,7 +82,7 @@ When files are selected or dropped into the component, one or more filters are a
 #### Properties
 
 - **url** `{String}`: Path on the server in which this file will be uploaded
-- **alias** `{String}`: Name of the field which will contain the file, default is `file` 
+- **alias** `{String}`: Name of the field which will contain the file, default is `file`
 - **headers** `{Object}`: Headers to be sent along with this file. HTML5 browsers only.
 - **formData** `{Array}`: Data to be sent along with this file
 - **method** `{String}`: It's a request method. By default `POST`. HTML5 browsers only.
@@ -134,6 +134,7 @@ uploader.filters.push(function(item) {
 ### Supported events
 
 - **afteraddingfile** `function(event, item) {`: Fires after adding a single file to the queue
+- **afterremovingfile** `function(event, item) {`: Fires after removing a single file to the queue
 - **whenaddingfilefailed** `function(event, item) {`: When adding a file failed
 - **afteraddingall** `function(event, items) {`: Fires after adding all the dragged or selected files to the queue
 - **beforeupload** `function(event, item) {`: Fires before uploading an item
@@ -334,6 +335,7 @@ uploader.filters.push(function(item) {
 ### Список событий
 
 - **afteraddingfile** `function(event, item) {` - после добавления файла в очередь
+  - **afterremovingfile** `function(event, item) {`: 
 - **whenaddingfilefailed** `function(event, item) {`: когда добавление файла в очередь не удалось
 - **afteraddingall** `function(event, items) {` - после добавления всех файлов в очередь
 - **beforeupload** `function(event, item) {` - перед загрузкой файла

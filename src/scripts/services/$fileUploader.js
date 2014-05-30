@@ -158,6 +158,7 @@ app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', func
             if (item._destroy) item._destroy();
             this.queue.splice(index, 1);
             this.progress = this._getTotalProgress();
+            this.trigger('afterremovingfile', item);
         },
 
         /**
