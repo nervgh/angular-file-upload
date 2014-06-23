@@ -6,7 +6,7 @@
     "ignore": ["examples"],
     "dependencies": {
         "angular": "~1.2.11",
-        "es5-shim": "~2.1.0"
+        "es5-shim": ">=3.4.0"
     },
     "keywords": [
         "angular",
