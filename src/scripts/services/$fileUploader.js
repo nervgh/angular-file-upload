@@ -395,10 +395,23 @@ app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', func
             });
 
             iframe.bind('load', function() {
-                // fixed angular.contents() for iframes
-                var html = iframe[0].contentDocument.body.innerHTML;
-                var xhr = {response: html, status: 200, dummy: true};
-                var response = that._transformResponse(xhr.response);
+                var response;
+                var xhr = {response: response, status: 200, dummy: true};
+                // Fix for legacy IE browsers that loads internal error page
+                // when failed WS response received. In consequence iframe
+                // content access denied error is thrown becouse trying to
+                // access cross domain page. When such thing occurs notifying
+                // with empty response object. See more info at:
+                // http://stackoverflow.com/questions/151362/access-is-denied-error-on-accessing-iframe-document-object
+                // Note that if non standard 4xx or 5xx error code returned
+                // from WS then response content can be accessed without error
+                // but 'XHR' status becomes 200. In order to avoid confusion
+                // returning response via same 'success' event handler.
+                try {
+                    // fixed angular.contents() for iframes
+                    xhr.response = iframe[0].contentDocument.body.innerHTML;
+                    response = that._transformResponse(xhr.response);
+                } catch (e) {}
                 that.trigger('in:success', xhr, item, response);
                 that.trigger('in:complete', xhr, item, response);
             });
