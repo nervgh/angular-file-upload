@@ -210,7 +210,7 @@ app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', func
                 item.index = item.index || this._nextIndex++;
                 item.isReady = true;
             }, this);
-            items.length && this.uploadItem(items[0]);
+            items.length && items[0].upload();
         },
 
         /**
@@ -302,7 +302,7 @@ app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', func
             this.isUploading = false;
 
             if(angular.isDefined(item)) {
-                this.uploadItem(item);
+                item.upload();
                 return;
             }
 
