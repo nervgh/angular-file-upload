@@ -36,11 +36,25 @@ app.directive('ngFileDrop', ['$fileUploader', function ($fileUploader) {
                         event.dataTransfer :
                         event.originalEvent.dataTransfer; // jQuery fix;
 
-                    if(dataTransfer.types && dataTransfer.types.contains('Files')) {
+                    var handleDragover = function(){
                         event.preventDefault();
                         event.stopPropagation();
                         dataTransfer.dropEffect = 'copy';
                         scope.$broadcast('file:addoverclass');
+                    };
+
+                    if(dataTransfer.types) {
+                        try {
+			    //works in chrome, safari
+                            if(dataTransfer.types.indexOf('Files') != -1){
+                                handleDragover();
+                            }
+                        } catch(E){
+			    //works in firefox
+                            if(dataTransfer.types.contains('Files')){
+                                handleDragover();
+                            }
+                        }
                     }
                 })
                 .bind('dragleave', function (event) {
