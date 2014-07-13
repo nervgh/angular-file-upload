@@ -81,6 +81,9 @@ app.directive('ngFileSelect', ['$fileUploader', function($fileUploader) {
                 var data = $fileUploader.isHTML5 ? this.files : this;
                 var options = scope.$eval(attributes.ngFileSelect);
 
+                // FIOTE: storing the used input on the filelist
+                for (var i = 0; i < data.length; i++) data[i].input = element[0]; 
+                
                 scope.$emit('file:add', data, options);
 
                 if($fileUploader.isHTML5 && element.attr('multiple')) {
@@ -110,6 +113,7 @@ app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', func
             progress: null,
             autoUpload: false,
             removeAfterUpload: false,
+            overwriteInputs: !1, // FIOTE: if 1, will overwrite input contents
             method: 'POST',
             filters: [],
             formData: [],
@@ -200,6 +204,26 @@ app.factory('$fileUploader', ['$compile', '$rootScope', '$http', '$window', func
             var length = this.queue.length;
             var list = 'length' in items ? items : [items];
 
+            // FIOTE
+            if (this.overwriteInputs) {
+                // checking the current list
+                for (var i = 0; i < this.queue.length; i++) {
+                    // getting a queue item
+                    var q = this.queue[i];
+                    // checking the filelist 
+                    for (var j = 0; j < items.length; j++) {
+                        // getting a file
+                        var item = items[j];
+                        // checking if the filelist item is using an input that's already used the queue
+                        if (q && item.input == q.file.input) { 
+                            // if yes, lets remove the queue item
+                            this.removeFromQueue(q);
+                            q = null;
+                        }
+                    }
+                }
+            }
+            
             angular.forEach(list, function(file) {
                 // check a [File|HTMLInputElement]
                 var isValid = !this.filters.length ? true : this.filters.every(function(filter) {
