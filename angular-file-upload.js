@@ -453,7 +453,7 @@ module
 
                 that._onBeforeUploadItem(item);
 
-                item.formData.forEach(function(obj) {
+                angular.forEach(item.formData, function(obj) {
                     angular.forEach(obj, function(value, key) {
                         form.append(key, value);
                     });
@@ -517,7 +517,7 @@ module
 
                 input.prop('name', item.alias);
 
-                item.formData.forEach(function(obj) {
+                angular.forEach(item.formData, function(obj) {
                     angular.forEach(obj, function(value, key) {
                         form.append(angular.element('<input type="hidden" name="' + key + '" value="' + value + '" />'));
                     });
