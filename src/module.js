@@ -171,7 +171,8 @@ module
              * @private
              */
             FileUploader.prototype.isFile = function(value) {
-                return value instanceof $window.File;
+                var fn = $window.File;
+                return (fn && value instanceof fn);
             };
             /**
              * Returns "true" if value an instance of FileLikeObject
@@ -483,6 +484,7 @@ module
                 });
 
                 xhr.send(form);
+                this._render();
             };
             /**
              * The IFrame transport
@@ -557,6 +559,7 @@ module
                 form.append(input).append(iframe);
 
                 form[0].submit();
+                this._render();
             };
             /**
              * Inner callback
@@ -977,7 +980,7 @@ module
                 var index = this.uploader._directives[this.prop].indexOf(this);
                 this.uploader._directives[this.prop].splice(index, 1);
                 this.unbind();
-                this.element = null;
+                // this.element = null;
             };
             /**
              * Saves links to functions
@@ -1040,8 +1043,7 @@ module
 
                 if (!this.uploader.isHTML5) this.destroy();
                 this.uploader.addToQueue(files, options, filters);
-
-                this.element.prop('value', null);
+                if (this.uploader.isHTML5) this.element.prop('value', null);
             };
 
             // ---------------------------
