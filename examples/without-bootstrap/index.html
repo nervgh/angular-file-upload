@@ -16,8 +16,8 @@
         <script src="directives.js"></script>
     </head>
 
-    <!-- 1. ng-file-drop | ng-file-drop="options" -->
-    <body ng-controller="TestController" ng-file-drop>
+    <!-- Example: nv-file-drop="" uploader="{Object}" options="{Object}" filters="{String}" -->
+    <body ng-controller="AppController" nv-file-drop="" uploader="uploader">
 
         <h1>Without bootstrap example</h1>
 
@@ -31,22 +31,22 @@
         <br />
         <br />
 
-        <!-- 3. ng-file-over | ng-file-over="className" -->
+        <!-- 3. nv-file-over uploader="link" over-class="className" -->
         <div ng-show="uploader.isHTML5">
-            <div class="over-zone zone" ng-file-over style="float: left">
+            <div class="over-zone zone" nv-file-over="" uploader="uploader" style="float: left;">
                 Base drop zone indication
             </div>
             <!-- Example: ng-file-drop | ng-file-drop="options" -->
-            <div ng-file-drop="{ url: '/foo' }" ng-file-over="other-over-zone" class="other-drop-zone zone" style="float: right">
+            <div nv-file-drop="" nv-file-over="" uploader="uploader" options="{url: '/foo'}" over-class="other-over-zone" class="other-drop-zone zone" style="float: right;">
                 One more drop zone with its own settings (and indication)
             </div>
-            <div style="clear: both"></div>
+            <div style="clear: both;"></div>
         </div>
 
         <br />
 
-        <!-- 2. ng-file-select | ng-file-select="options" -->
-        <input ng-file-select type="file" multiple />
+        <!-- Example: nv-file-select="" uploader="{Object}" options="{Object}" filters="{String}" -->
+        <input type="file" nv-file-select="" uploader="uploader" multiple />
 
         <h2>The queue. Length: {{ uploader.queue.length }}</h2>
         <ul>
@@ -59,13 +59,13 @@
                         <div class="item-progress" ng-style="{ 'width': item.progress + '%' }"></div>
                     </div>
                 </div>
-                <div ng-show="controller.isImage(item.file)">
+                <div ng-if="controller.isImage(item._file)">
                     Thumbnail (only images):
                         <!-- Image preview -->
                         <!--auto height-->
                         <!--<div ng-thumb="{ file: item.file, width: 100 }"></div>-->
                         <!--auto width-->
-                        <div ng-show="uploader.isHTML5" ng-thumb="{ file: item.file, height: 100 }"></div>
+                        <div ng-thumb="{ file: item._file, height: 100 }"></div>
                         <!--fixed width and height -->
                         <!--<div ng-thumb="{ file: item.file, width: 100, height: 100 }"></div>-->
                 </div>

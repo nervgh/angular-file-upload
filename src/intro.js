@@ -6,4 +6,6 @@
     } else {
         return factory(angular);
     }
-}(angular || null, function(angular) {
+}(typeof angular === 'undefined' ? null : angular || null, function(angular) {
+
+var module = angular.module('angularFileUpload', []);
