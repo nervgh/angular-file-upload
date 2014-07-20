@@ -18,7 +18,7 @@
 
         <style>
             .my-drop-zone { border: dotted 3px lightgray; }
-            .ng-file-over { border: dotted 3px red; } /* Default class applied to drop zones on over */
+            .nv-file-over { border: dotted 3px red; } /* Default class applied to drop zones on over */
             .another-file-over-class { border: dotted 3px green; }
 
             html, body { height: 100%; }
@@ -26,8 +26,8 @@
 
     </head>
 
-    <!-- 1. ng-file-drop | ng-file-drop="options" -->
-    <body ng-controller="TestController" ng-file-drop>
+    <!-- 1. nv-file-drop="" uploader="{Object}" options="{Object}" filters="{String}" -->
+    <body ng-controller="AppController" nv-file-drop="" uploader="uploader" filters="queueLimit, customFilter">
 
         <div class="container">
 
@@ -58,23 +58,25 @@
                     <h3>Select files</h3>
 
                     <div ng-show="uploader.isHTML5">
-                        <!-- 3. ng-file-over | ng-file-over="className" -->
-                        <div class="well my-drop-zone" ng-file-over>
+                        <!-- 3. nv-file-over uploader="link" over-class="className" -->
+                        <div class="well my-drop-zone" nv-file-over="" uploader="uploader">
                             Base drop zone
                         </div>
 
-                        <!-- Example: ng-file-drop | ng-file-drop="options" -->
-                        <div class="well my-drop-zone" ng-file-drop="{ url: '/foo' }" ng-file-over="another-file-over-class">
-                            Another drop zone with its own settings
+                        <!-- Example: nv-file-drop="" uploader="{Object}" options="{Object}" filters="{String}" -->
+                        <div nv-file-drop="" uploader="uploader" options="{ url: '/foo' }">
+                            <div nv-file-over="" uploader="uploader" over-class="another-file-over-class" class="well my-drop-zone">
+                                Another drop zone with its own settings
+                            </div>
                         </div>
                     </div>
 
-                    <!-- 2. ng-file-select | ng-file-select="options" -->
+                    <!-- Example: nv-file-select="" uploader="{Object}" options="{Object}" filters="{String}" -->
                     Multiple
-                    <input ng-file-select type="file" multiple  /><br/>
+                    <input type="file" nv-file-select="" uploader="uploader" multiple  /><br/>
 
                     Single
-                    <input ng-file-select type="file" />
+                    <input type="file" nv-file-select="" uploader="uploader" />
                 </div>
 
                 <div class="col-md-9" style="margin-bottom: 40px">

@@ -37,10 +37,9 @@ module.exports = (grunt) ->
                     banner: '<%= banner %>'
                     stripBanners: true
                 src: [
-                    'src/scripts/intro.js',
-                    'src/scripts/app.js',
-                    'src/scripts/*/*.js',
-                    'src/scripts/outro.js'
+                    'src/intro.js',
+                    'src/module.js',
+                    'src/outro.js'
                 ]
                 dest: 'angular-file-upload.js'
 
