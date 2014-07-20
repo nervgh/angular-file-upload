@@ -2,6 +2,12 @@
 
 ---
 
+# Important
+In the near future docs will be updated and placed [here](https://github.com/nervgh/angular-file-upload/wiki)
+Current version is [1.0.0](https://github.com/nervgh/angular-file-upload/tree/version_1.x.x)
+
+---
+
 ## English documentation
 
 ## About
