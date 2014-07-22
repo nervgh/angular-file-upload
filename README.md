@@ -8,6 +8,8 @@
 
 When files are selected or dropped into the component, one or more filters are applied. Files which pass all filters are added to the queue and are ready to be uploaded.
 
+You could find this module in bower like [_angular file upload_](http://bower.io/search/?q=angular%20file).
+
 ## Demos
 1. [Simple example](http://nervgh.github.io/pages/angular-file-upload/examples/simple)
 2. [Uploads only images (with canvas preview)](http://nervgh.github.io/pages/angular-file-upload/examples/image-preview)
