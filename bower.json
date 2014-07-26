@@ -1,6 +1,6 @@
 {
     "name": "angular-file-upload",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "main": "angular-file-upload.js",
     "homepage": "https://github.com/nervgh/angular-file-upload",
     "ignore": ["examples"],

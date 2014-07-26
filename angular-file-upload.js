@@ -1,5 +1,5 @@
 /*
- angular-file-upload v1.0.1
+ angular-file-upload v1.0.2
  https://github.com/nervgh/angular-file-upload
 */
 (function(angular, factory) {
@@ -10,9 +10,10 @@
     } else {
         return factory(angular);
     }
-}(typeof angular === 'undefined' ? null : angular || null, function(angular) {
+}(typeof angular === 'undefined' ? null : angular, function(angular) {
 
 var module = angular.module('angularFileUpload', []);
+
 'use strict';
 
 /**
@@ -1049,6 +1050,13 @@ module
              */
             FileSelect.prototype.getFilters = function() {};
             /**
+             * If returns "true" then HTMLInputElement will be cleared
+             * @returns {Boolean}
+             */
+            FileSelect.prototype.isEmptyAfterSelection = function() {
+                return !!this.element.attr('multiple');
+            };
+            /**
              * Event handler
              */
             FileSelect.prototype.onChange = function() {
@@ -1058,7 +1066,7 @@ module
 
                 if (!this.uploader.isHTML5) this.destroy();
                 this.uploader.addToQueue(files, options, filters);
-                if (this.uploader.isHTML5) this.element.prop('value', null);
+                if (this.isEmptyAfterSelection()) this.element.prop('value', null);
             };
 
             // ---------------------------
