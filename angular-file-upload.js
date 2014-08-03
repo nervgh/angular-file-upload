@@ -1,5 +1,5 @@
 /*
- angular-file-upload v1.0.2
+ angular-file-upload v1.0.3
  https://github.com/nervgh/angular-file-upload
 */
 (function(angular, factory) {
@@ -720,23 +720,44 @@ module
 
             /**
              * Creates an instance of FileLikeObject
-             * @param {String} fakePath
+             * @param {String|Object} fakePathOrObject
              * @constructor
              */
-            function FileLikeObject(fakePath) {
-                var path = fakePath;
+            function FileLikeObject(fakePathOrObject) {
+                var postfix = angular.isString(fakePathOrObject) ? 'FakePath' : 'Object';
+                var method = '_createFrom' + postfix;
+                this[method](fakePathOrObject);
+            }
+
+            /**
+             * Creates file from fake path string
+             * @param {String} path
+             * @private
+             */
+            FileLikeObject.prototype._createFromFakePath = function(path) {
                 this.lastModifiedDate = null;
                 this.size = null;
                 this.type = 'like/' + path.slice(path.lastIndexOf('.') + 1).toLowerCase();
                 this.name = path.slice(path.lastIndexOf('/') + path.lastIndexOf('\\') + 2);
-            }
+            };
+            /**
+             * Creates file from object
+             * @param {File|FileLikeObject} object
+             * @private
+             */
+            FileLikeObject.prototype._createFromObject = function(object) {
+                this.lastModifiedDate = angular.copy(object.lastModifiedDate);
+                this.size = object.size;
+                this.type = object.type;
+                this.name = object.name;
+            };
 
             // ---------------------------
 
             /**
              * Creates an instance of FileItem
              * @param {FileUploader} uploader
-             * @param {File|FileLikeObject|HTMLInputElement} file
+             * @param {File|FileLikeObject} file
              * @param {File|Object} options
              * @param {HTMLInputElement} [input]
              * @constructor
@@ -754,7 +775,7 @@ module
                     method: uploader.method
                 }, options, {
                     uploader: uploader,
-                    file: angular.copy(file),
+                    file: new FileUploader.FileLikeObject(file),
                     isReady: false,
                     isUploading: false,
                     isUploaded: false,
