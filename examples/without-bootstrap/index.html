@@ -84,7 +84,7 @@
                     <div class="total-progress" ng-style="{ 'width': uploader.progress + '%' }"></div>
                 </div>
             </div>
-            <button ng-click="uploader.uploadAll()" ng-disabled="!uploader.getNotUploadedItems().length">Upload all</button>
+            <button ng-click="uploader.uploadAll()" ng-disabled="!uploader.needsUploading()">Upload all</button>
             <button ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading">Cancel all</button>
             <button ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length">Remove all</button>
         </div>
