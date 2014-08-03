@@ -121,7 +121,7 @@ module
              * Auxiliary function to check if any file needs uploading
              */
             FileUploader.prototype.needsUploading = function() {
-              return uploader.getNotUploadedItems().length > 0;
+              return this.getNotUploadedItems().length > 0;
             };
 
             /**
