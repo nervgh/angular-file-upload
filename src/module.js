@@ -116,6 +116,14 @@ module
                 }
                 this.progress = 0;
             };
+
+            /**
+             * Auxiliary function to check if any file needs uploading
+             */
+            FileUploader.prototype.needsUploading = function() {
+              return uploader.getNotUploadedItems().length > 0;
+            };
+
             /**
              * Uploads a item from the queue
              * @param {FileItem|Number} value
