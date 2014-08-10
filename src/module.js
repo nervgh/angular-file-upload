@@ -62,28 +62,27 @@ module
             FileUploader.prototype.isHTML5 = !!($window.File && $window.FormData);
             /**
              * Adds items to the queue
-             * @param {FileList|File|HTMLInputElement} files
+             * @param {File|HTMLInputElement|Object|FileList|Array<Object>} files
              * @param {Object} [options]
              * @param {Array<Function>|String} filters
              */
             FileUploader.prototype.addToQueue = function(files, options, filters) {
-                var list = angular.isElement(files) ? [files]: files;
+                var list = this.isArrayLikeObject(files) ? files: [files];
                 var arrayOfFilters = this._getFilters(filters);
                 var count = this.queue.length;
                 var addedFileItems = [];
 
-                angular.forEach(list, function(file) {
-                    var item = this._getFileOrFileLikeObject(file);
+                angular.forEach(list, function(some /*{File|HTMLInputElement|Object}*/) {
+                    var temp = new FileUploader.FileLikeObject(some);
 
-                    if (this._isValidFile(item, arrayOfFilters, options)) {
-                        var input = this.isFile(item) ? null : file;
-                        var fileItem = new FileUploader.FileItem(this, item, options, input);
+                    if (this._isValidFile(temp, arrayOfFilters, options)) {
+                        var fileItem = new FileUploader.FileItem(this, some, options);
                         addedFileItems.push(fileItem);
                         this.queue.push(fileItem);
                         this._onAfterAddingFile(fileItem);
                     } else {
                         var filter = this.filters[this._failFilterIndex];
-                        this._onWhenAddingFileFailed(item, filter, options);
+                        this._onWhenAddingFileFailed(temp, filter, options);
                     }
                 }, this);
 
@@ -182,6 +181,14 @@ module
              */
             FileUploader.prototype.isFileLikeObject = function(value) {
                 return value instanceof FileUploader.FileLikeObject;
+            };
+            /**
+             * Returns "true" if value is array like object
+             * @param {*} value
+             * @returns {Boolean}
+             */
+            FileUploader.prototype.isArrayLikeObject = function(value) {
+                return (angular.isObject(value) && 'length' in value);
             };
             /**
              * Returns a index of item from the queue
@@ -364,16 +371,6 @@ module
                     this._failFilterIndex++;
                     return filter.fn.call(this, file, options);
                 }, this);
-            };
-            /**
-             * Returns a file or a file-like object
-             * @param {File|HTMLInputElement} some
-             * @returns {File|Object}
-             * @private
-             */
-            FileUploader.prototype._getFileOrFileLikeObject = function(some) {
-                if (this.isFile(some) || this.isFileLikeObject(some)) return some;
-                return new FileUploader.FileLikeObject(some.value);
             };
             /**
              * Checks whether upload successful
@@ -680,6 +677,10 @@ module
              */
             FileUploader.isFileLikeObject = FileUploader.prototype.isFileLikeObject;
             /**
+             * @borrows FileUploader.prototype.isArrayLikeObject
+             */
+            FileUploader.isArrayLikeObject = FileUploader.prototype.isArrayLikeObject;
+            /**
              * @borrows FileUploader.prototype.isHTML5
              */
             FileUploader.isHTML5 = FileUploader.prototype.isHTML5;
@@ -704,17 +705,19 @@ module
 
             /**
              * Creates an instance of FileLikeObject
-             * @param {String|Object} fakePathOrObject
+             * @param {File|HTMLInputElement|Object} fileOrInput
              * @constructor
              */
-            function FileLikeObject(fakePathOrObject) {
+            function FileLikeObject(fileOrInput) {
+                var isInput = angular.isElement(fileOrInput);
+                var fakePathOrObject = isInput ? fileOrInput.value : fileOrInput;
                 var postfix = angular.isString(fakePathOrObject) ? 'FakePath' : 'Object';
                 var method = '_createFrom' + postfix;
                 this[method](fakePathOrObject);
             }
 
             /**
-             * Creates file from fake path string
+             * Creates file like object from fake path string
              * @param {String} path
              * @private
              */
@@ -725,7 +728,7 @@ module
                 this.name = path.slice(path.lastIndexOf('/') + path.lastIndexOf('\\') + 2);
             };
             /**
-             * Creates file from object
+             * Creates file like object from object
              * @param {File|FileLikeObject} object
              * @private
              */
@@ -741,13 +744,14 @@ module
             /**
              * Creates an instance of FileItem
              * @param {FileUploader} uploader
-             * @param {File|FileLikeObject} file
-             * @param {File|Object} options
-             * @param {HTMLInputElement} [input]
+             * @param {File|HTMLInputElement|Object} some
+             * @param {Object} options
              * @constructor
              */
-            function FileItem(uploader, file, options, input) {
-                file = uploader._getFileOrFileLikeObject(file);
+            function FileItem(uploader, some, options) {
+                var isInput = angular.isElement(some);
+                var input = isInput ? angular.element(some) : null;
+                var file = !isInput ? some : null;
 
                 angular.extend(this, {
                     url: uploader.url,
@@ -759,7 +763,7 @@ module
                     method: uploader.method
                 }, options, {
                     uploader: uploader,
-                    file: new FileUploader.FileLikeObject(file),
+                    file: new FileUploader.FileLikeObject(some),
                     isReady: false,
                     isUploading: false,
                     isUploaded: false,
@@ -768,13 +772,11 @@ module
                     isError: false,
                     progress: 0,
                     index: null,
-                    _file: file
+                    _file: file,
+                    _input: input
                 });
 
-                if (input) {
-                    this._input = angular.element(input);
-                    this._replaceNode(this._input);
-                }
+                if (input) this._replaceNode(input);
             }
             /**********************
              * PUBLIC
