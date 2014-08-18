@@ -1,5 +1,5 @@
 /*
- angular-file-upload v1.1.0
+ angular-file-upload v1.1.1
  https://github.com/nervgh/angular-file-upload
 */
 (function(angular, factory) {
@@ -458,7 +458,7 @@ module
                     });
                 });
 
-                form.append(item.alias, item._file);
+                form.append(item.alias, item._file, item.file.name);
 
                 xhr.upload.onprogress = function(event) {
                     var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);

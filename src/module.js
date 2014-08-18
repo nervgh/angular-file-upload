@@ -442,7 +442,7 @@ module
                     });
                 });
 
-                form.append(item.alias, item._file);
+                form.append(item.alias, item._file, item.file.name);
 
                 xhr.upload.onprogress = function(event) {
                     var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
