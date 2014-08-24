@@ -326,9 +326,15 @@ module
              * @private
              */
             FileUploader.prototype._getFilters = function(filters) {
+                function trim(str) {
+                  return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+                }
                 if (angular.isUndefined(filters)) return this.filters;
                 if (angular.isArray(filters)) return filters;
-                var names = filters.split(/\s*,/);
+                var names = filters.split(',');
+                for (var i = 0; i < names.length; i++) {
+                  names[i] = trim(names[i]);
+                }
                 return this.filters.filter(function(filter) {
                     return names.indexOf(filter.name) !== -1;
                 }, this);
