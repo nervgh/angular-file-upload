@@ -488,7 +488,9 @@ module
                     that._onCompleteItem(item, response, xhr.status, headers);
                 };
 
-                xhr.open(item.method, item.url, true);
+                var targetURL = item.url === '/' ? (item.url === this.url ? '/' : this.url) : item.url;
+                console.debug("targetURL", targetURL);
+                xhr.open(item.method, targetURL, true);
 
                 xhr.withCredentials = item.withCredentials;
 
@@ -523,8 +525,9 @@ module
                     });
                 });
 
+                var targetURL = item.url === '/' ? (item.url === this.url ? '/' : this.url) : item.url;
                 form.prop({
-                    action: item.url,
+                    action: targetURL,
                     method: 'POST',
                     target: iframe.prop('name'),
                     enctype: 'multipart/form-data',
