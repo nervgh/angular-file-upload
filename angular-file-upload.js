@@ -344,7 +344,7 @@ module
             FileUploader.prototype._getFilters = function(filters) {
                 if (angular.isUndefined(filters)) return this.filters;
                 if (angular.isArray(filters)) return filters;
-                var names = filters.split(/\s*,/);
+                var names = filters.match(/[^\s,]+/g);
                 return this.filters.filter(function(filter) {
                     return names.indexOf(filter.name) !== -1;
                 }, this);
