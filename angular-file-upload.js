@@ -272,6 +272,12 @@ module
             /**
              * Callback
              * @param {FileItem} fileItem
+             * @param {Function} next
+             */
+            FileUploader.prototype.onBeforeUploadItemAsync = function(fileItem, next) { next(); };
+            /**
+             * Callback
+             * @param {FileItem} fileItem
              * @param {Number} progress
              */
             FileUploader.prototype.onProgressItem = function(fileItem, progress) {};
@@ -451,53 +457,55 @@ module
                 var that = this;
 
                 that._onBeforeUploadItem(item);
+                that._onBeforeUploadItemAsync(item, function() {
+                  angular.forEach(item.formData, function(obj) {
+                      angular.forEach(obj, function(value, key) {
+                          form.append(key, value);
+                      });
+                  });
 
-                angular.forEach(item.formData, function(obj) {
-                    angular.forEach(obj, function(value, key) {
-                        form.append(key, value);
-                    });
+                  form.append(item.alias, item._file, item.file.name);
+
+                  xhr.upload.onprogress = function(event) {
+                      var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
+                      that._onProgressItem(item, progress);
+                  };
+
+                  xhr.onload = function() {
+                      var headers = that._parseHeaders(xhr.getAllResponseHeaders());
+                      var response = that._transformResponse(xhr.response);
+                      var gist = that._isSuccessCode(xhr.status) ? 'Success' : 'Error';
+                      var method = '_on' + gist + 'Item';
+                      that[method](item, response, xhr.status, headers);
+                      that._onCompleteItem(item, response, xhr.status, headers);
+                  };
+
+                  xhr.onerror = function() {
+                      var headers = that._parseHeaders(xhr.getAllResponseHeaders());
+                      var response = that._transformResponse(xhr.response);
+                      that._onErrorItem(item, response, xhr.status, headers);
+                      that._onCompleteItem(item, response, xhr.status, headers);
+                  };
+
+                  xhr.onabort = function() {
+                      var headers = that._parseHeaders(xhr.getAllResponseHeaders());
+                      var response = that._transformResponse(xhr.response);
+                      that._onCancelItem(item, response, xhr.status, headers);
+                      that._onCompleteItem(item, response, xhr.status, headers);
+                  };
+
+                  xhr.open(item.method, item.url, true);
+
+                  xhr.withCredentials = item.withCredentials;
+
+                  angular.forEach(item.headers, function(value, name) {
+                      xhr.setRequestHeader(name, value);
+                  });
+
+                  xhr.send(form);
+                  that._render();
                 });
 
-                form.append(item.alias, item._file, item.file.name);
-
-                xhr.upload.onprogress = function(event) {
-                    var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
-                    that._onProgressItem(item, progress);
-                };
-
-                xhr.onload = function() {
-                    var headers = that._parseHeaders(xhr.getAllResponseHeaders());
-                    var response = that._transformResponse(xhr.response);
-                    var gist = that._isSuccessCode(xhr.status) ? 'Success' : 'Error';
-                    var method = '_on' + gist + 'Item';
-                    that[method](item, response, xhr.status, headers);
-                    that._onCompleteItem(item, response, xhr.status, headers);
-                };
-
-                xhr.onerror = function() {
-                    var headers = that._parseHeaders(xhr.getAllResponseHeaders());
-                    var response = that._transformResponse(xhr.response);
-                    that._onErrorItem(item, response, xhr.status, headers);
-                    that._onCompleteItem(item, response, xhr.status, headers);
-                };
-
-                xhr.onabort = function() {
-                    var headers = that._parseHeaders(xhr.getAllResponseHeaders());
-                    var response = that._transformResponse(xhr.response);
-                    that._onCancelItem(item, response, xhr.status, headers);
-                    that._onCompleteItem(item, response, xhr.status, headers);
-                };
-
-                xhr.open(item.method, item.url, true);
-
-                xhr.withCredentials = item.withCredentials;
-
-                angular.forEach(item.headers, function(value, name) {
-                    xhr.setRequestHeader(name, value);
-                });
-
-                xhr.send(form);
-                this._render();
             };
             /**
              * The IFrame transport
@@ -514,65 +522,66 @@ module
                 item._form = form; // save link to new form
 
                 that._onBeforeUploadItem(item);
+                that._onBeforeUploadItemAsync(item, function() {
+                  input.prop('name', item.alias);
 
-                input.prop('name', item.alias);
+                  angular.forEach(item.formData, function(obj) {
+                      angular.forEach(obj, function(value, key) {
+                          form.append(angular.element('<input type="hidden" name="' + key + '" value="' + value + '" />'));
+                      });
+                  });
 
-                angular.forEach(item.formData, function(obj) {
-                    angular.forEach(obj, function(value, key) {
-                        form.append(angular.element('<input type="hidden" name="' + key + '" value="' + value + '" />'));
-                    });
+                  form.prop({
+                      action: item.url,
+                      method: 'POST',
+                      target: iframe.prop('name'),
+                      enctype: 'multipart/form-data',
+                      encoding: 'multipart/form-data' // old IE
+                  });
+
+                  iframe.bind('load', function() {
+                      try {
+                          // Fix for legacy IE browsers that loads internal error page
+                          // when failed WS response received. In consequence iframe
+                          // content access denied error is thrown becouse trying to
+                          // access cross domain page. When such thing occurs notifying
+                          // with empty response object. See more info at:
+                          // http://stackoverflow.com/questions/151362/access-is-denied-error-on-accessing-iframe-document-object
+                          // Note that if non standard 4xx or 5xx error code returned
+                          // from WS then response content can be accessed without error
+                          // but 'XHR' status becomes 200. In order to avoid confusion
+                          // returning response via same 'success' event handler.
+
+                          // fixed angular.contents() for iframes
+                          var html = iframe[0].contentDocument.body.innerHTML;
+                      } catch (e) {}
+
+                      var xhr = {response: html, status: 200, dummy: true};
+                      var response = that._transformResponse(xhr.response);
+                      var headers = {};
+
+                      that._onSuccessItem(item, response, xhr.status, headers);
+                      that._onCompleteItem(item, response, xhr.status, headers);
+                  });
+
+                  form.abort = function() {
+                      var xhr = {status: 0, dummy: true};
+                      var headers = {};
+                      var response;
+
+                      iframe.unbind('load').prop('src', 'javascript:false;');
+                      form.replaceWith(input);
+
+                      that._onCancelItem(item, response, xhr.status, headers);
+                      that._onCompleteItem(item, response, xhr.status, headers);
+                  };
+
+                  input.after(form);
+                  form.append(input).append(iframe);
+
+                  form[0].submit();
+                  that._render();
                 });
-
-                form.prop({
-                    action: item.url,
-                    method: 'POST',
-                    target: iframe.prop('name'),
-                    enctype: 'multipart/form-data',
-                    encoding: 'multipart/form-data' // old IE
-                });
-
-                iframe.bind('load', function() {
-                    try {
-                        // Fix for legacy IE browsers that loads internal error page
-                        // when failed WS response received. In consequence iframe
-                        // content access denied error is thrown becouse trying to
-                        // access cross domain page. When such thing occurs notifying
-                        // with empty response object. See more info at:
-                        // http://stackoverflow.com/questions/151362/access-is-denied-error-on-accessing-iframe-document-object
-                        // Note that if non standard 4xx or 5xx error code returned
-                        // from WS then response content can be accessed without error
-                        // but 'XHR' status becomes 200. In order to avoid confusion
-                        // returning response via same 'success' event handler.
-
-                        // fixed angular.contents() for iframes
-                        var html = iframe[0].contentDocument.body.innerHTML;
-                    } catch (e) {}
-
-                    var xhr = {response: html, status: 200, dummy: true};
-                    var response = that._transformResponse(xhr.response);
-                    var headers = {};
-
-                    that._onSuccessItem(item, response, xhr.status, headers);
-                    that._onCompleteItem(item, response, xhr.status, headers);
-                });
-
-                form.abort = function() {
-                    var xhr = {status: 0, dummy: true};
-                    var headers = {};
-                    var response;
-
-                    iframe.unbind('load').prop('src', 'javascript:false;');
-                    form.replaceWith(input);
-
-                    that._onCancelItem(item, response, xhr.status, headers);
-                    that._onCompleteItem(item, response, xhr.status, headers);
-                };
-
-                input.after(form);
-                form.append(input).append(iframe);
-
-                form[0].submit();
-                this._render();
             };
             /**
              * Inner callback
@@ -607,6 +616,19 @@ module
                 item._onBeforeUpload();
                 this.onBeforeUploadItem(item);
             };
+            /**
+             *  Inner callback
+             * @param {FileItem} item
+             * @param {Function} next
+             * @private
+             */
+            FileUploader.prototype._onBeforeUploadItemAsync = function(item, next) {
+                that = this
+                item.onBeforeUploadAsync(function() {
+                  that.onBeforeUploadItemAsync(item, next);
+                });
+            };
+
             /**
              * Inner callback
              * @param {FileItem} item
@@ -820,6 +842,11 @@ module
              * @private
              */
             FileItem.prototype.onBeforeUpload = function() {};
+            /**
+             * Callback
+             * @private
+             */
+            FileItem.prototype.onBeforeUploadAsync = function(next) { next(); };
             /**
              * Callback
              * @param {Number} progress
@@ -1316,5 +1343,6 @@ module
             }
         };
     }])
+
     return module;
 }));
