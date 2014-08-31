@@ -1155,7 +1155,7 @@ module
              * Event handler
              */
             FileDrop.prototype.onDragLeave = function(event) {
-                if (event.target !== this.element[0]) return;
+                //if (event.target !== this.element[0]) return;
                 this._preventAndStop(event);
                 angular.forEach(this.uploader._directives.over, this._removeOverClass, this);
             };
