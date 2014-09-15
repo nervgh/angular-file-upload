@@ -157,6 +157,14 @@ module
                 if (item && item.isUploading) item[prop].abort();
             };
             /**
+             *Uploads with dummy file.
+             */
+            FileUploader.prototype.uploadWithoutFile = function(){
+                var dummyFile = new FileUploader.FileLikeObject('FakePath');    
+                this.addToQueue(dummyFile, {}, []);
+                this.uploadAll();
+            }
+            /**
              * Uploads all not uploaded items of queue
              */
             FileUploader.prototype.uploadAll = function() {
