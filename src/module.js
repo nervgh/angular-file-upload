@@ -493,6 +493,8 @@ module
                 var iframe = angular.element('<iframe name="iframeTransport' + Date.now() + '">');
                 var input = item._input;
                 var that = this;
+                var html;
+                var responseStatus = 200;
 
                 if (item._form) item._form.replaceWith(input); // remove old form
                 item._form = form; // save link to new form
@@ -529,10 +531,14 @@ module
                         // returning response via same 'success' event handler.
 
                         // fixed angular.contents() for iframes
-                        var html = iframe[0].contentDocument.body.innerHTML;
-                    } catch (e) {}
+                        html = iframe[0].contentDocument.body.innerHTML;
+                    } catch (e) {
+                        // in case we run into the access-is-denied error or we have another error on the server side
+                        // (intentional 500,40... errors), we at least say 'something went wrong' -> 500
+                        responseStatus = 500;
+                    }
 
-                    var xhr = {response: html, status: 200, dummy: true};
+                    var xhr = {response: html, status: responseStatus, dummy: true};
                     var response = that._transformResponse(xhr.response);
                     var headers = {};
 
