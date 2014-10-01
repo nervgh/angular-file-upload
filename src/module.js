@@ -503,7 +503,9 @@ module
 
                 angular.forEach(item.formData, function(obj) {
                     angular.forEach(obj, function(value, key) {
-                        form.append(angular.element('<input type="hidden" name="' + key + '" value="' + value + '" />'));
+                        var element = angular.element('<input type="hidden" name="' + key + '" />');
+                        element.val(value);
+                        form.append(element);
                     });
                 });
 
