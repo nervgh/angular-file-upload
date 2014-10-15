@@ -387,9 +387,9 @@ module
              * @returns {*}
              * @private
              */
-            FileUploader.prototype._transformResponse = function(response) {
+            FileUploader.prototype._transformResponse = function(response, getResponseHeader) {
                 angular.forEach($http.defaults.transformResponse, function(transformFn) {
-                    response = transformFn(response);
+                    response = transformFn(response, getResponseHeader);
                 });
                 return response;
             };
@@ -433,6 +433,7 @@ module
                 var xhr = item._xhr = new XMLHttpRequest();
                 var form = new FormData();
                 var that = this;
+                var getResponseHeader = angular.bind(xhr, xhr.getResponseHeader);
 
                 that._onBeforeUploadItem(item);
 
@@ -451,7 +452,7 @@ module
 
                 xhr.onload = function() {
                     var headers = that._parseHeaders(xhr.getAllResponseHeaders());
-                    var response = that._transformResponse(xhr.response);
+                    var response = that._transformResponse(xhr.response, getResponseHeader);
                     var gist = that._isSuccessCode(xhr.status) ? 'Success' : 'Error';
                     var method = '_on' + gist + 'Item';
                     that[method](item, response, xhr.status, headers);
@@ -460,14 +461,14 @@ module
 
                 xhr.onerror = function() {
                     var headers = that._parseHeaders(xhr.getAllResponseHeaders());
-                    var response = that._transformResponse(xhr.response);
+                    var response = that._transformResponse(xhr.response, getResponseHeader);
                     that._onErrorItem(item, response, xhr.status, headers);
                     that._onCompleteItem(item, response, xhr.status, headers);
                 };
 
                 xhr.onabort = function() {
                     var headers = that._parseHeaders(xhr.getAllResponseHeaders());
-                    var response = that._transformResponse(xhr.response);
+                    var response = that._transformResponse(xhr.response, getResponseHeader);
                     that._onCancelItem(item, response, xhr.status, headers);
                     that._onCompleteItem(item, response, xhr.status, headers);
                 };
@@ -533,7 +534,7 @@ module
                     } catch (e) {}
 
                     var xhr = {response: html, status: 200, dummy: true};
-                    var response = that._transformResponse(xhr.response);
+                    var response = that._transformResponse(xhr.response, function(){});
                     var headers = {};
 
                     that._onSuccessItem(item, response, xhr.status, headers);
