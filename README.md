@@ -2,6 +2,46 @@
 
 ---
 
+## Adding support for binary js upload
+
+**Client Side**
+
+Use as normal but passing your binaryJs client to the fileUploader object as in
+
+```javascript
+var binaryJsClient = new BinaryClient('ws://localhost:9001');
+
+var uploader = $scope.uploader = new FileUploader({
+  binaryJsClient : binaryJsClient
+});
+```
+
+**Server Side**
+You'll need a working instance of BinaryJs and then you may want to process the 
+incoming stream as in
+
+```javascript
+client.on('stream', function(stream, meta) {
+  console.log('Received stream: ', stream);
+  console.log('With meta: ', meta);
+
+  // store stream
+  //
+  var file = fs.createWriteStream('/tmp/' + meta.name);
+  stream.pipe(file);
+  //
+  // Send progress back
+  stream.on('data', function(data){
+    var progress = {rx: data.length / meta.size};
+    console.log('Data received: %d', progress.rx);
+    stream.write(progress);
+  });
+
+});
+```
+
+For detailed informations on how to use [BinaryJs](https://github.com/binaryjs/binaryjs)
+
 ## About
 
 **Angular File Upload** is a module for the [AngularJS](http://angularjs.org/) framework. Supports drag-n-drop upload, upload progress, validation filters and a file upload queue. It supports native HTML5 uploads, but degrades to a legacy iframe upload method for older browsers. Works with any server side platform which supports standard HTML form uploads.

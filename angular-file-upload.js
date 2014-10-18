@@ -43,7 +43,8 @@ module
         filters: [],
         formData: [],
         queueLimit: Number.MAX_VALUE,
-        withCredentials: false
+        withCredentials: false,
+        binaryJsClient : null
     })
 
 
@@ -138,13 +139,18 @@ module
             FileUploader.prototype.uploadItem = function(value) {
                 var index = this.getIndexOfItem(value);
                 var item = this.queue[index];
-                var transport = this.isHTML5 ? '_xhrTransport' : '_iframeTransport';
+                var transport = this.binaryJsClient ? '_binaryJsTransport' : this.isHTML5 ? '_xhrTransport' : '_iframeTransport';
+
+                console.log("Upload Item, ", this);
 
                 item._prepareToUploading();
                 if(this.isUploading) return;
 
                 this.isUploading = true;
+
                 this[transport](item);
+
+
             };
             /**
              * Cancels uploading of item from the queue
@@ -344,7 +350,7 @@ module
             FileUploader.prototype._getFilters = function(filters) {
                 if (angular.isUndefined(filters)) return this.filters;
                 if (angular.isArray(filters)) return filters;
-                var names = filters.match(/[^\s,]+/g);
+                var names = filters.split(/\s*,/);
                 return this.filters.filter(function(filter) {
                     return names.indexOf(filter.name) !== -1;
                 }, this);
@@ -440,6 +446,42 @@ module
 
                 return parsed;
             };
+            /**
+             * The Binary Js transport
+             */
+            FileUploader.prototype._binaryJsTransport = function(item) {
+              console.log('Using binary js transport to upload file: ', item);
+              var file = item._file;
+              var client = this.binaryJsClient;
+              var that = this;
+
+              that._onBeforeUploadItem(item);
+
+
+              var stream = client.send(file, {
+                name : file.name,
+                size : file.size
+              });
+              var tx = 0;
+              stream.on('data', function(data) {
+                var progress = Math.round(tx+=data.rx*100);
+                that._onProgressItem(item, progress);
+
+                if (progress == 100) {
+                  console.log('Progress has reached 100%');
+                  that._onSuccessItem(item);
+                  that._onCompleteItem(item);
+                }
+              });
+
+              stream.on('end', function(e) {
+                console.log('File upload completed');
+                //that._onCompleteItem(item);
+              });
+
+              this._render();
+
+            }
             /**
              * The XMLHttpRequest transport
              * @param {FileItem} item
@@ -1155,7 +1197,7 @@ module
              * Event handler
              */
             FileDrop.prototype.onDragLeave = function(event) {
-                if (event.currentTarget !== this.element[0]) return;
+                if (event.target !== this.element[0]) return;
                 this._preventAndStop(event);
                 angular.forEach(this.uploader._directives.over, this._removeOverClass, this);
             };
@@ -1316,6 +1358,5 @@ module
             }
         };
     }])
-
     return module;
 }));
