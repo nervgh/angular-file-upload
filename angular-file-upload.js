@@ -1,5 +1,5 @@
 /*
- angular-file-upload v1.1.1
+ angular-file-upload v1.1.2
  https://github.com/nervgh/angular-file-upload
 */
 (function(angular, factory) {
