@@ -1,5 +1,5 @@
 /*
- angular-file-upload v1.1.2
+ angular-file-upload v1.1.3
  https://github.com/nervgh/angular-file-upload
 */
 (function(angular, factory) {
@@ -421,17 +421,10 @@ module
 
                 if (!headers) return parsed;
 
-                function trim(string) {
-                    return string.replace(/^\s+/, '').replace(/\s+$/, '');
-                }
-                function lowercase(string) {
-                    return string.toLowerCase();
-                }
-
                 angular.forEach(headers.split('\n'), function(line) {
                     i = line.indexOf(':');
-                    key = lowercase(trim(line.substr(0, i)));
-                    val = trim(line.substr(i + 1));
+                    key = line.slice(0, i).trim().toLowerCase();
+                    val = line.slice(i + 1).trim();
 
                     if (key) {
                         parsed[key] = parsed[key] ? parsed[key] + ', ' + val : val;
