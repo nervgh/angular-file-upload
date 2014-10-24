@@ -1,6 +1,6 @@
 /*
  angular-file-upload v1.1.1
- https://github.com/nervgh/angular-file-upload
+ https://github.com/davidecavaliere/angular-file-upload
 */
 (function(angular, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -1358,5 +1358,6 @@ module
             }
         };
     }])
+
     return module;
 }));
