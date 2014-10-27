@@ -105,6 +105,7 @@ module
                 this.queue.splice(index, 1);
                 item._destroy();
                 this.progress = this._getTotalProgress();
+                this._onRemoveFromQueue(index);
             };
             /**
              * Clears the queue
@@ -114,6 +115,7 @@ module
                     this.queue[0].remove();
                 }
                 this.progress = 0;
+                this._onClearQueue(index);
             };
             /**
              * Uploads a item from the queue
