@@ -445,48 +445,36 @@ module
              * The Socket Js transport
              */
             FileUploader.prototype._socketJsTransport = function(item) {
-              console.log('Using socket js transport to upload file: ', item);
               var file = item._file;
               var client = this.socketJsClient;
               var that = this;
 
               that._onBeforeUploadItem(item);
 
-              var stream = client.send(file);
+              var stream = client.send(file, { hash : this.getIndexOfItem(item) });
 
               var size = 0;
               var progress = 0;
-              // stream.on('data', function(chunk) {
-              //   size += chunk.length;
-              //   progress = Math.floor(size / metadata.size * 100);
-              //   that._onProgressItem(item, progress);
-              // });
 
-              client.socket.on('progress', function(progress) {
-                that._onProgressItem(item, progress);
+              client.socket.on('progress', function(data) {
+                  var _item = that.queue[data.itemKey];
+                  that._onProgressItem(_item, data.tx);
+
               });
 
-              client.socket.on('upload-done', function() {
-                console.log(item, ' upload completed');
-                that._onSuccessItem(item);
-                that._onCompleteItem(item);
-              })
-
-              // stream.on('end', function(e) {
-              //   console.log('File upload completed');
-              //   that._onSuccessItem(item);
-              //   that._onCompleteItem(item);
-              // });
+              client.socket.on('upload-done', function(data) {
+                var _item = that.queue[data.itemKey];
+                that._onSuccessItem(_item);
+                that._onCompleteItem(_item);
+              });
 
               this._render();
-
             };
 
             /**
              * The Binary Js transport
              */
             FileUploader.prototype._binaryJsTransport = function(item) {
-              console.log('Using binary js transport to upload file: ', item);
               var file = item._file;
               var client = this.binaryJsClient;
               var that = this;
@@ -504,14 +492,12 @@ module
                 that._onProgressItem(item, progress);
 
                 if (progress == 100) {
-                  console.log('Progress has reached 100%');
                   that._onSuccessItem(item);
                   that._onCompleteItem(item);
                 }
               });
 
               stream.on('end', function(e) {
-                console.log('File upload completed');
                 //that._onCompleteItem(item);
               });
 
