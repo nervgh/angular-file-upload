@@ -28,7 +28,8 @@ module
         formData: [],
         queueLimit: Number.MAX_VALUE,
         withCredentials: false,
-        binaryJsClient : null
+        binaryJsClient : null,
+        socketJsClient : null
     })
 
 
@@ -123,9 +124,18 @@ module
             FileUploader.prototype.uploadItem = function(value) {
                 var index = this.getIndexOfItem(value);
                 var item = this.queue[index];
-                var transport = this.binaryJsClient ? '_binaryJsTransport' : this.isHTML5 ? '_xhrTransport' : '_iframeTransport';
 
-                console.log("Upload Item, ", this);
+                var transport = null;
+
+                if (this.binaryJsClient) {
+                  transport = '_binaryJsTransport';
+                } else if (this.socketJsClient) {
+                  transport = '_socketJsTransport';
+                } else if (this.isHTML5) {
+                  transport = '_xhrTransport';
+                } else {
+                  transport = '_iframeTransport';
+                }
 
                 item._prepareToUploading();
                 if(this.isUploading) return;
@@ -430,6 +440,48 @@ module
 
                 return parsed;
             };
+
+            /**
+             * The Socket Js transport
+             */
+            FileUploader.prototype._socketJsTransport = function(item) {
+              console.log('Using socket js transport to upload file: ', item);
+              var file = item._file;
+              var client = this.socketJsClient;
+              var that = this;
+
+              that._onBeforeUploadItem(item);
+
+              var stream = client.send(file);
+
+              var size = 0;
+              var progress = 0;
+              // stream.on('data', function(chunk) {
+              //   size += chunk.length;
+              //   progress = Math.floor(size / metadata.size * 100);
+              //   that._onProgressItem(item, progress);
+              // });
+
+              client.socket.on('progress', function(progress) {
+                that._onProgressItem(item, progress);
+              });
+
+              client.socket.on('upload-done', function() {
+                console.log(item, ' upload completed');
+                that._onSuccessItem(item);
+                that._onCompleteItem(item);
+              })
+
+              // stream.on('end', function(e) {
+              //   console.log('File upload completed');
+              //   that._onSuccessItem(item);
+              //   that._onCompleteItem(item);
+              // });
+
+              this._render();
+
+            };
+
             /**
              * The Binary Js transport
              */
