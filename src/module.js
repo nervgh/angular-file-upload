@@ -440,18 +440,24 @@ module
              */
             FileUploader.prototype._xhrTransport = function(item) {
                 var xhr = item._xhr = new XMLHttpRequest();
-                var form = new FormData();
+                var entity;
                 var that = this;
 
                 that._onBeforeUploadItem(item);
 
-                angular.forEach(item.formData, function(obj) {
-                    angular.forEach(obj, function(value, key) {
-                        form.append(key, value);
+                if (item.formData) {
+                    entity = new FormData();
+                    
+                    angular.forEach(item.formData, function(obj) {
+                        angular.forEach(obj, function(value, key) {
+                            entity.append(key, value);
+                        });
                     });
-                });
-
-                form.append(item.alias, item._file, item.file.name);
+    
+                    entity.append(item.alias, item._file, item.file.name);
+                } else {
+                    entity = item._file;
+                }
 
                 xhr.upload.onprogress = function(event) {
                     var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
@@ -489,7 +495,7 @@ module
                     xhr.setRequestHeader(name, value);
                 });
 
-                xhr.send(form);
+                xhr.send(entity);
                 this._render();
             };
             /**
