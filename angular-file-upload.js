@@ -89,7 +89,7 @@ module
                 var addedFileItems = [];
 
                 angular.forEach(list, function(some /*{File|HTMLInputElement|Object}*/) {
-                    var temp = new FileUploader.FileLikeObject(some);
+                    var temp = FileUploader.isFile(some) ? some : new FileUploader.FileLikeObject(some);
 
                     if (this._isValidFile(temp, arrayOfFilters, options)) {
                         var fileItem = new FileUploader.FileItem(this, some, options);
