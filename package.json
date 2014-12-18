@@ -3,6 +3,7 @@
     "version": "1.1.5",
     "homepage": "https://github.com/nervgh/angular-file-upload",
     "description": "Angular File Upload is a module for the AngularJS framework",
+    "main": "angular-file-upload.js",
     "author": {
         "name": "nerv",
         "url": "https://github.com/nervgh"
