@@ -60,7 +60,7 @@ module
                     isUploading: false,
                     _nextIndex: 0,
                     _failFilterIndex: -1,
-                    _directives: {select: [], drop: [], over: []}
+                    _directives: {select: [], drop: [], over: [], curtain: []}
                 });
 
                 // add default filters
@@ -727,6 +727,7 @@ module
             FileUploader.FileSelect = FileSelect;
             FileUploader.FileDrop = FileDrop;
             FileUploader.FileOver = FileOver;
+            FileUploader.FileDropCurtain = FileDropCurtain;
 
             // ---------------------------
 
@@ -1150,6 +1151,7 @@ module
                 var filters = this.getFilters();
                 this._preventAndStop(event);
                 angular.forEach(this.uploader._directives.over, this._removeOverClass, this);
+                angular.forEach(this.uploader._directives.curtain, this._removeOverClass, this);
                 this.uploader.addToQueue(transfer.files, options, filters);
             };
             /**
@@ -1161,14 +1163,17 @@ module
                 transfer.dropEffect = 'copy';
                 this._preventAndStop(event);
                 angular.forEach(this.uploader._directives.over, this._addOverClass, this);
+                angular.forEach(this.uploader._directives.curtain, this._addOverClass, this);
             };
             /**
              * Event handler
              */
             FileDrop.prototype.onDragLeave = function(event) {
                 if (event.currentTarget !== this.element[0]) return;
+                if(this.uploader._directives.curtain.length > 0) return;
                 this._preventAndStop(event);
                 angular.forEach(this.uploader._directives.over, this._removeOverClass, this);
+                angular.forEach(this.uploader._directives.curtain, this._removeOverClass, this);
             };
             /**
              * Helper
@@ -1208,6 +1213,121 @@ module
              */
             FileDrop.prototype._removeOverClass = function(item) {
                 item.removeOverClass();
+            };
+
+            // ---------------------------
+
+            FileUploader.inherit(FileDropCurtain, FileDirective);
+
+            /**
+             * Creates instance of {FileDrop} object
+             * @param {Object} options
+             * @constructor
+             */
+            function FileDropCurtain(options) {
+                FileDrop.super_.apply(this, arguments);
+            }
+            /**
+             * Map of events
+             * @type {Object}
+             */
+            FileDropCurtain.prototype.events = {
+                $destroy: 'destroy',
+                drop: 'onDrop',
+                dragleave: 'onDragLeave'
+            };
+            /**
+             * Name of property inside uploader._directive object
+             * @type {String}
+             */
+            FileDropCurtain.prototype.prop = 'curtain';
+            /**
+             * Returns options
+             * @return {Object|undefined}
+             */
+            FileDropCurtain.prototype.getOptions = function() {};
+            /**
+             * Returns filters
+             * @return {Array<Function>|String|undefined}
+             */
+            FileDropCurtain.prototype.getFilters = function() {};
+            /**
+             * Event handler
+             */
+            FileDropCurtain.prototype.onDrop = function(event) {
+                var transfer = this._getTransfer(event);
+                if (!transfer) return;
+                var options = this.getOptions();
+                var filters = this.getFilters();
+                this._preventAndStop(event);
+                angular.forEach(this.uploader._directives.over, this._removeOverClass, this);
+                angular.forEach(this.uploader._directives.curtain, this._removeOverClass, this);
+                this.uploader.addToQueue(transfer.files, options, filters);
+            };
+            /**
+             * Event handler
+             */
+            FileDropCurtain.prototype.onDragLeave = function(event) {
+                if (event.currentTarget !== this.element[0]) return;
+                this._preventAndStop(event);
+                angular.forEach(this.uploader._directives.over, this._removeOverClass, this);
+                angular.forEach(this.uploader._directives.curtain, this._removeOverClass, this);
+            };
+            /**
+             * Helper
+             */
+            FileDropCurtain.prototype._getTransfer = function(event) {
+                return event.dataTransfer ? event.dataTransfer : event.originalEvent.dataTransfer; // jQuery fix;
+            };
+            /**
+             * Helper
+             */
+            FileDropCurtain.prototype._preventAndStop = function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+            };
+            /**
+             * Returns "true" if types contains files
+             * @param {Object} types
+             */
+            FileDropCurtain.prototype._haveFiles = function(types) {
+                if (!types) return false;
+                if (types.indexOf) {
+                    return types.indexOf('Files') !== -1;
+                } else if(types.contains) {
+                    return types.contains('Files');
+                } else {
+                    return false;
+                }
+            };
+            /**
+             * Callback
+             */
+            FileDropCurtain.prototype._addOverClass = function(item) {
+                item.addOverClass();
+            };
+            /**
+             * Callback
+             */
+            FileDropCurtain.prototype._removeOverClass = function(item) {
+                item.removeOverClass();
+            };
+            /**
+             * Over class
+             * @type {string}
+             */
+            FileDropCurtain.prototype.overClass = 'nv-file-over-curtain';
+            /**
+             * Adds over class
+             */
+            FileDropCurtain.prototype.addOverClass = function() {
+                this.element.addClass(this.getOverClass());
+            };
+            /**
+             * Removes over class
+             */
+            FileDropCurtain.prototype.removeOverClass = function() {
+                this.element.removeClass(this.getOverClass());
             };
 
             // ---------------------------
@@ -1317,6 +1437,27 @@ module
                 }
 
                 var object = new FileUploader.FileOver({
+                    uploader: uploader,
+                    element: element
+                });
+
+                object.getOverClass = function() {
+                    return attributes.overClass || this.overClass;
+                };
+            }
+        };
+    }])
+
+    .directive('nvFileDropCurtain', ['FileUploader', function(FileUploader) {
+        return {
+            link: function(scope, element, attributes) {
+                var uploader = scope.$eval(attributes.uploader);
+
+                if (!(uploader instanceof FileUploader)) {
+                    throw new TypeError('"Uploader" must be an instance of FileUploader');
+                }
+
+                var object = new FileUploader.FileDropCurtain({
                     uploader: uploader,
                     element: element
                 });
