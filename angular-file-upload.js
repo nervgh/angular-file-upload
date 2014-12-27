@@ -458,7 +458,7 @@ module
                 var xhr = item._xhr = new XMLHttpRequest();
                 var form = new FormData();
                 var that = this;
-
+                
                 that._onBeforeUploadItem(item);
 
                 angular.forEach(item.formData, function(obj) {
@@ -615,6 +615,10 @@ module
              * @private
              */
             FileUploader.prototype._onBeforeUploadItem = function(item) {
+                if (angular.isFunction(this.getFormData)){
+                    item.formData = this.getFormData(item.formData);
+                }
+                
                 item._onBeforeUpload();
                 this.onBeforeUploadItem(item);
             };
@@ -879,6 +883,11 @@ module
                 this.isCancel = false;
                 this.isError = false;
                 this.progress = 0;
+                
+                if (angular.isFunction(this.getFormData)){
+                    this.formData = this.getFormData(this.formData);
+                }
+                
                 this.onBeforeUpload();
             };
             /**
@@ -1328,5 +1337,47 @@ module
         };
     }])
 
+    .directive('nvForm', ['FileUploader', function(FileUploader) {
+        return {
+            link: function(scope, element, attributes) {
+                var uploader = scope.$eval(attributes.nvForm || attributes.uploader);
+              
+                if (!(uploader instanceof FileUploader || uploader instanceof FileUploader.FileItem)) {
+                    throw new TypeError('"nvForm" must be supplied with an instance of FileUploader or FileUploader.FileItem');
+                }
+                                
+                var el = element[0];
+                var elements = el.querySelectorAll('input:not([type=file]),select,textarea');
+                
+                var currentFn = uploader.getFormData;
+                uploader.getFormData = function(formData){
+                    //if there is a getFormData function defined on the FileUploader, use that as the base form data
+                    var data = currentFn ? currentFn() : [];
+                    
+                    //append the existing form data from the config.
+                    angular.extend(data, formData || []);
+                    
+                    angular.forEach(elements, function(el){
+                        var $el = angular.element(el);
+                        var name = $el.attr('name');
+                        
+
+                        
+                        
+                        //if we have a name attribute, include the form element.
+                        if (name/* && !(isFileUploader && $el.attr('nv-form-file-item'))*/){
+                            var obj = {};
+                            obj[name] = $el.val();
+                            this.push(obj);
+                        }
+                    }, data);
+                    
+                    return data;
+                }
+   
+            }
+        };
+    }])
+ 
     return module;
 }));
