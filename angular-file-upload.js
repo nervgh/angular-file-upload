@@ -66,6 +66,9 @@ module
                 // add default filters
                 this.filters.unshift({name: 'queueLimit', fn: this._queueLimitFilter});
                 this.filters.unshift({name: 'folder', fn: this._folderFilter});
+
+                // Init amazon SDK
+                if (this.s3Upload) this.loadS3Library();
             }
             /**********************
              * PUBLIC
@@ -147,6 +150,95 @@ module
                 this[transport](item);
             };
             /**
+             * Initialize instance of S3 class from AWS-SDK
+             */
+            FileUploader.prototype.initializeS3 = function() {
+                if (!angular.isUndefined(AWS)) {
+                    AWS.config.update({ accessKeyId: this.s3Options.accessKeyId, secretAccessKey: this.s3Options.secretAccessKey });
+                    AWS.config.region = this.s3Options.region;
+                    this.s3 = new AWS.S3({ params: { Bucket: this.s3Options.bucket } });
+                }else {
+                    throw new TypeError('AWS-SDK has not been loaded.');
+                }
+            };
+            /**
+             * Uploads a item from the queue to S3
+             * @param {FileItem|Number} value
+             */
+            FileUploader.prototype.uploadItemToS3 = function(value) {
+                var index = this.getIndexOfItem(value);
+                var item = this.queue[index];
+
+                // We need the file with a blob to send bytes, not fileLikeObject
+                var file = item._file;
+                var that = this;
+                var timestamp = new Date().getTime();
+                var response;
+                var status;
+                var headers = {};
+
+                if (angular.isUndefined(this.s3)) this.initializeS3();
+                
+                if(file) {
+                    item.isUploading = true;
+                    var fileName = timestamp + '_' + file.name;
+                    var params = { Key: this.s3Options.folder + fileName, ContentType: file.type, Body: file, ServerSideEncryption: 'AES256' };
+
+                    this.managedUpload = this.s3.upload(params);
+                    this.managedUpload.partSize = 1 * 1024 * 1024; // 1MB
+                    this.managedUpload.queueSize = 1; // One file at time
+
+                    this.managedUpload.on('httpUploadProgress', function(event) {
+                        var progress = Math.round(event.loaded / event.total * 100);
+                        that._onProgressItem(item, progress);
+                    });
+                    
+                    this.managedUpload.send(function(error, data) {
+                        if(error) {
+                            response = error;
+                            that._onErrorItem(item, response, status, headers);
+                        } else {
+                            // Upload successfully finished
+                            response = { fileName: fileName };
+                            // Ok code
+                            status = 200;
+                            // Execute callback
+                            that._onSuccessItem(item, response, status, headers);
+                            that._onCompleteItem(item, response, status, headers);
+                        }
+                    });
+                }
+                else {
+                    // No file selected
+                    var response = { message: 'No file selected' };
+                    that._onErrorItem(item, response, status, headers);
+                }
+            };
+            /**
+             * Load S3 library (AWS-SDK)
+             * @param {callback|function} callback
+             */
+            FileUploader.prototype.loadS3Library = function(callback) {
+                var awsSDKScript,
+                firstScript = document.getElementsByTagName("script")[0],
+                protocol = /^http:/.test(document.location) ? 'http' : 'https',
+                scriptId = "aws-sdk";
+
+                if (!document.getElementById(scriptId)) {
+                    awsSDKScript = document.createElement("script");
+                    awsSDKScript.id = "aws-sdk";
+                    awsSDKScript.src = protocol + "://sdk.amazonaws.com/js/aws-sdk-2.1.4.min.js";
+
+                    awsSDKScript.onload = function() {
+                        if(!angular.isUndefined(callback)) {
+                            callback();
+                        }
+                    };
+
+                    firstScript.parentNode.insertBefore(awsSDKScript, firstScript);
+                }
+            };
+            /**
              * Cancels uploading of item from the queue
              * @param {FileItem|Number} value
              */
@@ -155,6 +247,21 @@ module
                 var item = this.queue[index];
                 var prop = this.isHTML5 ? '_xhr' : '_form';
                 if (item && item.isUploading) item[prop].abort();
+            };
+            /**
+             * Cancels uploading of item from the queue to S3
+             * @param {FileItem|Number} value
+             */
+            FileUploader.prototype.cancelS3Item = function(value) {
+                var index = this.getIndexOfItem(value);
+                var item = this.queue[index];
+
+                if (item && item.isUploading){
+                    this.managedUpload.abort();
+                    this.managedUpload = undefined;
+                    this._onCancelItem(item, undefined, undefined, undefined);
+                    this._onCompleteItem(item, undefined, undefined, undefined);
+                }
             };
             /**
              * Uploads all not uploaded items of queue
@@ -812,13 +919,19 @@ module
              * Uploads a FileItem
              */
             FileItem.prototype.upload = function() {
-                this.uploader.uploadItem(this);
+                 if (!this.uploader.s3Upload)
+                    this.uploader.uploadItem(this);
+                else
+                    this.uploader.uploadItemToS3(this);
             };
             /**
              * Cancels uploading of FileItem
              */
             FileItem.prototype.cancel = function() {
-                this.uploader.cancelItem(this);
+                if (!this.uploader.s3Upload)
+                    this.uploader.cancelItem(this);
+                else
+                    this.uploader.cancelItemInAmazon(this);
             };
             /**
              * Removes a FileItem
