@@ -931,7 +931,7 @@ module
                 if (!this.uploader.s3Upload)
                     this.uploader.cancelItem(this);
                 else
-                    this.uploader.cancelItemInAmazon(this);
+                    this.uploader.cancelS3Item(this);
             };
             /**
              * Removes a FileItem
