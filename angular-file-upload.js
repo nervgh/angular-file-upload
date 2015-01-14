@@ -178,7 +178,7 @@ module
                 var headers = {};
 
                 if (angular.isUndefined(this.s3)) this.initializeS3();
-                
+
                 if(file) {
                     item.isUploading = true;
                     var fileName = timestamp + '_' + file.name;
@@ -192,10 +192,10 @@ module
                         var progress = Math.round(event.loaded / event.total * 100);
                         that._onProgressItem(item, progress);
                     });
-                    
+
                     this.managedUpload.send(function(error, data) {
                         if(error) {
-                            response = error;
+                            response = { message: error };
                             that._onErrorItem(item, response, status, headers);
                         } else {
                             // Upload successfully finished
@@ -210,7 +210,7 @@ module
                 }
                 else {
                     // No file selected
-                    var response = { message: 'No file selected' };
+                    response = { message: 'No file selected' };
                     that._onErrorItem(item, response, status, headers);
                 }
             };
