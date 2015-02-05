@@ -5,9 +5,11 @@
     "homepage": "https://github.com/nervgh/angular-file-upload",
     "ignore": ["examples"],
     "dependencies": {
-        "angular": "~1.2.11",
-        "es5-shim": ">=3.4.0"
+        "angular": "~1.2.11"
     },
+    "devDependencies": {
+        "es5-shim": ">=3.4.0"
+    }
     "keywords": [
         "angular",
         "file",
