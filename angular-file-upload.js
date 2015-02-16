@@ -1100,7 +1100,7 @@ module
 
                 if (!this.uploader.isHTML5) this.destroy();
                 this.uploader.addToQueue(files, options, filters);
-                if (this.isEmptyAfterSelection() || options.clearInputAfterAddedToQueue) this.element.prop('value', null);
+                if (this.isEmptyAfterSelection() || (options && options.clearInputAfterAddedToQueue)) this.element.prop('value', null);
             };
 
             // ---------------------------
