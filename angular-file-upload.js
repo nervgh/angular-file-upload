@@ -180,26 +180,30 @@ module
                 if (angular.isUndefined(this.s3)) this.initializeS3();
 
                 if(file) {
+                    item._prepareToUploading();
+                    if(this.isUploading) return;
                     item.isUploading = true;
+
                     var fileName = timestamp + '_' + file.name;
                     var params = { Key: this.s3Options.folder + fileName, ContentType: file.type, Body: file, ServerSideEncryption: 'AES256' };
-
                     this.managedUpload = this.s3.upload(params);
-                    this.managedUpload.partSize = 1 * 1024 * 1024; // 1MB
                     this.managedUpload.queueSize = 1; // One file at time
 
+                    // Add progress event
                     this.managedUpload.on('httpUploadProgress', function(event) {
                         var progress = Math.round(event.loaded / event.total * 100);
                         that._onProgressItem(item, progress);
                     });
 
+                    // Uplaod file
                     this.managedUpload.send(function(error, data) {
+
                         if(error) {
                             response = { message: error };
                             that._onErrorItem(item, response, status, headers);
                         } else {
                             // Upload successfully finished
-                            response = { fileName: fileName };
+                            response = { fileName: fileName, bucket: that.s3Options.bucket, folder: that.s3Options.folder, url: data.Location };
                             // Ok code
                             status = 200;
                             // Execute callback
@@ -210,7 +214,7 @@ module
                 }
                 else {
                     // No file selected
-                    response = { message: 'No file selected' };
+                    response = { message: 'No file Selected' };
                     that._onErrorItem(item, response, status, headers);
                 }
             };
