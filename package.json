@@ -7,6 +7,8 @@
         "name": "nerv",
         "url": "https://github.com/nervgh"
     },
+    "main": "angular-file-upload.min.js",
+
     "dependencies": {
         "coffee-script": "~1.6.2",
         "grunt-contrib-copy": "~0.4.1",
