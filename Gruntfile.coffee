@@ -3,6 +3,9 @@ path = require 'path'
 # Build configurations.
 module.exports = (grunt) ->
     grunt.initConfig
+        watch:
+            files: ['src/*'],
+            tasks: ['default']
 
         # Metadata
         pkg: grunt.file.readJSON('package.json'),
@@ -50,6 +53,7 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-contrib-copy'
     grunt.loadNpmTasks 'grunt-contrib-uglify'
     grunt.loadNpmTasks 'grunt-contrib-concat'
+    grunt.loadNpmTasks 'grunt-contrib-watch'
 
     grunt.registerTask 'default', [
         'clean'
