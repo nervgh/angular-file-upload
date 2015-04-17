@@ -1364,7 +1364,7 @@ module
     * @author: nerv
     * @version: 0.1.2, 2014-01-09
     */
-    .directive('ngThumb', ['$window', function($window) {
+    .directive('ngThumb', ['$window', '$log', function($window, $log) {
         var helper = {
             support: !!($window.FileReader && $window.CanvasRenderingContext2D),
             isFile: function(item) {
@@ -1380,6 +1380,9 @@ module
             restrict: 'A',
             template: '<canvas/>',
             link: function(scope, element, attributes) {
+
+                var uploader = scope.$parent.uploader;
+
                 if (!helper.support) return;
 
                 var params = scope.$eval(attributes.ngThumb);
@@ -1402,9 +1405,27 @@ module
                 function onLoadImage() {
                     var width = params.width || this.width / this.height * params.height;
                     var height = params.height || this.height / this.width * params.width;
+                    var image = this;
                     canvas.attr({ width: width, height: height });
                     canvas[0].getContext('2d').drawImage(this, 0, 0, width, height);
                     stackBlurImage(this, canvas[0], 10, true);
+
+                    if(angular.isDefined(uploader)) {
+                        uploader.onProgressItem = function(progress) {
+                            stackBlurImage(image, canvas[0], 10 - 10 * progress, true);
+                        };
+
+                        uploader.onCompleteItem = function() {
+                            $log.debug('Item Complete');
+                            stackBlurImage(image, canvas[0], 100, true);
+                            var ctx = canvas[0].getContext('2d');
+
+                            var errorLabel = 'Error';
+                            ctx.font = "100px serif";
+                            var text = ctx.measureText(errorLabel);
+                            ctx.fillText(errorLabel, 10, 50);
+                        };
+                    }
                 }
             }
         };
