@@ -1,4 +1,9 @@
-# Angular File Upload
+ # Angular File Upload
+
+## v1.2.0
+* added grunt watch task. Please use ```grunt watch``` to automatically build angular-file-upload.* files for easier development
+* imported ngThumb directive in angularFileUpload moudule
+* if ngThumb is used under under a uploader directive then the thumbnails will be blured according to upload status
 
 ## Added support for socket.io-stream
 Use as normal passing your socketJsClaient client to fileuploader object
