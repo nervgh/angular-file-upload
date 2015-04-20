@@ -1378,7 +1378,7 @@ module
 
         return {
             restrict: 'A',
-            template: '<canvas/>',
+            template: '<canvas style="display : none;/>',
             link: function(scope, element, attributes) {
 
                 var uploader = scope.$parent.uploader;
@@ -1403,14 +1403,42 @@ module
                 }
 
                 function onLoadImage() {
-                    var width = params.width || this.width / this.height * params.height;
-                    var height = params.height || this.height / this.width * params.width;
-                    var image = this;
-                    canvas.attr({ width: width, height: height });
-                    canvas[0].getContext('2d').drawImage(this, 0, 0, width, height);
+                    var xOffSet = 0;
+                    var yOffSet = 0;
+
+                    var width = params.width;
+                    var height = params.height;
+
+                    if (params.height && params.width) {
+                       /* if we have constrains on both height and width */
+                       if (this.width >= this.height) {
+                         /* if the image is wider than taller */
+                         width = this.width / this.height * params.height;
+                         xOffSet =(params.width - width) / 2;
+                       } else {
+                         // if the image is taller than wider
+                         height = this.height / this.width * params.width;
+                         yOffSet = (params.height - height) / 2;
+                       }
+
+                       canvas.attr({width: params.width, height: params.height});
+                    } else {
+                       /* in the case we have just one constrain this is enough */
+                       width = params.width || this.width / this.height * params.height;
+                       height = params.height || this.height / this.width * params.width;
+
+                       canvas.attr({width: width, height: height});
+                    }
+
+                    canvas[0].getContext('2d').drawImage(this, xOffSet || 0, yOffSet || 0, width, height);
+
+                    $(canvas).show();
+
+
+
                     stackBlurImage(this, canvas[0], 10, true);
 
-                    if(angular.isDefined(uploader)) {
+                    if(angular.isDefined(uploader) && attributes.blur == true) {
                         uploader.onProgressItem = function(progress) {
                             stackBlurImage(image, canvas[0], 10 - 10 * progress, true);
                         };
@@ -1427,7 +1455,7 @@ module
                         };
                     }
                 }
-            }
+              }
         };
     }])
 
