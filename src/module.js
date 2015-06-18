@@ -81,7 +81,7 @@ module
                         this.queue.push(fileItem);
                         this._onAfterAddingFile(fileItem);
                     } else {
-                        var filter = this.filters[this._failFilterIndex];
+                        var filter = arrayOfFilters[this._failFilterIndex];
                         this._onWhenAddingFileFailed(temp, filter, options);
                     }
                 }, this);
