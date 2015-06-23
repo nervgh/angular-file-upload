@@ -1221,6 +1221,8 @@ module
              */
             function FileOver(options) {
                 FileOver.super_.apply(this, arguments);
+
+                this.removeClassTimeout = -1;
             }
             /**
              * Map of events
@@ -1243,13 +1245,22 @@ module
              * Adds over class
              */
             FileOver.prototype.addOverClass = function() {
+                if (this.removeClassTimeout > -1) {
+                    clearTimeout(this.removeClassTimeout);
+                    this.removeClassTimeout = -1;
+                }
                 this.element.addClass(this.getOverClass());
             };
             /**
              * Removes over class
              */
             FileOver.prototype.removeOverClass = function() {
-                this.element.removeClass(this.getOverClass());
+                var self=this;
+                if (self.removeClassTimeout < 0) {
+                    self.removeClassTimeout = setTimeout(function() {
+                        self.element.removeClass(self.getOverClass());
+                    },50);
+                }
             };
             /**
              * Returns over class
