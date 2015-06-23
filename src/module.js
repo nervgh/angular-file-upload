@@ -451,6 +451,10 @@ module
                     });
                 });
 
+                if ( typeof(item._file.size) != 'number' ) {
+                    throw new TypeError('The file specified is no longer valid');
+                }
+
                 form.append(item.alias, item._file, item.file.name);
 
                 xhr.upload.onprogress = function(event) {
@@ -796,7 +800,12 @@ module
              * Uploads a FileItem
              */
             FileItem.prototype.upload = function() {
-                this.uploader.uploadItem(this);
+                try {
+                    this.uploader.uploadItem(this);
+                } catch (e) {
+                    this.uploader._onCompleteItem( this, '', 0, [] );
+                    this.uploader._onErrorItem( this, '', 0, [] );
+                }
             };
             /**
              * Cancels uploading of FileItem
