@@ -71,6 +71,15 @@ module
              * PUBLIC
              **********************/
             /**
+             * Set all the options as a single object
+             * @param {Object} [options]
+             */
+            FileUploader.prototype.setOptions = function (options) {
+                // do not erase options that already added
+                // just overwrite some of them
+                angular.extend(this, options);
+            };
+            /**
              * Checks a support the html5 uploader
              * @returns {Boolean}
              * @readonly
