@@ -31,8 +31,8 @@ module
     })
 
 
-    .factory('FileUploader', ['fileUploaderOptions', '$rootScope', '$http', '$window', '$compile',
-        function(fileUploaderOptions, $rootScope, $http, $window, $compile) {
+    .factory('FileUploader', ['fileUploaderOptions', '$rootScope', '$http', '$window', '$compile', '$timeout',
+        function(fileUploaderOptions, $rootScope, $http, $window, $compile, $timeout) {
             /**
              * Creates an instance of FileUploader
              * @param {Object} [options]
@@ -1137,11 +1137,16 @@ module
                 this.uploader.addToQueue(transfer.files, options, filters);
             };
             /**
+             * Flag to check if the onDragLeave event should be fired
+             */
+            FileDrop.prototype._dragingOver = false;
+            /**
              * Event handler
              */
             FileDrop.prototype.onDragOver = function(event) {
                 var transfer = this._getTransfer(event);
                 if(!this._haveFiles(transfer.types)) return;
+                this._dragingOver = true;
                 transfer.dropEffect = 'copy';
                 this._preventAndStop(event);
                 angular.forEach(this.uploader._directives.over, this._addOverClass, this);
@@ -1150,9 +1155,13 @@ module
              * Event handler
              */
             FileDrop.prototype.onDragLeave = function(event) {
-                if (event.currentTarget !== this.element[0]) return;
-                this._preventAndStop(event);
-                angular.forEach(this.uploader._directives.over, this._removeOverClass, this);
+                var self = this;
+                self._dragingOver = false;
+                $timeout(function() {
+                    if (event.currentTarget !== self.element[0] || self._dragingOver) return;
+                    self._preventAndStop(event);
+                    angular.forEach(self.uploader._directives.over, self._removeOverClass, self);
+                });
             };
             /**
              * Helper
