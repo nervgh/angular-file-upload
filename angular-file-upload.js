@@ -51,7 +51,7 @@ module
         $httpProviderInstance = $httpProvider;
     }])
 
-    .factory('FileUploader', ['fileUploaderOptions', '$rootScope', '$http', '$window', '$compile',
+    .factory('FileUploader', ['fileUploaderOptions', '$rootScope', '$http', '$window', '$compile', '$injector',
         function (fileUploaderOptions, $rootScope, $http, $window, $compile, $injector) {
             /**
              * Creates an instance of FileUploader
