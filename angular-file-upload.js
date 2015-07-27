@@ -1,5 +1,5 @@
 /*
- angular-file-upload v1.1.5
+ angular-file-upload v1.1.6
  https://github.com/nervgh/angular-file-upload
 */
 (function(angular, factory) {
@@ -97,7 +97,7 @@ module
                         this.queue.push(fileItem);
                         this._onAfterAddingFile(fileItem);
                     } else {
-                        var filter = this.filters[this._failFilterIndex];
+                        var filter = arrayOfFilters[this._failFilterIndex];
                         this._onWhenAddingFileFailed(temp, filter, options);
                     }
                 }, this);
