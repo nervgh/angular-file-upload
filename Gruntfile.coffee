@@ -42,7 +42,14 @@ module.exports = (grunt) ->
                     'src/outro.js'
                 ]
                 dest: 'angular-file-upload.js'
-
+        watch:
+            scripts:
+                files: ['src/*.js']
+                tasks: ['default'],
+                options: {
+                    spawn:false
+                }
+				
     # Register grunt tasks supplied by grunt-contrib-*.
     # Referenced in package.json.
     # https://github.com/gruntjs/grunt-contrib
@@ -50,6 +57,7 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-contrib-copy'
     grunt.loadNpmTasks 'grunt-contrib-uglify'
     grunt.loadNpmTasks 'grunt-contrib-concat'
+    grunt.loadNpmTasks 'grunt-contrib-watch'
 
     grunt.registerTask 'default', [
         'clean'
