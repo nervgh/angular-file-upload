@@ -245,7 +245,6 @@ angular
              * @param {File|Object} item
              * @param {Object} filter
              * @param {Object} options
-             * @private
              */
             FileUploader.prototype.onWhenAddingFileFailed = function(item, filter, options) {};
             /**
