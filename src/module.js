@@ -446,9 +446,7 @@ angular
                 that._onBeforeUploadItem(item);
 
                 angular.forEach(item.formData, function(obj) {
-                    angular.forEach(obj, function(value, key) {
-                        form.append(key, value);
-                    });
+                    form.append(key, value);
                 });
 
                 if ( typeof(item._file.size) != 'number' ) {
