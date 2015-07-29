@@ -703,7 +703,7 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
          * @private
          */
         static isFileLikeObject(value) {
-            return value instanceof this.constructor.FileLikeObject;
+            return value instanceof FileLikeObject;
         }
         /**
          * Returns "true" if value is array like object
