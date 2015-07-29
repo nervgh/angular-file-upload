@@ -12,7 +12,7 @@ let {
     } = angular;
 
 
-export default function __($compile, FileLikeObject) {
+export default ($compile, FileLikeObject) => {
     
     
     class FileItem {
@@ -250,7 +250,7 @@ export default function __($compile, FileLikeObject) {
 }
 
 
-__.$inject = [
+module.exports.$inject = [
     '$compile',
     'FileLikeObject'
 ];

@@ -9,7 +9,7 @@ let {
     } = angular;
 
 
-export default function __(FileDirective) {
+export default (FileDirective) => {
     
     
     class FileDrop extends FileDirective {
@@ -119,6 +119,6 @@ export default function __(FileDirective) {
 }
 
 
-__.$inject = [
+module.exports.$inject = [
     'FileDirective'
 ];

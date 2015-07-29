@@ -11,7 +11,7 @@ let {
     } = angular;
 
 
-export default function __() {
+export default () => {
     
     
     class FileLikeObject {
@@ -56,5 +56,5 @@ export default function __() {
 }
 
 
-__.$inject = [
+module.exports.$inject = [
 ];

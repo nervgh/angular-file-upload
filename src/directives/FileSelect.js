@@ -4,11 +4,11 @@
 import CONFIG from './../config.json';
 
 
-export default function __($parse, FileUploader, FileSelect) {
+export default  ($parse, FileUploader, FileSelect) => {
 
 
     return {
-        link: function(scope, element, attributes) {
+        link: (scope, element, attributes) => {
             var uploader = scope.$eval(attributes.uploader);
 
             if (!(uploader instanceof FileUploader)) {
@@ -21,7 +21,7 @@ export default function __($parse, FileUploader, FileSelect) {
             });
 
             object.getOptions = $parse(attributes.options).bind(object, scope);
-            object.getFilters = function() {return attributes.filters;};
+            object.getFilters = () => attributes.filters;
         }
     };
 
@@ -29,7 +29,7 @@ export default function __($parse, FileUploader, FileSelect) {
 }
 
 
-__.$inject = [
+module.exports.$inject = [
     '$parse',
     'FileUploader',
     'FileSelect'

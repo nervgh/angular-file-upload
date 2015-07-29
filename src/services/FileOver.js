@@ -4,7 +4,7 @@
 import CONFIG from './../config.json';
 
 
-export default function __(FileDirective) {
+export default (FileDirective) => {
     
     
     class FileOver extends FileDirective {
@@ -51,6 +51,6 @@ export default function __(FileDirective) {
 }
 
 
-__.$inject = [
+module.exports.$inject = [
     'FileDirective'
 ];
