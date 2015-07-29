@@ -16,7 +16,7 @@ let {
     } = angular;
 
 
-export default function __(fileUploaderOptions, $rootScope, $http, $window, FileLikeObject, FileItem) {
+export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject, FileItem) => {
     
     
     let {
@@ -60,7 +60,7 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
             var count = this.queue.length;
             var addedFileItems = [];
 
-            forEach(list, function(some /*{File|HTMLInputElement|Object}*/) {
+            forEach(list, (some /*{File|HTMLInputElement|Object}*/) => {
                 var temp = new FileLikeObject(some);
 
                 if (this._isValidFile(temp, arrayOfFilters, options)) {
@@ -72,7 +72,7 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
                     var filter = arrayOfFilters[this._failFilterIndex];
                     this._onWhenAddingFileFailed(temp, filter, options);
                 }
-            }, this);
+            });
 
             if(this.queue.length !== count) {
                 this._onAfterAddingAll(addedFileItems);
@@ -132,14 +132,10 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
          * Uploads all not uploaded items of queue
          */
         uploadAll() {
-            var items = this.getNotUploadedItems().filter(function(item) {
-                return !item.isUploading;
-            });
+            var items = this.getNotUploadedItems().filter(item => !item.isUploading);
             if(!items.length) return;
 
-            forEach(items, function(item) {
-                item._prepareToUploading();
-            });
+            forEach(items, item => item._prepareToUploading());
             items[0].upload();
         }
         /**
@@ -147,9 +143,7 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
          */
         cancelAll() {
             var items = this.getNotUploadedItems();
-            forEach(items, function(item) {
-                item.cancel();
-            });
+            forEach(items, item => item.cancel());
         }
         /**
          * Returns "true" if value an instance of File
@@ -190,9 +184,7 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
          * @returns {Array}
          */
         getNotUploadedItems() {
-            return this.queue.filter(function(item) {
-                return !item.isUploaded;
-            });
+            return this.queue.filter(item => !item.isUploaded);
         }
         /**
          * Returns items ready for upload
@@ -200,22 +192,18 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
          */
         getReadyItems() {
             return this.queue
-                .filter(function(item) {
-                    return (item.isReady && !item.isUploading);
-                })
-                .sort(function(item1, item2) {
-                    return item1.index - item2.index;
-                });
+                .filter(item => (item.isReady && !item.isUploading))
+                .sort((item1, item2) => item1.index - item2.index);
         }
         /**
          * Destroys instance of FileUploader
          */
         destroy() {
-            forEach(this._directives, function(key) {
-                forEach(this._directives[key], function(object) {
+            forEach(this._directives, (key) => {
+                forEach(this._directives[key], (object) => {
                     object.destroy();
-                }, this);
-            }, this);
+                });
+            });
         }
         /**
          * Callback
@@ -326,9 +314,8 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
             if(!filters) return this.filters;
             if(isArray(filters)) return filters;
             var names = filters.match(/[^\s,]+/g);
-            return this.filters.filter(function(filter) {
-                return names.indexOf(filter.name) !== -1;
-            }, this);
+            return this.filters
+                .filter(filter => names.indexOf(filter.name) !== -1);
         }
         /**
          * Updates html
@@ -364,10 +351,10 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
          */
         _isValidFile(file, filters, options) {
             this._failFilterIndex = -1;
-            return !filters.length ? true : filters.every(function(filter) {
+            return !filters.length ? true : filters.every((filter) => {
                 this._failFilterIndex++;
                 return filter.fn.call(this, file, options);
-            }, this);
+            });
         }
         /**
          * Checks whether upload successful
@@ -387,7 +374,7 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
          */
         _transformResponse(response, headers) {
             var headersGetter = this._headersGetter(headers);
-            forEach($http.defaults.transformResponse, function(transformFn) {
+            forEach($http.defaults.transformResponse, (transformFn) => {
                 response = transformFn(response, headersGetter);
             });
             return response;
@@ -404,7 +391,7 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
 
             if(!headers) return parsed;
 
-            forEach(headers.split('\n'), function(line) {
+            forEach(headers.split('\n'), (line) => {
                 i = line.indexOf(':');
                 key = line.slice(0, i).trim().toLowerCase();
                 val = line.slice(i + 1).trim();
@@ -423,7 +410,7 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
          * @private
          */
         _headersGetter(parsedHeaders) {
-            return function(name) {
+            return (name) => {
                 if(name) {
                     return parsedHeaders[name.toLowerCase()] || null;
                 }
@@ -438,12 +425,11 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
         _xhrTransport(item) {
             var xhr = item._xhr = new XMLHttpRequest();
             var form = new FormData();
-            var that = this;
 
-            that._onBeforeUploadItem(item);
+            this._onBeforeUploadItem(item);
 
-            forEach(item.formData, function(obj) {
-                forEach(obj, function(value, key) {
+            forEach(item.formData, (obj) => {
+                forEach(obj, (value, key) => {
                     form.append(key, value);
                 });
             });
@@ -454,39 +440,39 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
 
             form.append(item.alias, item._file, item.file.name);
 
-            xhr.upload.onprogress = function(event) {
+            xhr.upload.onprogress = (event) => {
                 var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
-                that._onProgressItem(item, progress);
+                this._onProgressItem(item, progress);
             };
 
-            xhr.onload = function() {
-                var headers = that._parseHeaders(xhr.getAllResponseHeaders());
-                var response = that._transformResponse(xhr.response, headers);
-                var gist = that._isSuccessCode(xhr.status) ? 'Success' : 'Error';
+            xhr.onload = () => {
+                var headers = this._parseHeaders(xhr.getAllResponseHeaders());
+                var response = this._transformResponse(xhr.response, headers);
+                var gist = this._isSuccessCode(xhr.status) ? 'Success' : 'Error';
                 var method = '_on' + gist + 'Item';
-                that[method](item, response, xhr.status, headers);
-                that._onCompleteItem(item, response, xhr.status, headers);
+                this[method](item, response, xhr.status, headers);
+                this._onCompleteItem(item, response, xhr.status, headers);
             };
 
-            xhr.onerror = function() {
-                var headers = that._parseHeaders(xhr.getAllResponseHeaders());
-                var response = that._transformResponse(xhr.response, headers);
-                that._onErrorItem(item, response, xhr.status, headers);
-                that._onCompleteItem(item, response, xhr.status, headers);
+            xhr.onerror = () => {
+                var headers = this._parseHeaders(xhr.getAllResponseHeaders());
+                var response = this._transformResponse(xhr.response, headers);
+                this._onErrorItem(item, response, xhr.status, headers);
+                this._onCompleteItem(item, response, xhr.status, headers);
             };
 
-            xhr.onabort = function() {
-                var headers = that._parseHeaders(xhr.getAllResponseHeaders());
-                var response = that._transformResponse(xhr.response, headers);
-                that._onCancelItem(item, response, xhr.status, headers);
-                that._onCompleteItem(item, response, xhr.status, headers);
+            xhr.onabort = () => {
+                var headers = this._parseHeaders(xhr.getAllResponseHeaders());
+                var response = this._transformResponse(xhr.response, headers);
+                this._onCancelItem(item, response, xhr.status, headers);
+                this._onCompleteItem(item, response, xhr.status, headers);
             };
 
             xhr.open(item.method, item.url, true);
 
             xhr.withCredentials = item.withCredentials;
 
-            forEach(item.headers, function(value, name) {
+            forEach(item.headers, (value, name) => {
                 xhr.setRequestHeader(name, value);
             });
 
@@ -502,17 +488,16 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
             var form = element('<form style="display: none;" />');
             var iframe = element('<iframe name="iframeTransport' + Date.now() + '">');
             var input = item._input;
-            var that = this;
 
             if(item._form) item._form.replaceWith(input); // remove old form
             item._form = form; // save link to new form
 
-            that._onBeforeUploadItem(item);
+            this._onBeforeUploadItem(item);
 
             input.prop('name', item.alias);
 
-            forEach(item.formData, function(obj) {
-                forEach(obj, function(value, key) {
+            forEach(item.formData, (obj) => {
+                forEach(obj, (value, key) => {
                     var element = element('<input type="hidden" name="' + key + '" />');
                     element.val(value);
                     form.append(element);
@@ -527,7 +512,7 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
                 encoding: 'multipart/form-data' // old IE
             });
 
-            iframe.bind('load', function() {
+            iframe.bind('load', () => {
                 var html = '';
                 var status = 200;
 
@@ -553,13 +538,13 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
 
                 var xhr = {response: html, status: status, dummy: true};
                 var headers = {};
-                var response = that._transformResponse(xhr.response, headers);
+                var response = this._transformResponse(xhr.response, headers);
 
-                that._onSuccessItem(item, response, xhr.status, headers);
-                that._onCompleteItem(item, response, xhr.status, headers);
+                this._onSuccessItem(item, response, xhr.status, headers);
+                this._onCompleteItem(item, response, xhr.status, headers);
             });
 
-            form.abort = function() {
+            form.abort = () => {
                 var xhr = {status: 0, dummy: true};
                 var headers = {};
                 var response;
@@ -567,8 +552,8 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
                 iframe.unbind('load').prop('src', 'javascript:false;');
                 form.replaceWith(input);
 
-                that._onCancelItem(item, response, xhr.status, headers);
-                that._onCompleteItem(item, response, xhr.status, headers);
+                this._onCancelItem(item, response, xhr.status, headers);
+                this._onCompleteItem(item, response, xhr.status, headers);
             };
 
             input.after(form);
@@ -748,7 +733,7 @@ export default function __(fileUploaderOptions, $rootScope, $http, $window, File
 }
 
 
-__.$inject = [
+module.exports.$inject = [
     'fileUploaderOptions', 
     '$rootScope', 
     '$http', 

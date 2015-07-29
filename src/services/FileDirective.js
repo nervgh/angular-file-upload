@@ -9,7 +9,7 @@ let {
     } = angular;
 
 
-export default function __() {
+export default () => {
 
 
     class FileDirective {
@@ -78,5 +78,5 @@ export default function __() {
 }
 
 
-__.$inject = [
+module.exports.$inject = [
 ];

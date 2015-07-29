@@ -4,11 +4,11 @@
 import CONFIG from './../config.json';
 
 
-export default function __(FileUploader, FileOver) {
+export default (FileUploader, FileOver) => {
 
 
     return {
-        link: function(scope, element, attributes) {
+        link: (scope, element, attributes) => {
             var uploader = scope.$eval(attributes.uploader);
 
             if (!(uploader instanceof FileUploader)) {
@@ -20,9 +20,7 @@ export default function __(FileUploader, FileOver) {
                 element: element
             });
 
-            object.getOverClass = function() {
-                return attributes.overClass || this.overClass;
-            };
+            object.getOverClass = () => attributes.overClass || object.overClass;
         }
     };
 
@@ -30,7 +28,7 @@ export default function __(FileUploader, FileOver) {
 }
 
 
-__.$inject = [
+module.exports.$inject = [
     'FileUploader',
     'FileOver'
 ];
