@@ -498,9 +498,9 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
 
             forEach(item.formData, (obj) => {
                 forEach(obj, (value, key) => {
-                    var element = element('<input type="hidden" name="' + key + '" />');
-                    element.val(value);
-                    form.append(element);
+                    var element_ = element('<input type="hidden" name="' + key + '" />');
+                    element_.val(value);
+                    form.append(element_);
                 });
             });
 
