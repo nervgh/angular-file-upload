@@ -110,7 +110,12 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
         uploadItem(value) {
             var index = this.getIndexOfItem(value);
             var item = this.queue[index];
-            var transport = this.isHTML5 ? '_xhrTransport' : '_iframeTransport';
+            var transport;
+            if (this.isHTML5) {
+                transport = this.useDirectUpload ? '_directXHRTransport' : '_xhrTransport';
+            } else {
+                transport = '_iframeTransport';
+            }
 
             item._prepareToUploading();
             if(this.isUploading) return;
@@ -477,6 +482,55 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             });
 
             xhr.send(form);
+            this._render();
+        }
+        /**
+         * The XMLHttpRequest transport for directly upload without form-data
+         * @param {FileItem} item
+         * @private
+         */
+        _directXHRTransport = function(item) {
+            var xhr = item._xhr = new XMLHttpRequest();
+
+            this._onBeforeUploadItem(item);
+
+            xhr.upload.onprogress = function(event) {
+                var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
+                this._onProgressItem(item, progress);
+            };
+
+            xhr.onload = function() {
+                var headers = this._parseHeaders(xhr.getAllResponseHeaders());
+                var response = this._transformResponse(xhr.response, headers);
+                var gist = this._isSuccessCode(xhr.status) ? 'Success' : 'Error';
+                var method = '_on' + gist + 'Item';
+                this[method](item, response, xhr.status, headers);
+                this._onCompleteItem(item, response, xhr.status, headers);
+            };
+
+            xhr.onerror = function() {
+                var headers = this._parseHeaders(xhr.getAllResponseHeaders());
+                var response = this._transformResponse(xhr.response, headers);
+                this._onErrorItem(item, response, xhr.status, headers);
+                this._onCompleteItem(item, response, xhr.status, headers);
+            };
+
+            xhr.onabort = function() {
+                var headers = this._parseHeaders(xhr.getAllResponseHeaders());
+                var response = this._transformResponse(xhr.response, headers);
+                this._onCancelItem(item, response, xhr.status, headers);
+                this._onCompleteItem(item, response, xhr.status, headers);
+            };
+
+            xhr.open(item.method, item.url, true);
+
+            xhr.withCredentials = item.withCredentials;
+
+            angular.forEach(item.headers, function(value, name) {
+                xhr.setRequestHeader(name, value);
+            });
+
+            xhr.send(item._file);
             this._render();
         }
         /**
