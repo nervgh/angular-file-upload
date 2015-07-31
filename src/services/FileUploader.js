@@ -512,7 +512,7 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
                 encoding: 'multipart/form-data' // old IE
             });
 
-            iframe.bind('load', () => {
+            iframe.onload = () => {
                 var html = '';
                 var status = 200;
 
@@ -542,14 +542,15 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
 
                 this._onSuccessItem(item, response, xhr.status, headers);
                 this._onCompleteItem(item, response, xhr.status, headers);
-            });
+            };
 
             form.abort = () => {
                 var xhr = {status: 0, dummy: true};
                 var headers = {};
                 var response;
 
-                iframe.unbind('load').prop('src', 'javascript:false;');
+                iframe[0].onload = undefined;
+                iframe[0].src = 'javascript:false;';
                 form.replaceWith(input);
 
                 this._onCancelItem(item, response, xhr.status, headers);
