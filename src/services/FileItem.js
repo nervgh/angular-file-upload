@@ -77,6 +77,7 @@ export default ($compile, FileLikeObject) => {
          * Removes a FileItem
          */
         remove() {
+            this.onRemove();
             this.uploader.removeFromQueue(this);
         }
         /**
@@ -92,6 +93,11 @@ export default ($compile, FileLikeObject) => {
          */
         onProgress(progress) {
         }
+        /**
+         * Callback
+         */
+         onRemove(){
+         }
         /**
          * Callback
          * @param {*} response

@@ -90,6 +90,7 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             var index = this.getIndexOfItem(value);
             var item = this.queue[index];
             if(item.isUploading) item.cancel();
+            this.onRemoveFromQueue(item);
             this.queue.splice(index, 1);
             item._destroy();
             this.progress = this._getTotalProgress();
@@ -101,6 +102,7 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             while(this.queue.length) {
                 this.queue[0].remove();
             }
+            this.onClearQueue();
             this.progress = 0;
         }
         /**
@@ -204,6 +206,17 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
                     object.destroy();
                 });
             });
+        }
+        /**
+         * Callback
+         */
+        onClearQueue(){
+        }
+        /**
+         * Callback
+         * @param {FileItem} fileItem
+         */
+        onRemoveFromQueue(fileItem) {
         }
         /**
          * Callback
