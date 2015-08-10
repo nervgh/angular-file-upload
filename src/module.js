@@ -11,8 +11,8 @@
  * FileUploader.FileDrop
  * FileUploader.FileOver
  */
-
-module
+angular
+    .module('angularFileUpload', [])
 
 
     .value('fileUploaderOptions', {

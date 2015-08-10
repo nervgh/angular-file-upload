@@ -1,6 +1,6 @@
 {
     "name": "angular-file-upload",
-    "main": "angular-file-upload.min.js",
+    "main": "dist/angular-file-upload.min.js",
     "homepage": "https://github.com/nervgh/angular-file-upload",
     "ignore": ["examples"],
     "dependencies": {
