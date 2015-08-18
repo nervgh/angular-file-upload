@@ -5,8 +5,8 @@ import CONFIG from './../config.json';
 
 
 export default (FileDirective) => {
-    
-    
+
+
     class FileOver extends FileDirective {
         /**
          * Creates instance of {FileDrop} object
@@ -14,6 +14,8 @@ export default (FileDirective) => {
          * @constructor
          */
         constructor(options) {
+            super(options);
+            
             // Map of events
             this.events = {
                 $destroy: 'destroy'
@@ -22,8 +24,6 @@ export default (FileDirective) => {
             this.prop = 'over';
             // Over class
             this.overClass = 'nv-file-over';
-            
-            super(options);
         }
         /**
          * Adds over class
@@ -45,8 +45,8 @@ export default (FileDirective) => {
             return this.overClass;
         }
     }
-    
-    
+
+
     return FileOver;
 }
 
