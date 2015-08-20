@@ -8,7 +8,18 @@
 
 When files are selected or dropped into the component, one or more filters are applied. Files which pass all filters are added to the queue. When file is added to the queue, for him is created instance of `{FileItem}` and uploader options are copied into this object. After, items in the queue (FileItems) are ready for uploading.
 
+## Package managers
+### Bower
+```
+bower install angular-file-upload
+```
 You could find this module in bower like [_angular file upload_](http://bower.io/search/?q=angular%20file%20upload).
+
+### NPM
+```
+npm install angular-file-upload
+```
+You could find this module in npm like [_angular file upload_](https://www.npmjs.com/search?q=angular%20file%20upload).
 
 ## Demos
 1. [Simple example](http://nervgh.github.io/pages/angular-file-upload/examples/simple)
