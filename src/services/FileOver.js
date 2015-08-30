@@ -4,6 +4,11 @@
 import CONFIG from './../config.json';
 
 
+let {
+    extend
+    } = angular;
+
+
 export default (FileDirective) => {
     
     
@@ -14,16 +19,18 @@ export default (FileDirective) => {
          * @constructor
          */
         constructor(options) {
-            // Map of events
-            this.events = {
-                $destroy: 'destroy'
-            };
-            // Name of property inside uploader._directive object
-            this.prop = 'over';
-            // Over class
-            this.overClass = 'nv-file-over';
+            let extendedOptions = extend(options, {
+                // Map of events
+                events: {
+                    $destroy: 'destroy'
+                },
+                // Name of property inside uploader._directive object
+                prop: 'over',
+                // Over class
+                overClass: 'nv-file-over'
+            });
             
-            super(options);
+            super(extendedOptions);
         }
         /**
          * Adds over class

@@ -4,6 +4,11 @@
 import CONFIG from './../config.json';
 
 
+let {
+    extend
+    } = angular;
+
+
 export default (FileDirective) => {
     
     
@@ -14,15 +19,17 @@ export default (FileDirective) => {
          * @constructor
          */
         constructor(options) {
-            // Map of events
-            this.events = {
-                $destroy: 'destroy',
-                change: 'onChange'
-            };
-            // Name of property inside uploader._directive object
-            this.prop = 'select';
+            let extendedOptions = extend(options, {
+                // Map of events
+                events: {
+                    $destroy: 'destroy',
+                    change: 'onChange'
+                },
+                // Name of property inside uploader._directive object
+                prop: 'select'
+            });
             
-            super(options);
+            super(extendedOptions);
             
             if(!this.uploader.isHTML5) {
                 this.element.removeAttr('multiple');

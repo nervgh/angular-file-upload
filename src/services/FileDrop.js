@@ -5,6 +5,7 @@ import CONFIG from './../config.json';
 
 
 let {
+    extend,
     forEach
     } = angular;
 
@@ -19,17 +20,19 @@ export default (FileDirective) => {
          * @constructor
          */
         constructor(options) {
-            // Map of events
-            this.events = {
-                $destroy: 'destroy',
-                drop: 'onDrop',
-                dragover: 'onDragOver',
-                dragleave: 'onDragLeave'
-            };
-            // Name of property inside uploader._directive object
-            this.prop = 'drop';
+            let extendedOptions = extend(options, {
+                // Map of events
+                events: {
+                    $destroy: 'destroy',
+                    drop: 'onDrop',
+                    dragover: 'onDragOver',
+                    dragleave: 'onDragLeave'
+                },
+                // Name of property inside uploader._directive object
+                prop: 'drop'
+            });
             
-            super(options);
+            super(extendedOptions);
         }
         /**
          * Returns options
