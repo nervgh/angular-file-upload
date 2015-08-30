@@ -10,8 +10,8 @@ let {
 
 
 export default (FileDirective) => {
-    
-    
+
+
     class FileDrop extends FileDirective {
         /**
          * Creates instance of {FileDrop} object
@@ -19,6 +19,8 @@ export default (FileDirective) => {
          * @constructor
          */
         constructor(options) {
+            super(options);
+
             // Map of events
             this.events = {
                 $destroy: 'destroy',
@@ -28,8 +30,6 @@ export default (FileDirective) => {
             };
             // Name of property inside uploader._directive object
             this.prop = 'drop';
-            
-            super(options);
         }
         /**
          * Returns options
@@ -113,8 +113,8 @@ export default (FileDirective) => {
             item.removeOverClass();
         }
     }
-    
-    
+
+
     return FileDrop;
 }
 

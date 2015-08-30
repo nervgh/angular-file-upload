@@ -5,8 +5,8 @@ import CONFIG from './../config.json';
 
 
 export default (FileDirective) => {
-    
-    
+
+
     class FileSelect extends FileDirective {
         /**
          * Creates instance of {FileSelect} object
@@ -14,6 +14,8 @@ export default (FileDirective) => {
          * @constructor
          */
         constructor(options) {
+            super(options);
+
             // Map of events
             this.events = {
                 $destroy: 'destroy',
@@ -21,9 +23,7 @@ export default (FileDirective) => {
             };
             // Name of property inside uploader._directive object
             this.prop = 'select';
-            
-            super(options);
-            
+
             if(!this.uploader.isHTML5) {
                 this.element.removeAttr('multiple');
             }
@@ -61,8 +61,8 @@ export default (FileDirective) => {
             if(this.isEmptyAfterSelection()) this.element.prop('value', null);
         }
     }
-    
-    
+
+
     return FileSelect;
 }
 
