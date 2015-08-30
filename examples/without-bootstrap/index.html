@@ -34,7 +34,7 @@
         <br />
 
         <!-- 3. nv-file-over uploader="link" over-class="className" -->
-        <div ng-show="uploader.isHTML5">
+        <div>
             <div class="over-zone zone" nv-file-over="" uploader="uploader" style="float: left;">
                 Base drop zone indication
             </div>
@@ -55,7 +55,7 @@
             <li ng-repeat="item in uploader.queue">
                 <div>Name: {{ item.file.name }}</div>
                 <div>Size: {{ item.file.size/1024/1024|number:2 }} Mb</div>
-                <div ng-show="uploader.isHTML5">
+                <div>
                     Progress: {{ item.progress }}
                     <div class="item-progress-box">
                         <div class="item-progress" ng-style="{ 'width': item.progress + '%' }"></div>

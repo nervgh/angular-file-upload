@@ -11,8 +11,7 @@ let {
     isObject,
     isNumber,
     isDefined,
-    isArray,
-    element
+    isArray
     } = angular;
 
 
@@ -50,7 +49,7 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
         }
         /**
          * Adds items to the queue
-         * @param {File|HTMLInputElement|Object|FileList|Array<Object>} files
+         * @param {File|Object|FileList|Array<Object>} files
          * @param {Object} [options]
          * @param {Array<Function>|String} filters
          */
@@ -60,7 +59,7 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             var count = this.queue.length;
             var addedFileItems = [];
 
-            forEach(list, (some /*{File|HTMLInputElement|Object}*/) => {
+            forEach(list, (some /*{File|Object}*/) => {
                 var temp = new FileLikeObject(some);
 
                 if (this._isValidFile(temp, arrayOfFilters, options)) {
@@ -91,7 +90,6 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             var item = this.queue[index];
             if(item.isUploading) item.cancel();
             this.queue.splice(index, 1);
-            item._destroy();
             this.progress = this._getTotalProgress();
         }
         /**
@@ -110,13 +108,12 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
         uploadItem(value) {
             var index = this.getIndexOfItem(value);
             var item = this.queue[index];
-            var transport = this.isHTML5 ? '_xhrTransport' : '_iframeTransport';
 
             item._prepareToUploading();
             if(this.isUploading) return;
 
             this.isUploading = true;
-            this[transport](item);
+            this._xhrTransport(item);
         }
         /**
          * Cancels uploading of item from the queue
@@ -125,8 +122,9 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
         cancelItem(value) {
             var index = this.getIndexOfItem(value);
             var item = this.queue[index];
-            var prop = this.isHTML5 ? '_xhr' : '_form';
-            if(item && item.isUploading) item[prop].abort();
+            if(item && item.isUploading) {
+                item._xhr.abort();
+            }
         }
         /**
          * Uploads all not uploaded items of queue
@@ -480,89 +478,6 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             this._render();
         }
         /**
-         * The IFrame transport
-         * @param {FileItem} item
-         * @private
-         */
-        _iframeTransport(item) {
-            var form = element('<form style="display: none;" />');
-            var iframe = element('<iframe name="iframeTransport' + Date.now() + '">');
-            var input = item._input;
-
-            if(item._form) item._form.replaceWith(input); // remove old form
-            item._form = form; // save link to new form
-
-            this._onBeforeUploadItem(item);
-
-            input.prop('name', item.alias);
-
-            forEach(item.formData, (obj) => {
-                forEach(obj, (value, key) => {
-                    var element_ = element('<input type="hidden" name="' + key + '" />');
-                    element_.val(value);
-                    form.append(element_);
-                });
-            });
-
-            form.prop({
-                action: item.url,
-                method: 'POST',
-                target: iframe.prop('name'),
-                enctype: 'multipart/form-data',
-                encoding: 'multipart/form-data' // old IE
-            });
-
-            iframe.bind('load', () => {
-                var html = '';
-                var status = 200;
-
-                try {
-                    // Fix for legacy IE browsers that loads internal error page
-                    // when failed WS response received. In consequence iframe
-                    // content access denied error is thrown becouse trying to
-                    // access cross domain page. When such thing occurs notifying
-                    // with empty response object. See more info at:
-                    // http://stackoverflow.com/questions/151362/access-is-denied-error-on-accessing-iframe-document-object
-                    // Note that if non standard 4xx or 5xx error code returned
-                    // from WS then response content can be accessed without error
-                    // but 'XHR' status becomes 200. In order to avoid confusion
-                    // returning response via same 'success' event handler.
-
-                    // fixed angular.contents() for iframes
-                    html = iframe[0].contentDocument.body.innerHTML;
-                } catch(e) {
-                    // in case we run into the access-is-denied error or we have another error on the server side
-                    // (intentional 500,40... errors), we at least say 'something went wrong' -> 500
-                    status = 500;
-                }
-
-                var xhr = {response: html, status: status, dummy: true};
-                var headers = {};
-                var response = this._transformResponse(xhr.response, headers);
-
-                this._onSuccessItem(item, response, xhr.status, headers);
-                this._onCompleteItem(item, response, xhr.status, headers);
-            });
-
-            form.abort = () => {
-                var xhr = {status: 0, dummy: true};
-                var headers = {};
-                var response;
-
-                iframe.unbind('load').prop('src', 'javascript:false;');
-                form.replaceWith(input);
-
-                this._onCancelItem(item, response, xhr.status, headers);
-                this._onCompleteItem(item, response, xhr.status, headers);
-            };
-
-            input.after(form);
-            form.append(input).append(iframe);
-
-            form[0].submit();
-            this._render();
-        }
-        /**
          * Inner callback
          * @param {File|Object} item
          * @param {Object} filter
@@ -709,24 +624,6 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             target.super_ = source;
         }
     }
-
-
-    /**********************
-     * PUBLIC
-     **********************/
-    /**
-     * Checks a support the html5 uploader
-     * @returns {Boolean}
-     * @readonly
-     */
-    FileUploader.prototype.isHTML5 = !!(File && FormData);
-    /**********************
-     * STATIC
-     **********************/
-    /**
-     * @borrows FileUploader.prototype.isHTML5
-     */
-    FileUploader.isHTML5 = FileUploader.prototype.isHTML5;
 
     
     return FileUploader;

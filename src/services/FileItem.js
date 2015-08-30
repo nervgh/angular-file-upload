@@ -12,22 +12,18 @@ let {
     } = angular;
 
 
-export default ($compile, FileLikeObject) => {
+export default (FileLikeObject) => {
     
     
     class FileItem {
         /**
          * Creates an instance of FileItem
          * @param {FileUploader} uploader
-         * @param {File|HTMLInputElement|Object} some
+         * @param {File|Object} file
          * @param {Object} options
          * @constructor
          */
-        constructor(uploader, some, options) {
-            var isInput = isElement(some);
-            var input = isInput ? element(some) : null;
-            var file = !isInput ? some : null;
-
+        constructor(uploader, file, options) {
             extend(this, {
                 url: uploader.url,
                 alias: uploader.alias,
@@ -38,7 +34,7 @@ export default ($compile, FileLikeObject) => {
                 method: uploader.method
             }, options, {
                 uploader: uploader,
-                file: new FileLikeObject(some),
+                file: new FileLikeObject(file),
                 isReady: false,
                 isUploading: false,
                 isUploaded: false,
@@ -47,11 +43,8 @@ export default ($compile, FileLikeObject) => {
                 isError: false,
                 progress: 0,
                 index: null,
-                _file: file,
-                _input: input
+                _file: file
             });
-
-            if (input) this._replaceNode(input);
         }
         /**********************
          * PUBLIC
@@ -215,15 +208,6 @@ export default ($compile, FileLikeObject) => {
             if(this.removeAfterUpload) this.remove();
         }
         /**
-         * Destroys a FileItem
-         */
-        _destroy() {
-            if(this._input) this._input.remove();
-            if(this._form) this._form.remove();
-            delete this._form;
-            delete this._input;
-        }
-        /**
          * Prepares to uploading
          * @private
          */
@@ -231,18 +215,6 @@ export default ($compile, FileLikeObject) => {
             this.index = this.index || ++this.uploader._nextIndex;
             this.isReady = true;
         }
-        /**
-         * Replaces input element on his clone
-         * @param {JQLite|jQuery} input
-         * @private
-         */
-        _replaceNode(input) {
-            var clone = $compile(input.clone())(input.scope());
-            clone.prop('value', null); // FF fix
-            input.css('display', 'none');
-            input.after(clone); // remove jquery dependency
-        }
-
     }
     
     
@@ -251,6 +223,5 @@ export default ($compile, FileLikeObject) => {
 
 
 module.exports.$inject = [
-    '$compile',
     'FileLikeObject'
 ];

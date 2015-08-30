@@ -30,10 +30,7 @@ export default (FileDirective) => {
             });
             
             super(extendedOptions);
-            
-            if(!this.uploader.isHTML5) {
-                this.element.removeAttr('multiple');
-            }
+
             this.element.prop('value', null); // FF fix
         }
         /**
@@ -59,11 +56,10 @@ export default (FileDirective) => {
          * Event handler
          */
         onChange() {
-            var files = this.uploader.isHTML5 ? this.element[0].files : this.element[0];
+            var files = this.element[0].files;
             var options = this.getOptions();
             var filters = this.getFilters();
 
-            if(!this.uploader.isHTML5) this.destroy();
             this.uploader.addToQueue(files, options, filters);
             if(this.isEmptyAfterSelection()) this.element.prop('value', null);
         }
