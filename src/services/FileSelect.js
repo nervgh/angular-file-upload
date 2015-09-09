@@ -61,7 +61,10 @@ export default (FileDirective) => {
             var filters = this.getFilters();
 
             this.uploader.addToQueue(files, options, filters);
-            if(this.isEmptyAfterSelection()) this.element.prop('value', null);
+            if(this.isEmptyAfterSelection()) {
+                this.element.prop('value', null);
+                this.element.replaceWith(this.element = this.element.clone(true)); // IE fix
+            }
         }
     }
     
