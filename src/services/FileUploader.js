@@ -24,7 +24,7 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
         } = $window;
     
     
-    class FileUploader {
+    return class FileUploader {
         /**********************
          * PUBLIC
          **********************/
@@ -614,9 +614,6 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             return (isObject(value) && 'length' in value);
         }
     }
-
-    
-    return FileUploader;
 }
 
 

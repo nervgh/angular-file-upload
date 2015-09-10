@@ -12,7 +12,7 @@ let {
 export default (FileDirective) => {
     
     
-    class FileSelect extends FileDirective {
+    return class FileSelect extends FileDirective {
         /**
          * Creates instance of {FileSelect} object
          * @param {Object} options
@@ -67,9 +67,6 @@ export default (FileDirective) => {
             }
         }
     }
-    
-    
-    return FileSelect;
 }
 
 

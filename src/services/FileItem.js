@@ -15,7 +15,7 @@ let {
 export default (FileLikeObject) => {
     
     
-    class FileItem {
+    return class FileItem {
         /**
          * Creates an instance of FileItem
          * @param {FileUploader} uploader
@@ -216,9 +216,6 @@ export default (FileLikeObject) => {
             this.isReady = true;
         }
     }
-    
-    
-    return FileItem;
 }
 
 

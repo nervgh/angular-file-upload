@@ -12,7 +12,7 @@ let {
 export default (FileDirective) => {
     
     
-    class FileOver extends FileDirective {
+    return class FileOver extends FileDirective {
         /**
          * Creates instance of {FileDrop} object
          * @param {Object} options
@@ -52,9 +52,6 @@ export default (FileDirective) => {
             return this.overClass;
         }
     }
-    
-    
-    return FileOver;
 }
 
 
