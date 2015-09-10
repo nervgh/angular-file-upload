@@ -613,16 +613,6 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
         static isArrayLikeObject(value) {
             return (isObject(value) && 'length' in value);
         }
-        /**
-         * Inherits a target (Class_1) by a source (Class_2)
-         * @param {Function} target
-         * @param {Function} source
-         */
-        static inherit(target, source) {
-            target.prototype = Object.create(source.prototype);
-            target.prototype.constructor = target;
-            target.super_ = source;
-        }
     }
 
     
