@@ -23,6 +23,8 @@ export default () => {
          * @constructor
          */
         constructor(options) {
+            // Map of events
+            this.events = {};
             extend(this, options);
             this.uploader._directives[this.prop].push(this);
             this._saveLinks();
@@ -65,13 +67,6 @@ export default () => {
             }
         }
     }
-
-
-    /**
-     * Map of events
-     * @type {Object}
-     */
-    FileDirective.prototype.events = {};
 
 
     return FileDirective;
