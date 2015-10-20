@@ -1,4 +1,4 @@
-
+'use strict';
 
 var pkg = require('./package.json');
 // https://github.com/gulpjs/gulp/blob/master/docs/README.md
@@ -7,14 +7,14 @@ var gulp = require('gulp');
 var webpack = require('webpack');
 // https://github.com/shama/webpack-stream
 var webpackStream = require('webpack-stream');
-
+//
+var es = require('event-stream');
+var extend = require('extend');
 
 gulp.task(
     pkg.name + '/build',
     function() {
-        return gulp
-            .src('./src/index.js')
-            .pipe(webpackStream({
+        var normalWebpackStream = {
                 module: {
                     loaders: [
                         // https://github.com/babel/babel-loader
@@ -26,12 +26,7 @@ gulp.task(
                     ]
                 },
                 plugins: [
-                    // http://webpack.github.io/docs/list-of-plugins.html#uglifyjsplugin
-                    new webpack.optimize.UglifyJsPlugin({
-                        compress: {
-                            warnings: false
-                        }
-                    }),
+
                     // http://webpack.github.io/docs/list-of-plugins.html#bannerplugin
                     new webpack.BannerPlugin(
                         '/*\n' +
@@ -48,10 +43,34 @@ gulp.task(
                 output: {
                     library: pkg.name,
                     libraryTarget: 'umd',
-                    filename: pkg.name + '.min.js'
+                    filename: pkg.name + '.js'
                 }
-            }))
-            .pipe(gulp.dest('./dist'));
+            },
+            normalStream =
+                gulp
+                    .src('./src/index.js')
+                    .pipe(webpackStream(normalWebpackStream))
+                    .pipe(gulp.dest('./dist'));
+
+        var ulgifyWebpackStream = extend(true, {}, normalWebpackStream);
+
+        ulgifyWebpackStream.plugins.unshift(
+            // http://webpack.github.io/docs/list-of-plugins.html#uglifyjsplugin
+            new webpack.optimize.UglifyJsPlugin({
+                compress: {
+                    warnings: false
+                }
+        }));
+
+        ulgifyWebpackStream.output.filename = pkg.name + '.min.js';
+
+        var uglifyStream =
+            gulp
+                .src('./src/index.js')
+                .pipe(webpackStream(ulgifyWebpackStream))
+                .pipe(gulp.dest('./dist'));
+
+        return es.concat(normalStream, uglifyStream);
     }
 );
 
