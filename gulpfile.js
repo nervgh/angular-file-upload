@@ -1,5 +1,3 @@
-'use strict';
-
 var pkg = require('./package.json');
 // https://github.com/gulpjs/gulp/blob/master/docs/README.md
 var gulp = require('gulp');
@@ -7,8 +5,9 @@ var gulp = require('gulp');
 var webpack = require('webpack');
 // https://github.com/shama/webpack-stream
 var webpackStream = require('webpack-stream');
-//
+// https://github.com/dominictarr/event-stream
 var es = require('event-stream');
+// https://github.com/justmoon/node-extend
 var extend = require('extend');
 
 gulp.task(
@@ -52,6 +51,9 @@ gulp.task(
                     .pipe(webpackStream(normalWebpackStream))
                     .pipe(gulp.dest('./dist'));
 
+        /**
+         * Deep copy the normalWebpackStream to customize it for the uglify stream
+         */
         var ulgifyWebpackStream = extend(true, {}, normalWebpackStream);
 
         ulgifyWebpackStream.plugins.unshift(
