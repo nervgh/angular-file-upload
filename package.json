@@ -11,9 +11,11 @@
     "devDependencies": {
         "babel": "^4.7.16",
         "babel-loader": "^4.0.0",
-        "json-loader": "^0.5.1",
-        "html-loader": "^0.2.3",
+        "event-stream": "^3.3.2",
+        "extend": "^3.0.0",
         "gulp": "^3.9.0",
+        "html-loader": "^0.2.3",
+        "json-loader": "^0.5.1",
         "webpack": "^1.10.1",
         "webpack-stream": "^2.0.0"
     }
