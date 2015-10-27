@@ -7,6 +7,10 @@
         "name": "nerv",
         "url": "https://github.com/nervgh"
     },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nervgh/angular-file-upload.git"
+    },
     "main": "dist/angular-file-upload.min.js",
     "devDependencies": {
         "babel": "^4.7.16",
