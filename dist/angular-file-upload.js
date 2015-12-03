@@ -233,6 +233,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    this.queue.splice(index, 1);
 	                    item._destroy();
 	                    this.progress = this._getTotalProgress();
+	                    this.onRemoveFromQueue(item, index);
 	                }
 	            },
 	            clearQueue: {
@@ -245,6 +246,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        this.queue[0].remove();
 	                    }
 	                    this.progress = 0;
+	                    this.onClearQueue();
 	                }
 	            },
 	            uploadItem: {
@@ -495,6 +497,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	                 */
 	
 	                value: function onCompleteAll() {}
+	            },
+	            onRemoveFromQueue: {
+	                /**
+	                 * Callback
+	                 * @param {FileItem} item
+	                 * @param {Number} index  
+	                 */
+	
+	                value: function onRemoveFromQueue(item, index) {}
+	            },
+	            onClearQueue: {
+	                /**
+	                 * Callback
+	                 */
+	
+	                value: function onClearQueue() {}
 	            },
 	            _getTotalProgress: {
 	                /**********************
@@ -1996,4 +2014,3 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ ])
 });
 ;
-//# sourceMappingURL=angular-file-upload.js.map

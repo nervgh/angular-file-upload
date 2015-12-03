@@ -56,7 +56,13 @@ angular
         uploader.onCompleteAll = function() {
             console.info('onCompleteAll');
         };
-
+        uploader.onRemoveFromQueue = function(item, index) {
+            console.info('onRemoveFromQueue', item, index);
+        };
+        uploader.onClearQueue = function() {
+            console.info('onClearQueue');
+        };
+        
         console.info('uploader', uploader);
 
 
