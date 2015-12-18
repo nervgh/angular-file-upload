@@ -476,7 +476,13 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
                 xhr.setRequestHeader(name, value);
             });
 
-            xhr.send(form);
+
+            if (typeof _this.onInsteadSend == 'function') {
+              _this.onInsteadPost(item, form, xhr);
+            } else {
+              xhr.send(form);
+            }
+
             this._render();
         }
         /**
@@ -559,7 +565,12 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             input.after(form);
             form.append(input).append(iframe);
 
-            form[0].submit();
+            if (typeof _this.onInsteadSend == 'function') {
+              _this.onInsteadPost(item, form, null);
+            } else {
+              form[0].submit();
+            }
+
             this._render();
         }
         /**
