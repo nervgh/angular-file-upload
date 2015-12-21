@@ -428,6 +428,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                value: function onBeforeUploadItem(fileItem) {}
 	            },
+	            onInsteadSend: {
+	                /**
+	                 * Callback
+	                 * @param {FileItem} fileItem
+	                 */
+	
+	                value: function onInsteadSend(item, form, xhr) {}
+	            },
 	            onProgressItem: {
 	                /**
 	                 * Callback
@@ -729,7 +737,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        xhr.setRequestHeader(name, value);
 	                    });
 	
-	                    xhr.send(form);
+	                    if (typeof this.onInsteadSend == "function") {
+	                        this.onInsteadSend(item, form, xhr);
+	                    } else {
+	                        xhr.send(form);
+	                    };
+	
 	                    this._render();
 	                }
 	            },
@@ -817,7 +830,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    input.after(form);
 	                    form.append(input).append(iframe);
 	
-	                    form[0].submit();
+	                    if (typeof this.onInsteadSend == "function") {
+	                        this.onInsteadSend(item, form, null);
+	                    } else {
+	                        form[0].submit();
+	                    };
+	
 	                    this._render();
 	                }
 	            },
@@ -1996,4 +2014,3 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ ])
 });
 ;
-//# sourceMappingURL=angular-file-upload.js.map

@@ -234,6 +234,12 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
         /**
          * Callback
          * @param {FileItem} fileItem
+         */
+        onInsteadSend(item, form, xhr) {
+        }
+        /**
+         * Callback
+         * @param {FileItem} fileItem
          * @param {Number} progress
          */
         onProgressItem(fileItem, progress) {
@@ -476,7 +482,13 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
                 xhr.setRequestHeader(name, value);
             });
 
-            xhr.send(form);
+
+            if (typeof this.onInsteadSend == 'function') {
+              this.onInsteadSend(item, form, xhr);
+            } else {
+              xhr.send(form);
+            };
+
             this._render();
         }
         /**
@@ -559,7 +571,12 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             input.after(form);
             form.append(input).append(iframe);
 
-            form[0].submit();
+            if (typeof this.onInsteadSend == 'function') {
+              this.onInsteadSend(item, form, null);
+            } else {
+              form[0].submit();
+            };
+
             this._render();
         }
         /**
