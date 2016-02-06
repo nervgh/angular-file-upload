@@ -9,7 +9,7 @@ let {
     } = angular;
 
 
-export default (FileDirective) => {
+export default ($compile, FileDirective) => {
     
     
     class FileSelect extends FileDirective {
@@ -67,7 +67,7 @@ export default (FileDirective) => {
             this.uploader.addToQueue(files, options, filters);
             if(this.isEmptyAfterSelection()) {
                 this.element.prop('value', null);
-                this.element.replaceWith(this.element = this.element.clone(true)); // IE fix
+                this.element.replaceWith( $compile(this.element.clone())(this.scope) ); // IE fix
             }
         }
     }
@@ -78,5 +78,6 @@ export default (FileDirective) => {
 
 
 module.exports.$inject = [
+    '$compile',
     'FileDirective'
 ];
