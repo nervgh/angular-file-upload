@@ -35,6 +35,7 @@ export default ($compile, FileLikeObject) => {
                 formData: copy(uploader.formData),
                 removeAfterUpload: uploader.removeAfterUpload,
                 withCredentials: uploader.withCredentials,
+                disableMultipart: uploader.disableMultipart,
                 method: uploader.method
             }, options, {
                 uploader: uploader,

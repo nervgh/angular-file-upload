@@ -424,21 +424,27 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
          */
         _xhrTransport(item) {
             var xhr = item._xhr = new XMLHttpRequest();
-            var form = new FormData();
+            var sendable;
 
             this._onBeforeUploadItem(item);
 
-            forEach(item.formData, (obj) => {
-                forEach(obj, (value, key) => {
-                    form.append(key, value);
+            if (!item.disableMultipart) {
+                sendable = new FormData();
+                forEach(item.formData, (obj) => {
+                    forEach(obj, (value, key) => {
+                        sendable.append(key, value);
+                    });
                 });
-            });
+
+                sendable.append(item.alias, item._file, item.file.name);
+            }
+            else {
+                sendable = item.file;
+            }
 
             if(typeof(item._file.size) != 'number') {
                 throw new TypeError('The file specified is no longer valid');
             }
-
-            form.append(item.alias, item._file, item.file.name);
 
             xhr.upload.onprogress = (event) => {
                 var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
@@ -476,7 +482,7 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
                 xhr.setRequestHeader(name, value);
             });
 
-            xhr.send(form);
+            xhr.send(sendable);
             this._render();
         }
         /**
