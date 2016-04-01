@@ -65,6 +65,9 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
 
                 if (this._isValidFile(temp, arrayOfFilters, options)) {
                     var fileItem = new FileItem(this, some, options);
+                    if (fileItem.file.name in this.dic_queue)
+                        return;
+                    this.dic_queue[fileItem.file.name] = 1;
                     addedFileItems.push(fileItem);
                     this.queue.push(fileItem);
                     this._onAfterAddingFile(fileItem);
@@ -74,8 +77,10 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
                 }
             });
 
-            if(this.queue.length !== count) {
-                this._onAfterAddingAll(addedFileItems);
+            if(this.queue.length !== count ) {
+                if (!options || !options.isNotAddingAll) {
+                    this._onAfterAddingAll(addedFileItems);
+                }
                 this.progress = this._getTotalProgress();
             }
 
@@ -91,6 +96,7 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             var item = this.queue[index];
             if(item.isUploading) item.cancel();
             this.queue.splice(index, 1);
+            delete this.dic_queue[value.file.name];
             item._destroy();
             this.progress = this._getTotalProgress();
         }
@@ -101,6 +107,7 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             while(this.queue.length) {
                 this.queue[0].remove();
             }
+            this.dic_queue = {};
             this.progress = 0;
         }
         /**

@@ -6,6 +6,7 @@ export default {
     alias: 'file',
     headers: {},
     queue: [],
+    dic_queue: {},
     progress: 0,
     autoUpload: false,
     removeAfterUpload: false,
