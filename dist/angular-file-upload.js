@@ -116,6 +116,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    alias: "file",
 	    headers: {},
 	    queue: [],
+	    dic_queue: {},
 	    progress: 0,
 	    autoUpload: false,
 	    removeAfterUpload: false,
@@ -202,6 +203,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                        if (_this._isValidFile(temp, arrayOfFilters, options)) {
 	                            var fileItem = new FileItem(_this, some, options);
+	                            if (fileItem.file.name in _this.dic_queue) return;
+	                            _this.dic_queue[fileItem.file.name] = 1;
 	                            addedFileItems.push(fileItem);
 	                            _this.queue.push(fileItem);
 	                            _this._onAfterAddingFile(fileItem);
@@ -212,7 +215,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    });
 	
 	                    if (this.queue.length !== count) {
-	                        this._onAfterAddingAll(addedFileItems);
+	                        if (!options || !options.isNotAddingAll) {
+	                            this._onAfterAddingAll(addedFileItems);
+	                        }
 	                        this.progress = this._getTotalProgress();
 	                    }
 	
@@ -231,6 +236,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    var item = this.queue[index];
 	                    if (item.isUploading) item.cancel();
 	                    this.queue.splice(index, 1);
+	                    delete this.dic_queue[value.file.name];
 	                    item._destroy();
 	                    this.progress = this._getTotalProgress();
 	                }
@@ -244,6 +250,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    while (this.queue.length) {
 	                        this.queue[0].remove();
 	                    }
+	                    this.dic_queue = {};
 	                    this.progress = 0;
 	                }
 	            },
@@ -1996,4 +2003,3 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ ])
 });
 ;
-//# sourceMappingURL=angular-file-upload.js.map
