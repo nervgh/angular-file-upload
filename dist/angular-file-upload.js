@@ -268,7 +268,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    item._prepareToUploading();
 	                    if (this.isUploading) {
 	                        return;
-	                    }this.isUploading = true;
+	                    }item.url = this.url;
+	
+	                    this.isUploading = true;
 	                    this[transport](item);
 	                }
 	            },

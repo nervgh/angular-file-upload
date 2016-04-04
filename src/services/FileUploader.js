@@ -121,6 +121,7 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
 
             item._prepareToUploading();
             if(this.isUploading) return;
+            item.url = this.url;
 
             this.isUploading = true;
             this[transport](item);
