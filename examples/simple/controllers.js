@@ -57,5 +57,13 @@ angular
             console.info('onCompleteAll');
         };
 
+        $scope.onDragEnter = function () {
+            console.info('onDragEnter');
+        };
+
+        $scope.onDragLeave = function () {
+            console.info('onDragLeave');
+        };
+
         console.info('uploader', uploader);
     }]);
