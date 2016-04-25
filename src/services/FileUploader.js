@@ -230,6 +230,7 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
          * @param {FileItem} fileItem
          */
         onBeforeUploadItem(fileItem) {
+            return true;
         }
         /**
          * Callback
@@ -426,57 +427,62 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             var xhr = item._xhr = new XMLHttpRequest();
             var form = new FormData();
 
-            this._onBeforeUploadItem(item);
+            if (!this._onBeforeUploadItem(item))
+            {
+                this._onCancelItem(item);
+                this._onCompleteItem(item);
+            } else {
 
-            forEach(item.formData, (obj) => {
-                forEach(obj, (value, key) => {
-                    form.append(key, value);
+                forEach(item.formData, (obj) => {
+                    forEach(obj, (value, key) => {
+                        form.append(key, value);
+                    });
                 });
-            });
 
-            if(typeof(item._file.size) != 'number') {
-                throw new TypeError('The file specified is no longer valid');
+                if (typeof(item._file.size) != 'number') {
+                    throw new TypeError('The file specified is no longer valid');
+                }
+
+                form.append(item.alias, item._file, item.file.name);
+
+                xhr.upload.onprogress = (event) => {
+                    var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
+                    this._onProgressItem(item, progress);
+                };
+
+                xhr.onload = () => {
+                    var headers = this._parseHeaders(xhr.getAllResponseHeaders());
+                    var response = this._transformResponse(xhr.response, headers);
+                    var gist = this._isSuccessCode(xhr.status) ? 'Success' : 'Error';
+                    var method = '_on' + gist + 'Item';
+                    this[method](item, response, xhr.status, headers);
+                    this._onCompleteItem(item, response, xhr.status, headers);
+                };
+
+                xhr.onerror = () => {
+                    var headers = this._parseHeaders(xhr.getAllResponseHeaders());
+                    var response = this._transformResponse(xhr.response, headers);
+                    this._onErrorItem(item, response, xhr.status, headers);
+                    this._onCompleteItem(item, response, xhr.status, headers);
+                };
+
+                xhr.onabort = () => {
+                    var headers = this._parseHeaders(xhr.getAllResponseHeaders());
+                    var response = this._transformResponse(xhr.response, headers);
+                    this._onCancelItem(item, response, xhr.status, headers);
+                    this._onCompleteItem(item, response, xhr.status, headers);
+                };
+
+                xhr.open(item.method, item.url, true);
+
+                xhr.withCredentials = item.withCredentials;
+
+                forEach(item.headers, (value, name) => {
+                    xhr.setRequestHeader(name, value);
+                });
+
+                xhr.send(form);
             }
-
-            form.append(item.alias, item._file, item.file.name);
-
-            xhr.upload.onprogress = (event) => {
-                var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
-                this._onProgressItem(item, progress);
-            };
-
-            xhr.onload = () => {
-                var headers = this._parseHeaders(xhr.getAllResponseHeaders());
-                var response = this._transformResponse(xhr.response, headers);
-                var gist = this._isSuccessCode(xhr.status) ? 'Success' : 'Error';
-                var method = '_on' + gist + 'Item';
-                this[method](item, response, xhr.status, headers);
-                this._onCompleteItem(item, response, xhr.status, headers);
-            };
-
-            xhr.onerror = () => {
-                var headers = this._parseHeaders(xhr.getAllResponseHeaders());
-                var response = this._transformResponse(xhr.response, headers);
-                this._onErrorItem(item, response, xhr.status, headers);
-                this._onCompleteItem(item, response, xhr.status, headers);
-            };
-
-            xhr.onabort = () => {
-                var headers = this._parseHeaders(xhr.getAllResponseHeaders());
-                var response = this._transformResponse(xhr.response, headers);
-                this._onCancelItem(item, response, xhr.status, headers);
-                this._onCompleteItem(item, response, xhr.status, headers);
-            };
-
-            xhr.open(item.method, item.url, true);
-
-            xhr.withCredentials = item.withCredentials;
-
-            forEach(item.headers, (value, name) => {
-                xhr.setRequestHeader(name, value);
-            });
-
-            xhr.send(form);
             this._render();
         }
         /**
@@ -492,74 +498,79 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             if(item._form) item._form.replaceWith(input); // remove old form
             item._form = form; // save link to new form
 
-            this._onBeforeUploadItem(item);
+            if (!this._onBeforeUploadItem(item))
+            {
+                this._onCancelItem(item);
+                this._onCompleteItem(item);
+            } else {
 
-            input.prop('name', item.alias);
+                input.prop('name', item.alias);
 
-            forEach(item.formData, (obj) => {
-                forEach(obj, (value, key) => {
-                    var element_ = element('<input type="hidden" name="' + key + '" />');
-                    element_.val(value);
-                    form.append(element_);
+                forEach(item.formData, (obj) => {
+                    forEach(obj, (value, key) => {
+                        var element_ = element('<input type="hidden" name="' + key + '" />');
+                        element_.val(value);
+                        form.append(element_);
+                    });
                 });
-            });
 
-            form.prop({
-                action: item.url,
-                method: 'POST',
-                target: iframe.prop('name'),
-                enctype: 'multipart/form-data',
-                encoding: 'multipart/form-data' // old IE
-            });
+                form.prop({
+                    action: item.url,
+                    method: 'POST',
+                    target: iframe.prop('name'),
+                    enctype: 'multipart/form-data',
+                    encoding: 'multipart/form-data' // old IE
+                });
 
-            iframe.bind('load', () => {
-                var html = '';
-                var status = 200;
+                iframe.bind('load', () => {
+                    var html = '';
+                    var status = 200;
 
-                try {
-                    // Fix for legacy IE browsers that loads internal error page
-                    // when failed WS response received. In consequence iframe
-                    // content access denied error is thrown becouse trying to
-                    // access cross domain page. When such thing occurs notifying
-                    // with empty response object. See more info at:
-                    // http://stackoverflow.com/questions/151362/access-is-denied-error-on-accessing-iframe-document-object
-                    // Note that if non standard 4xx or 5xx error code returned
-                    // from WS then response content can be accessed without error
-                    // but 'XHR' status becomes 200. In order to avoid confusion
-                    // returning response via same 'success' event handler.
+                    try {
+                        // Fix for legacy IE browsers that loads internal error page
+                        // when failed WS response received. In consequence iframe
+                        // content access denied error is thrown becouse trying to
+                        // access cross domain page. When such thing occurs notifying
+                        // with empty response object. See more info at:
+                        // http://stackoverflow.com/questions/151362/access-is-denied-error-on-accessing-iframe-document-object
+                        // Note that if non standard 4xx or 5xx error code returned
+                        // from WS then response content can be accessed without error
+                        // but 'XHR' status becomes 200. In order to avoid confusion
+                        // returning response via same 'success' event handler.
 
-                    // fixed angular.contents() for iframes
-                    html = iframe[0].contentDocument.body.innerHTML;
-                } catch(e) {
-                    // in case we run into the access-is-denied error or we have another error on the server side
-                    // (intentional 500,40... errors), we at least say 'something went wrong' -> 500
-                    status = 500;
-                }
+                        // fixed angular.contents() for iframes
+                        html = iframe[0].contentDocument.body.innerHTML;
+                    } catch (e) {
+                        // in case we run into the access-is-denied error or we have another error on the server side
+                        // (intentional 500,40... errors), we at least say 'something went wrong' -> 500
+                        status = 500;
+                    }
 
-                var xhr = {response: html, status: status, dummy: true};
-                var headers = {};
-                var response = this._transformResponse(xhr.response, headers);
+                    var xhr = {response: html, status: status, dummy: true};
+                    var headers = {};
+                    var response = this._transformResponse(xhr.response, headers);
 
-                this._onSuccessItem(item, response, xhr.status, headers);
-                this._onCompleteItem(item, response, xhr.status, headers);
-            });
+                    this._onSuccessItem(item, response, xhr.status, headers);
+                    this._onCompleteItem(item, response, xhr.status, headers);
+                });
 
-            form.abort = () => {
-                var xhr = {status: 0, dummy: true};
-                var headers = {};
-                var response;
+                form.abort = () => {
+                    var xhr = {status: 0, dummy: true};
+                    var headers = {};
+                    var response;
 
-                iframe.unbind('load').prop('src', 'javascript:false;');
-                form.replaceWith(input);
+                    iframe.unbind('load').prop('src', 'javascript:false;');
+                    form.replaceWith(input);
 
-                this._onCancelItem(item, response, xhr.status, headers);
-                this._onCompleteItem(item, response, xhr.status, headers);
-            };
+                    this._onCancelItem(item, response, xhr.status, headers);
+                    this._onCompleteItem(item, response, xhr.status, headers);
+                };
 
-            input.after(form);
-            form.append(input).append(iframe);
+                input.after(form);
+                form.append(input).append(iframe);
 
-            form[0].submit();
+                form[0].submit();
+            }
             this._render();
         }
         /**
@@ -593,7 +604,7 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
          */
         _onBeforeUploadItem(item) {
             item._onBeforeUpload();
-            this.onBeforeUploadItem(item);
+            return this.onBeforeUploadItem(item);
         }
         /**
          * Inner callback

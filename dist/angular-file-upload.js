@@ -426,7 +426,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                 * @param {FileItem} fileItem
 	                 */
 	
-	                value: function onBeforeUploadItem(fileItem) {}
+	                value: function onBeforeUploadItem(fileItem) {
+	                    return true;
+	                }
 	            },
 	            onProgressItem: {
 	                /**
@@ -679,57 +681,61 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    var xhr = item._xhr = new XMLHttpRequest();
 	                    var form = new FormData();
 	
-	                    this._onBeforeUploadItem(item);
+	                    if (!this._onBeforeUploadItem(item)) {
+	                        this._onCancelItem(item);
+	                        this._onCompleteItem(item);
+	                    } else {
 	
-	                    forEach(item.formData, function (obj) {
-	                        forEach(obj, function (value, key) {
-	                            form.append(key, value);
+	                        forEach(item.formData, function (obj) {
+	                            forEach(obj, function (value, key) {
+	                                form.append(key, value);
+	                            });
 	                        });
-	                    });
 	
-	                    if (typeof item._file.size != "number") {
-	                        throw new TypeError("The file specified is no longer valid");
+	                        if (typeof item._file.size != "number") {
+	                            throw new TypeError("The file specified is no longer valid");
+	                        }
+	
+	                        form.append(item.alias, item._file, item.file.name);
+	
+	                        xhr.upload.onprogress = function (event) {
+	                            var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
+	                            _this._onProgressItem(item, progress);
+	                        };
+	
+	                        xhr.onload = function () {
+	                            var headers = _this._parseHeaders(xhr.getAllResponseHeaders());
+	                            var response = _this._transformResponse(xhr.response, headers);
+	                            var gist = _this._isSuccessCode(xhr.status) ? "Success" : "Error";
+	                            var method = "_on" + gist + "Item";
+	                            _this[method](item, response, xhr.status, headers);
+	                            _this._onCompleteItem(item, response, xhr.status, headers);
+	                        };
+	
+	                        xhr.onerror = function () {
+	                            var headers = _this._parseHeaders(xhr.getAllResponseHeaders());
+	                            var response = _this._transformResponse(xhr.response, headers);
+	                            _this._onErrorItem(item, response, xhr.status, headers);
+	                            _this._onCompleteItem(item, response, xhr.status, headers);
+	                        };
+	
+	                        xhr.onabort = function () {
+	                            var headers = _this._parseHeaders(xhr.getAllResponseHeaders());
+	                            var response = _this._transformResponse(xhr.response, headers);
+	                            _this._onCancelItem(item, response, xhr.status, headers);
+	                            _this._onCompleteItem(item, response, xhr.status, headers);
+	                        };
+	
+	                        xhr.open(item.method, item.url, true);
+	
+	                        xhr.withCredentials = item.withCredentials;
+	
+	                        forEach(item.headers, function (value, name) {
+	                            xhr.setRequestHeader(name, value);
+	                        });
+	
+	                        xhr.send(form);
 	                    }
-	
-	                    form.append(item.alias, item._file, item.file.name);
-	
-	                    xhr.upload.onprogress = function (event) {
-	                        var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
-	                        _this._onProgressItem(item, progress);
-	                    };
-	
-	                    xhr.onload = function () {
-	                        var headers = _this._parseHeaders(xhr.getAllResponseHeaders());
-	                        var response = _this._transformResponse(xhr.response, headers);
-	                        var gist = _this._isSuccessCode(xhr.status) ? "Success" : "Error";
-	                        var method = "_on" + gist + "Item";
-	                        _this[method](item, response, xhr.status, headers);
-	                        _this._onCompleteItem(item, response, xhr.status, headers);
-	                    };
-	
-	                    xhr.onerror = function () {
-	                        var headers = _this._parseHeaders(xhr.getAllResponseHeaders());
-	                        var response = _this._transformResponse(xhr.response, headers);
-	                        _this._onErrorItem(item, response, xhr.status, headers);
-	                        _this._onCompleteItem(item, response, xhr.status, headers);
-	                    };
-	
-	                    xhr.onabort = function () {
-	                        var headers = _this._parseHeaders(xhr.getAllResponseHeaders());
-	                        var response = _this._transformResponse(xhr.response, headers);
-	                        _this._onCancelItem(item, response, xhr.status, headers);
-	                        _this._onCompleteItem(item, response, xhr.status, headers);
-	                    };
-	
-	                    xhr.open(item.method, item.url, true);
-	
-	                    xhr.withCredentials = item.withCredentials;
-	
-	                    forEach(item.headers, function (value, name) {
-	                        xhr.setRequestHeader(name, value);
-	                    });
-	
-	                    xhr.send(form);
 	                    this._render();
 	                }
 	            },
@@ -750,74 +756,78 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    if (item._form) item._form.replaceWith(input); // remove old form
 	                    item._form = form; // save link to new form
 	
-	                    this._onBeforeUploadItem(item);
+	                    if (!this._onBeforeUploadItem(item)) {
+	                        this._onCancelItem(item);
+	                        this._onCompleteItem(item);
+	                    } else {
 	
-	                    input.prop("name", item.alias);
+	                        input.prop("name", item.alias);
 	
-	                    forEach(item.formData, function (obj) {
-	                        forEach(obj, function (value, key) {
-	                            var element_ = element("<input type=\"hidden\" name=\"" + key + "\" />");
-	                            element_.val(value);
-	                            form.append(element_);
+	                        forEach(item.formData, function (obj) {
+	                            forEach(obj, function (value, key) {
+	                                var element_ = element("<input type=\"hidden\" name=\"" + key + "\" />");
+	                                element_.val(value);
+	                                form.append(element_);
+	                            });
 	                        });
-	                    });
 	
-	                    form.prop({
-	                        action: item.url,
-	                        method: "POST",
-	                        target: iframe.prop("name"),
-	                        enctype: "multipart/form-data",
-	                        encoding: "multipart/form-data" // old IE
-	                    });
+	                        form.prop({
+	                            action: item.url,
+	                            method: "POST",
+	                            target: iframe.prop("name"),
+	                            enctype: "multipart/form-data",
+	                            encoding: "multipart/form-data" // old IE
+	                        });
 	
-	                    iframe.bind("load", function () {
-	                        var html = "";
-	                        var status = 200;
+	                        iframe.bind("load", function () {
+	                            var html = "";
+	                            var status = 200;
 	
-	                        try {
-	                            // Fix for legacy IE browsers that loads internal error page
-	                            // when failed WS response received. In consequence iframe
-	                            // content access denied error is thrown becouse trying to
-	                            // access cross domain page. When such thing occurs notifying
-	                            // with empty response object. See more info at:
-	                            // http://stackoverflow.com/questions/151362/access-is-denied-error-on-accessing-iframe-document-object
-	                            // Note that if non standard 4xx or 5xx error code returned
-	                            // from WS then response content can be accessed without error
-	                            // but 'XHR' status becomes 200. In order to avoid confusion
-	                            // returning response via same 'success' event handler.
+	                            try {
+	                                // Fix for legacy IE browsers that loads internal error page
+	                                // when failed WS response received. In consequence iframe
+	                                // content access denied error is thrown becouse trying to
+	                                // access cross domain page. When such thing occurs notifying
+	                                // with empty response object. See more info at:
+	                                // http://stackoverflow.com/questions/151362/access-is-denied-error-on-accessing-iframe-document-object
+	                                // Note that if non standard 4xx or 5xx error code returned
+	                                // from WS then response content can be accessed without error
+	                                // but 'XHR' status becomes 200. In order to avoid confusion
+	                                // returning response via same 'success' event handler.
 	
-	                            // fixed angular.contents() for iframes
-	                            html = iframe[0].contentDocument.body.innerHTML;
-	                        } catch (e) {
-	                            // in case we run into the access-is-denied error or we have another error on the server side
-	                            // (intentional 500,40... errors), we at least say 'something went wrong' -> 500
-	                            status = 500;
-	                        }
+	                                // fixed angular.contents() for iframes
+	                                html = iframe[0].contentDocument.body.innerHTML;
+	                            } catch (e) {
+	                                // in case we run into the access-is-denied error or we have another error on the server side
+	                                // (intentional 500,40... errors), we at least say 'something went wrong' -> 500
+	                                status = 500;
+	                            }
 	
-	                        var xhr = { response: html, status: status, dummy: true };
-	                        var headers = {};
-	                        var response = _this._transformResponse(xhr.response, headers);
+	                            var xhr = { response: html, status: status, dummy: true };
+	                            var headers = {};
+	                            var response = _this._transformResponse(xhr.response, headers);
 	
-	                        _this._onSuccessItem(item, response, xhr.status, headers);
-	                        _this._onCompleteItem(item, response, xhr.status, headers);
-	                    });
+	                            _this._onSuccessItem(item, response, xhr.status, headers);
+	                            _this._onCompleteItem(item, response, xhr.status, headers);
+	                        });
 	
-	                    form.abort = function () {
-	                        var xhr = { status: 0, dummy: true };
-	                        var headers = {};
-	                        var response;
+	                        form.abort = function () {
+	                            var xhr = { status: 0, dummy: true };
+	                            var headers = {};
+	                            var response;
 	
-	                        iframe.unbind("load").prop("src", "javascript:false;");
-	                        form.replaceWith(input);
+	                            iframe.unbind("load").prop("src", "javascript:false;");
+	                            form.replaceWith(input);
 	
-	                        _this._onCancelItem(item, response, xhr.status, headers);
-	                        _this._onCompleteItem(item, response, xhr.status, headers);
-	                    };
+	                            _this._onCancelItem(item, response, xhr.status, headers);
+	                            _this._onCompleteItem(item, response, xhr.status, headers);
+	                        };
 	
-	                    input.after(form);
-	                    form.append(input).append(iframe);
+	                        input.after(form);
+	                        form.append(input).append(iframe);
 	
-	                    form[0].submit();
+	                        form[0].submit();
+	                    }
 	                    this._render();
 	                }
 	            },
@@ -863,7 +873,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                value: function _onBeforeUploadItem(item) {
 	                    item._onBeforeUpload();
-	                    this.onBeforeUploadItem(item);
+	                    return this.onBeforeUploadItem(item);
 	                }
 	            },
 	            _onProgressItem: {
@@ -1996,4 +2006,3 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ ])
 });
 ;
-//# sourceMappingURL=angular-file-upload.js.map
