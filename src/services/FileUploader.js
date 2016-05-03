@@ -113,7 +113,7 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             var transport = this.isHTML5 ? '_xhrTransport' : '_iframeTransport';
 
             item._prepareToUploading();
-            if(this.isUploading) return;
+            if(item.isUploading) return;
 
             this.isUploading = true;
             this[transport](item);
@@ -135,8 +135,7 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             var items = this.getNotUploadedItems().filter(item => !item.isUploading);
             if(!items.length) return;
 
-            forEach(items, item => item._prepareToUploading());
-            items[0].upload();
+            forEach(items, item => item.upload());
         }
         /**
          * Cancels all uploads
@@ -187,13 +186,11 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             return this.queue.filter(item => !item.isUploaded);
         }
         /**
-         * Returns items ready for upload
+         * Return currently uploading items
          * @returns {Array}
          */
-        getReadyItems() {
-            return this.queue
-                .filter(item => (item.isReady && !item.isUploading))
-                .sort((item1, item2) => item1.index - item2.index);
+        getUploadingItems() {
+            return this.queue.filter(item => item.isUploading);
         }
         /**
          * Destroys instance of FileUploader
@@ -657,13 +654,12 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             item._onComplete(response, status, headers);
             this.onCompleteItem(item, response, status, headers);
 
-            var nextItem = this.getReadyItems()[0];
-            this.isUploading = false;
-
-            if(isDefined(nextItem)) {
-                nextItem.upload();
+            var currentlyUploadingItems = this.getUploadingItems();
+            if(currentlyUploadingItems.length > 0) {
                 return;
             }
+
+            this.isUploading = false;
 
             this.onCompleteAll();
             this.progress = this._getTotalProgress();

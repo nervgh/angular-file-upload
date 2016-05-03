@@ -26,6 +26,7 @@ export default (FileDirective) => {
                     $destroy: 'destroy',
                     drop: 'onDrop',
                     dragover: 'onDragOver',
+                    dragenter: 'onDragEnter',
                     dragleave: 'onDragLeave'
                 },
                 // Name of property inside uploader._directive object
@@ -71,7 +72,14 @@ export default (FileDirective) => {
         /**
          * Event handler
          */
+        onDragEnter(event) {
+            this._onDragEnterCallback();
+        }
+        /**
+         * Event handler
+         */
         onDragLeave(event) {
+            this._onDragLeaveCallback();
             if(event.currentTarget === this.element[0]) return;
             this._preventAndStop(event);
             forEach(this.uploader._directives.over, this._removeOverClass, this);
@@ -115,6 +123,14 @@ export default (FileDirective) => {
         _removeOverClass(item) {
             item.removeOverClass();
         }
+        /**
+         * onDragEnter default callback
+         */
+        _onDragEnterCallback() { }
+        /**
+         * onDragEnter default callback
+         */
+        _onDragLeaveCallback() { }
     }
     
     

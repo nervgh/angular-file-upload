@@ -259,7 +259,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    var transport = this.isHTML5 ? "_xhrTransport" : "_iframeTransport";
 	
 	                    item._prepareToUploading();
-	                    if (this.isUploading) {
+	                    if (item.isUploading) {
 	                        return;
 	                    }this.isUploading = true;
 	                    this[transport](item);
@@ -290,9 +290,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    if (!items.length) {
 	                        return;
 	                    }forEach(items, function (item) {
-	                        return item._prepareToUploading();
+	                        return item.upload();
 	                    });
-	                    items[0].upload();
 	                }
 	            },
 	            cancelAll: {
@@ -365,17 +364,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    });
 	                }
 	            },
-	            getReadyItems: {
+	            getUploadingItems: {
 	                /**
-	                 * Returns items ready for upload
+	                 * Return currently uploading items
 	                 * @returns {Array}
 	                 */
 	
-	                value: function getReadyItems() {
+	                value: function getUploadingItems() {
 	                    return this.queue.filter(function (item) {
-	                        return item.isReady && !item.isUploading;
-	                    }).sort(function (item1, item2) {
-	                        return item1.index - item2.index;
+	                        return item.isUploading;
 	                    });
 	                }
 	            },
@@ -942,13 +939,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    item._onComplete(response, status, headers);
 	                    this.onCompleteItem(item, response, status, headers);
 	
-	                    var nextItem = this.getReadyItems()[0];
-	                    this.isUploading = false;
-	
-	                    if (isDefined(nextItem)) {
-	                        nextItem.upload();
+	                    var currentlyUploadingItems = this.getUploadingItems();
+	                    if (currentlyUploadingItems.length > 0) {
 	                        return;
 	                    }
+	
+	                    this.isUploading = false;
 	
 	                    this.onCompleteAll();
 	                    this.progress = this._getTotalProgress();
@@ -1665,6 +1661,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    $destroy: "destroy",
 	                    drop: "onDrop",
 	                    dragover: "onDragOver",
+	                    dragenter: "onDragEnter",
 	                    dragleave: "onDragLeave"
 	                },
 	                // Name of property inside uploader._directive object
@@ -1723,12 +1720,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    forEach(this.uploader._directives.over, this._addOverClass, this);
 	                }
 	            },
+	            onDragEnter: {
+	                /**
+	                 * Event handler
+	                 */
+	
+	                value: function onDragEnter(event) {
+	                    this._onDragEnterCallback();
+	                }
+	            },
 	            onDragLeave: {
 	                /**
 	                 * Event handler
 	                 */
 	
 	                value: function onDragLeave(event) {
+	                    this._onDragLeaveCallback();
 	                    if (event.currentTarget === this.element[0]) {
 	                        return;
 	                    }this._preventAndStop(event);
@@ -1789,6 +1796,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	                value: function _removeOverClass(item) {
 	                    item.removeOverClass();
 	                }
+	            },
+	            _onDragEnterCallback: {
+	                /**
+	                 * onDragEnter default callback
+	                 */
+	
+	                value: function _onDragEnterCallback() {}
+	            },
+	            _onDragLeaveCallback: {
+	                /**
+	                 * onDragEnter default callback
+	                 */
+	
+	                value: function _onDragLeaveCallback() {}
 	            }
 	        });
 	
@@ -1935,7 +1956,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    return {
 	        link: function (scope, element, attributes) {
-	            var uploader = scope.$eval(attributes.uploader);
+	            var uploader = scope.$eval(attributes.uploader),
+	                fileDropOptions = {
+	                uploader: uploader,
+	                element: element
+	            },
+	                onDragEnterCallback = scope.$eval(attributes.onDragEnter),
+	                onDragLeaveCallback = scope.$eval(attributes.onDragLeave);
 	
 	            if (!(uploader instanceof FileUploader)) {
 	                throw new TypeError("\"Uploader\" must be an instance of FileUploader");
@@ -1943,10 +1970,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            if (!uploader.isHTML5) return;
 	
-	            var object = new FileDrop({
-	                uploader: uploader,
-	                element: element
-	            });
+	            if (onDragEnterCallback) {
+	                if (typeof onDragEnterCallback !== "function") {
+	                    throw new TypeError("\"onDragEnter\" callback must be a functions");
+	                }
+	                fileDropOptions._onDragEnterCallback = onDragEnterCallback;
+	            }
+	
+	            if (onDragLeaveCallback) {
+	                if (typeof onDragLeaveCallback !== "function") {
+	                    throw new TypeError("\"onDragLeave\" callback must be a functions");
+	                }
+	                fileDropOptions._onDragLeaveCallback = onDragLeaveCallback;
+	            }
+	
+	            var object = new FileDrop(fileDropOptions);
 	
 	            object.getOptions = $parse(attributes.options).bind(object, scope);
 	            object.getFilters = function () {
@@ -1996,4 +2034,3 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ ])
 });
 ;
-//# sourceMappingURL=angular-file-upload.js.map
