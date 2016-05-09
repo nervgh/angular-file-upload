@@ -123,8 +123,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    filters: [],
 	    formData: [],
 	    queueLimit: Number.MAX_VALUE,
-	    withCredentials: false,
-	    disableMultipart: false
+	    withCredentials: false
 	};
 
 /***/ },
@@ -678,26 +677,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    var _this = this;
 	
 	                    var xhr = item._xhr = new XMLHttpRequest();
-	                    var sendable;
+	                    var form = new FormData();
 	
 	                    this._onBeforeUploadItem(item);
 	
-	                    if (!item.disableMultipart) {
-	                        sendable = new FormData();
-	                        forEach(item.formData, function (obj) {
-	                            forEach(obj, function (value, key) {
-	                                sendable.append(key, value);
-	                            });
+	                    forEach(item.formData, function (obj) {
+	                        forEach(obj, function (value, key) {
+	                            form.append(key, value);
 	                        });
-	
-	                        sendable.append(item.alias, item._file, item.file.name);
-	                    } else {
-	                        sendable = item.file;
-	                    }
+	                    });
 	
 	                    if (typeof item._file.size != "number") {
 	                        throw new TypeError("The file specified is no longer valid");
 	                    }
+	
+	                    form.append(item.alias, item._file, item.file.name);
 	
 	                    xhr.upload.onprogress = function (event) {
 	                        var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
@@ -735,7 +729,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        xhr.setRequestHeader(name, value);
 	                    });
 	
-	                    xhr.send(sendable);
+	                    xhr.send(form);
 	                    this._render();
 	                }
 	            },
@@ -1158,7 +1152,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                formData: copy(uploader.formData),
 	                removeAfterUpload: uploader.removeAfterUpload,
 	                withCredentials: uploader.withCredentials,
-	                disableMultipart: uploader.disableMultipart,
 	                method: uploader.method
 	            }, options, {
 	                uploader: uploader,
@@ -2003,3 +1996,4 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ ])
 });
 ;
+//# sourceMappingURL=angular-file-upload.js.map
