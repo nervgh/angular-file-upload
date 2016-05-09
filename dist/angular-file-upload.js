@@ -259,7 +259,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    var transport = this.isHTML5 ? "_xhrTransport" : "_iframeTransport";
 	
 	                    item._prepareToUploading();
-	                    if (this.isUploading) {
+	                    if (item.isUploading) {
 	                        return;
 	                    }this.isUploading = true;
 	                    this[transport](item);
@@ -290,9 +290,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    if (!items.length) {
 	                        return;
 	                    }forEach(items, function (item) {
-	                        return item._prepareToUploading();
+	                        return item.upload();
 	                    });
-	                    items[0].upload();
 	                }
 	            },
 	            cancelAll: {
@@ -365,17 +364,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    });
 	                }
 	            },
-	            getReadyItems: {
+	            getUploadingItems: {
 	                /**
-	                 * Returns items ready for upload
+	                 * Return currently uploading items
 	                 * @returns {Array}
 	                 */
 	
-	                value: function getReadyItems() {
+	                value: function getUploadingItems() {
 	                    return this.queue.filter(function (item) {
-	                        return item.isReady && !item.isUploading;
-	                    }).sort(function (item1, item2) {
-	                        return item1.index - item2.index;
+	                        return item.isUploading;
 	                    });
 	                }
 	            },
@@ -942,13 +939,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    item._onComplete(response, status, headers);
 	                    this.onCompleteItem(item, response, status, headers);
 	
-	                    var nextItem = this.getReadyItems()[0];
-	                    this.isUploading = false;
-	
-	                    if (isDefined(nextItem)) {
-	                        nextItem.upload();
+	                    var currentlyUploadingItems = this.getUploadingItems();
+	                    if (currentlyUploadingItems.length > 0) {
 	                        return;
 	                    }
+	
+	                    this.isUploading = false;
 	
 	                    this.onCompleteAll();
 	                    this.progress = this._getTotalProgress();
@@ -1996,4 +1992,3 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ ])
 });
 ;
-//# sourceMappingURL=angular-file-upload.js.map
