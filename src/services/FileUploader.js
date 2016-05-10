@@ -439,7 +439,7 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
                 sendable.append(item.alias, item._file, item.file.name);
             }
             else {
-                sendable = item.file;
+                sendable = item._file;
             }
 
             if(typeof(item._file.size) != 'number') {
