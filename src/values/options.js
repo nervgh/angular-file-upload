@@ -13,5 +13,6 @@ export default {
     filters: [],
     formData: [],
     queueLimit: Number.MAX_VALUE,
-    withCredentials: false
+    withCredentials: false,
+    disableMultipart: false
 };
