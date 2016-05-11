@@ -12,10 +12,10 @@ let {
     } = angular;
 
 
-export default ($compile, FileLikeObject) => {
+export default function __identity($compile, FileLikeObject) {
     
     
-    class FileItem {
+    return class FileItem {
         /**
          * Creates an instance of FileItem
          * @param {FileUploader} uploader
@@ -243,15 +243,11 @@ export default ($compile, FileLikeObject) => {
             input.css('display', 'none');
             input.after(clone); // remove jquery dependency
         }
-
     }
-    
-    
-    return FileItem;
 }
 
 
-module.exports.$inject = [
+__identity.$inject = [
     '$compile',
     'FileLikeObject'
 ];

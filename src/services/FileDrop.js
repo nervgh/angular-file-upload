@@ -10,10 +10,10 @@ let {
     } = angular;
 
 
-export default (FileDirective) => {
+export default function __identity(FileDirective) {
     
     
-    class FileDrop extends FileDirective {
+    return class FileDrop extends FileDirective {
         /**
          * Creates instance of {FileDrop} object
          * @param {Object} options
@@ -116,12 +116,9 @@ export default (FileDirective) => {
             item.removeOverClass();
         }
     }
-    
-    
-    return FileDrop;
 }
 
 
-module.exports.$inject = [
+__identity.$inject = [
     'FileDirective'
 ];

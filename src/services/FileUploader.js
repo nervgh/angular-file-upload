@@ -16,7 +16,7 @@ let {
     } = angular;
 
 
-export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject, FileItem) => {
+export default function __identity(fileUploaderOptions, $rootScope, $http, $window, FileLikeObject, FileItem) {
     
     
     let {
@@ -739,7 +739,7 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
 }
 
 
-module.exports.$inject = [
+__identity.$inject = [
     'fileUploaderOptions', 
     '$rootScope', 
     '$http', 

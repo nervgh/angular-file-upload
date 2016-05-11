@@ -9,7 +9,7 @@ let {
     } = angular;
 
 
-export default () => {
+export default function __identity() {
 
 
     class FileDirective {
@@ -76,7 +76,3 @@ export default () => {
 
     return FileDirective;
 }
-
-
-module.exports.$inject = [
-];

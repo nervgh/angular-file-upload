@@ -1,5 +1,5 @@
 /*
- angular-file-upload v2.3.0
+ angular-file-upload v2.3.1
  https://github.com/nervgh/angular-file-upload
 */
 
@@ -166,6 +166,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
+	exports.default = __identity;
+	
 	var _config = __webpack_require__(1);
 	
 	var _config2 = _interopRequireDefault(_config);
@@ -183,8 +185,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var isDefined = _angular.isDefined;
 	var isArray = _angular.isArray;
 	var element = _angular.element;
-	
-	exports.default = function (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject, FileItem) {
+	function __identity(fileUploaderOptions, $rootScope, $http, $window, FileLikeObject, FileItem) {
 	    var File = $window.File;
 	    var FormData = $window.FormData;
 	
@@ -1068,9 +1069,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    FileUploader.isHTML5 = FileUploader.prototype.isHTML5;
 	
 	    return FileUploader;
-	};
+	}
 	
-	module.exports.$inject = ['fileUploaderOptions', '$rootScope', '$http', '$window', 'FileLikeObject', 'FileItem'];
+	__identity.$inject = ['fileUploaderOptions', '$rootScope', '$http', '$window', 'FileLikeObject', 'FileItem'];
 
 /***/ },
 /* 4 */
@@ -1084,6 +1085,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
+	exports.default = __identity;
+	
 	var _config = __webpack_require__(1);
 	
 	var _config2 = _interopRequireDefault(_config);
@@ -1096,9 +1099,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var copy = _angular.copy;
 	var isElement = _angular.isElement;
 	var isString = _angular.isString;
+	function __identity() {
 	
-	exports.default = function () {
-	    var FileLikeObject = function () {
+	    return function () {
 	        /**
 	         * Creates an instance of FileLikeObject
 	         * @param {File|HTMLInputElement|Object} fileOrInput
@@ -1147,11 +1150,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        return FileLikeObject;
 	    }();
-	
-	    return FileLikeObject;
-	};
-	
-	module.exports.$inject = [];
+	}
 
 /***/ },
 /* 5 */
@@ -1164,6 +1163,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	exports.default = __identity;
 	
 	var _config = __webpack_require__(1);
 	
@@ -1178,9 +1179,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var extend = _angular.extend;
 	var element = _angular.element;
 	var isElement = _angular.isElement;
+	function __identity($compile, FileLikeObject) {
 	
-	exports.default = function ($compile, FileLikeObject) {
-	    var FileItem = function () {
+	    return function () {
 	        /**
 	         * Creates an instance of FileItem
 	         * @param {FileUploader} uploader
@@ -1464,11 +1465,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        return FileItem;
 	    }();
+	}
 	
-	    return FileItem;
-	};
-	
-	module.exports.$inject = ['$compile', 'FileLikeObject'];
+	__identity.$inject = ['$compile', 'FileLikeObject'];
 
 /***/ },
 /* 6 */
@@ -1482,6 +1481,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
+	exports.default = __identity;
+	
 	var _config = __webpack_require__(1);
 	
 	var _config2 = _interopRequireDefault(_config);
@@ -1492,8 +1493,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _angular = angular;
 	var extend = _angular.extend;
-	
-	exports.default = function () {
+	function __identity() {
 	    var FileDirective = function () {
 	        /**
 	         * Creates instance of {FileDirective} object
@@ -1576,9 +1576,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    FileDirective.prototype.events = {};
 	
 	    return FileDirective;
-	};
-	
-	module.exports.$inject = [];
+	}
 
 /***/ },
 /* 7 */
@@ -1591,6 +1589,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	exports.default = __identity;
 	
 	var _config = __webpack_require__(1);
 	
@@ -1606,9 +1606,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _angular = angular;
 	var extend = _angular.extend;
+	function __identity(FileDirective) {
 	
-	exports.default = function (FileDirective) {
-	    var FileSelect = function (_FileDirective) {
+	    return function (_FileDirective) {
 	        _inherits(FileSelect, _FileDirective);
 	
 	        /**
@@ -1687,11 +1687,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        return FileSelect;
 	    }(FileDirective);
+	}
 	
-	    return FileSelect;
-	};
-	
-	module.exports.$inject = ['FileDirective'];
+	__identity.$inject = ['FileDirective'];
 
 /***/ },
 /* 8 */
@@ -1704,6 +1702,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	exports.default = __identity;
 	
 	var _config = __webpack_require__(1);
 	
@@ -1720,9 +1720,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _angular = angular;
 	var extend = _angular.extend;
 	var forEach = _angular.forEach;
+	function __identity(FileDirective) {
 	
-	exports.default = function (FileDirective) {
-	    var FileDrop = function (_FileDirective) {
+	    return function (_FileDirective) {
 	        _inherits(FileDrop, _FileDirective);
 	
 	        /**
@@ -1862,11 +1862,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        return FileDrop;
 	    }(FileDirective);
+	}
 	
-	    return FileDrop;
-	};
-	
-	module.exports.$inject = ['FileDirective'];
+	__identity.$inject = ['FileDirective'];
 
 /***/ },
 /* 9 */
@@ -1879,6 +1877,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	exports.default = __identity;
 	
 	var _config = __webpack_require__(1);
 	
@@ -1894,9 +1894,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _angular = angular;
 	var extend = _angular.extend;
+	function __identity(FileDirective) {
 	
-	exports.default = function (FileDirective) {
-	    var FileOver = function (_FileDirective) {
+	    return function (_FileDirective) {
 	        _inherits(FileOver, _FileDirective);
 	
 	        /**
@@ -1954,11 +1954,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        return FileOver;
 	    }(FileDirective);
+	}
 	
-	    return FileOver;
-	};
-	
-	module.exports.$inject = ['FileDirective'];
+	__identity.$inject = ['FileDirective'];
 
 /***/ },
 /* 10 */
@@ -1969,6 +1967,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.default = __identity;
 	
 	var _config = __webpack_require__(1);
 	
@@ -1976,7 +1975,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	exports.default = function ($parse, FileUploader, FileSelect) {
+	function __identity($parse, FileUploader, FileSelect) {
 	
 	    return {
 	        link: function link(scope, element, attributes) {
@@ -1997,9 +1996,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            };
 	        }
 	    };
-	};
+	}
 	
-	module.exports.$inject = ['$parse', 'FileUploader', 'FileSelect'];
+	__identity.$inject = ['$parse', 'FileUploader', 'FileSelect'];
 
 /***/ },
 /* 11 */
@@ -2010,6 +2009,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.default = __identity;
 	
 	var _config = __webpack_require__(1);
 	
@@ -2017,7 +2017,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	exports.default = function ($parse, FileUploader, FileDrop) {
+	function __identity($parse, FileUploader, FileDrop) {
 	
 	    return {
 	        link: function link(scope, element, attributes) {
@@ -2040,9 +2040,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            };
 	        }
 	    };
-	};
+	}
 	
-	module.exports.$inject = ['$parse', 'FileUploader', 'FileDrop'];
+	__identity.$inject = ['$parse', 'FileUploader', 'FileDrop'];
 
 /***/ },
 /* 12 */
@@ -2053,6 +2053,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.default = __identity;
 	
 	var _config = __webpack_require__(1);
 	
@@ -2060,7 +2061,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	exports.default = function (FileUploader, FileOver) {
+	function __identity(FileUploader, FileOver) {
 	
 	    return {
 	        link: function link(scope, element, attributes) {
@@ -2080,9 +2081,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            };
 	        }
 	    };
-	};
+	}
 	
-	module.exports.$inject = ['FileUploader', 'FileOver'];
+	__identity.$inject = ['FileUploader', 'FileOver'];
 
 /***/ }
 /******/ ])
