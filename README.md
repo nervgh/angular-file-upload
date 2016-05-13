@@ -33,3 +33,18 @@ You could find this module in npm like [_angular file upload_](https://www.npmjs
 3. [FAQ](https://github.com/nervgh/angular-file-upload/wiki/FAQ)
 4. [Migrate from 0.x.x to 1.x.x](https://github.com/nervgh/angular-file-upload/wiki/Migrate-from-0.x.x-to-1.x.x)
 5. [RubyGem](https://github.com/marthyn/angularjs-file-upload-rails)
+
+## Browser compatibility
+This module uses the _feature detection_ pattern for adaptation its behaviour: [fd1](https://github.com/nervgh/angular-file-upload/blob/v2.3.1/src/services/FileUploader.js#L728), 
+[fd2](https://github.com/nervgh/angular-file-upload/blob/v2.3.1/examples/image-preview/directives.js#L21).
+
+You could check out features of target browsers using http://caniuse.com/. For example, the [File API](http://caniuse.com/#feat=fileapi) feature.
+
+| Feature/Browser  | IE 8-9 |  IE10+ | Firefox 28+ | Chrome 38+ | Safari 6+ | 
+|----------|:---:|:---:|:---:|:---:|:---:|
+| `<input type="file"/>` | + | + | + | + | + |
+| `<input type="file" multiple/>` | - | + | + | + | + |
+| Drag-n-drop | - | + | + | + | + |
+| Iframe transport (only for old browsers) | + | + | + | + | + |
+| XHR transport (multipart,binary) | - | + | + | + | + |
+| An image preview via Canvas (not built-in) | - | + | + | + | + |
