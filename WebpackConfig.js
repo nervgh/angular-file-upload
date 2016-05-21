@@ -35,10 +35,7 @@ class WebpackConfig {
           // https://github.com/babel/babel-loader
           {
             test: /\.js$/,
-            loader: 'babel',
-            query: {
-              presets: ['es2015']
-            }
+            loader: 'babel'
           },
           // https://github.com/webpack/json-loader
           {test: /\.json$/, loader: 'json'},
