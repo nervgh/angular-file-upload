@@ -117,6 +117,7 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
 
             this.isUploading = true;
             this[transport](item);
+            this._render();
         }
         /**
          * Cancels uploading of item from the queue
@@ -230,6 +231,7 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
          * @param {FileItem} fileItem
          */
         onBeforeUploadItem(fileItem) {
+            return true;
         }
         /**
          * Callback
@@ -426,7 +428,11 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
             var xhr = item._xhr = new XMLHttpRequest();
             var sendable;
 
-            this._onBeforeUploadItem(item);
+            if (!this._onBeforeUploadItem(item)) {
+                this._onCancelItem(item);
+                this._onCompleteItem(item);
+                return;
+            }
 
             if (!item.disableMultipart) {
                 sendable = new FormData();
@@ -498,7 +504,11 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
             if(item._form) item._form.replaceWith(input); // remove old form
             item._form = form; // save link to new form
 
-            this._onBeforeUploadItem(item);
+            if (!this._onBeforeUploadItem(item)) {
+                this._onCancelItem(item);
+                this._onCompleteItem(item);
+                return;
+            }
 
             input.prop('name', item.alias);
 
@@ -599,7 +609,7 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
          */
         _onBeforeUploadItem(item) {
             item._onBeforeUpload();
-            this.onBeforeUploadItem(item);
+            return this.onBeforeUploadItem(item);
         }
         /**
          * Inner callback
