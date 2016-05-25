@@ -431,6 +431,7 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
             if (!this._onBeforeUploadItem(item)) {
                 this._onCancelItem(item);
                 this._onCompleteItem(item);
+                return;
             }
 
             if (!item.disableMultipart) {
@@ -506,6 +507,7 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
             if (!this._onBeforeUploadItem(item)) {
                 this._onCancelItem(item);
                 this._onCompleteItem(item);
+                return;
             }
 
             input.prop('name', item.alias);
