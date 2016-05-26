@@ -1,5 +1,5 @@
 /*
- angular-file-upload v2.3.2
+ angular-file-upload v2.3.3
  https://github.com/nervgh/angular-file-upload
 */
 
@@ -182,7 +182,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var isDefined = _angular.isDefined;
 	var isArray = _angular.isArray;
 	var element = _angular.element;
-	function __identity(fileUploaderOptions, $rootScope, $http, $window, FileLikeObject, FileItem) {
+	function __identity(fileUploaderOptions, $rootScope, $http, $window, $timeout, FileLikeObject, FileItem) {
 	    var File = $window.File;
 	    var FormData = $window.FormData;
 	
@@ -289,8 +289,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            item._prepareToUploading();
 	            if (this.isUploading) return;
 	
+	            this._onBeforeUploadItem(item);
+	            if (item.isCancel) return;
+	
+	            item.isUploading = true;
 	            this.isUploading = true;
 	            this[transport](item);
+	            this._render();
 	        };
 	        /**
 	         * Cancels uploading of item from the queue
@@ -299,10 +304,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	        FileUploader.prototype.cancelItem = function cancelItem(value) {
+	            var _this2 = this;
+	
 	            var index = this.getIndexOfItem(value);
 	            var item = this.queue[index];
 	            var prop = this.isHTML5 ? '_xhr' : '_form';
-	            if (item && item.isUploading) item[prop].abort();
+	            if (!item) return;
+	            item.isCancel = true;
+	            if (item.isUploading) {
+	                // It will call this._onCancelItem() & this._onCompleteItem() asynchronously
+	                item[prop].abort();
+	            } else {
+	                (function () {
+	                    var dummy = [undefined, 0, {}];
+	                    var onNextTick = function onNextTick() {
+	                        _this2._onCancelItem.apply(_this2, [item].concat(dummy));
+	                        _this2._onCompleteItem.apply(_this2, [item].concat(dummy));
+	                    };
+	                    $timeout(onNextTick); // Trigger callbacks asynchronously (setImmediate emulation)
+	                })();
+	            }
 	        };
 	        /**
 	         * Uploads all not uploaded items of queue
@@ -403,10 +424,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	        FileUploader.prototype.destroy = function destroy() {
-	            var _this2 = this;
+	            var _this3 = this;
 	
 	            forEach(this._directives, function (key) {
-	                forEach(_this2._directives[key], function (object) {
+	                forEach(_this3._directives[key], function (object) {
 	                    object.destroy();
 	                });
 	            });
@@ -580,12 +601,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	        FileUploader.prototype._isValidFile = function _isValidFile(file, filters, options) {
-	            var _this3 = this;
+	            var _this4 = this;
 	
 	            this._failFilterIndex = -1;
 	            return !filters.length ? true : filters.every(function (filter) {
-	                _this3._failFilterIndex++;
-	                return filter.fn.call(_this3, file, options);
+	                _this4._failFilterIndex++;
+	                return filter.fn.call(_this4, file, options);
 	            });
 	        };
 	        /**
@@ -668,12 +689,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	        FileUploader.prototype._xhrTransport = function _xhrTransport(item) {
-	            var _this4 = this;
+	            var _this5 = this;
 	
 	            var xhr = item._xhr = new XMLHttpRequest();
 	            var sendable;
-	
-	            this._onBeforeUploadItem(item);
 	
 	            if (!item.disableMultipart) {
 	                sendable = new FormData();
@@ -694,30 +713,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            xhr.upload.onprogress = function (event) {
 	                var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
-	                _this4._onProgressItem(item, progress);
+	                _this5._onProgressItem(item, progress);
 	            };
 	
 	            xhr.onload = function () {
-	                var headers = _this4._parseHeaders(xhr.getAllResponseHeaders());
-	                var response = _this4._transformResponse(xhr.response, headers);
-	                var gist = _this4._isSuccessCode(xhr.status) ? 'Success' : 'Error';
+	                var headers = _this5._parseHeaders(xhr.getAllResponseHeaders());
+	                var response = _this5._transformResponse(xhr.response, headers);
+	                var gist = _this5._isSuccessCode(xhr.status) ? 'Success' : 'Error';
 	                var method = '_on' + gist + 'Item';
-	                _this4[method](item, response, xhr.status, headers);
-	                _this4._onCompleteItem(item, response, xhr.status, headers);
+	                _this5[method](item, response, xhr.status, headers);
+	                _this5._onCompleteItem(item, response, xhr.status, headers);
 	            };
 	
 	            xhr.onerror = function () {
-	                var headers = _this4._parseHeaders(xhr.getAllResponseHeaders());
-	                var response = _this4._transformResponse(xhr.response, headers);
-	                _this4._onErrorItem(item, response, xhr.status, headers);
-	                _this4._onCompleteItem(item, response, xhr.status, headers);
+	                var headers = _this5._parseHeaders(xhr.getAllResponseHeaders());
+	                var response = _this5._transformResponse(xhr.response, headers);
+	                _this5._onErrorItem(item, response, xhr.status, headers);
+	                _this5._onCompleteItem(item, response, xhr.status, headers);
 	            };
 	
 	            xhr.onabort = function () {
-	                var headers = _this4._parseHeaders(xhr.getAllResponseHeaders());
-	                var response = _this4._transformResponse(xhr.response, headers);
-	                _this4._onCancelItem(item, response, xhr.status, headers);
-	                _this4._onCompleteItem(item, response, xhr.status, headers);
+	                var headers = _this5._parseHeaders(xhr.getAllResponseHeaders());
+	                var response = _this5._transformResponse(xhr.response, headers);
+	                _this5._onCancelItem(item, response, xhr.status, headers);
+	                _this5._onCompleteItem(item, response, xhr.status, headers);
 	            };
 	
 	            xhr.open(item.method, item.url, true);
@@ -729,7 +748,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	
 	            xhr.send(sendable);
-	            this._render();
 	        };
 	        /**
 	         * The IFrame transport
@@ -739,7 +757,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	        FileUploader.prototype._iframeTransport = function _iframeTransport(item) {
-	            var _this5 = this;
+	            var _this6 = this;
 	
 	            var form = element('<form style="display: none;" />');
 	            var iframe = element('<iframe name="iframeTransport' + Date.now() + '">');
@@ -747,8 +765,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            if (item._form) item._form.replaceWith(input); // remove old form
 	            item._form = form; // save link to new form
-	
-	            this._onBeforeUploadItem(item);
 	
 	            input.prop('name', item.alias);
 	
@@ -794,10 +810,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                var xhr = { response: html, status: status, dummy: true };
 	                var headers = {};
-	                var response = _this5._transformResponse(xhr.response, headers);
+	                var response = _this6._transformResponse(xhr.response, headers);
 	
-	                _this5._onSuccessItem(item, response, xhr.status, headers);
-	                _this5._onCompleteItem(item, response, xhr.status, headers);
+	                _this6._onSuccessItem(item, response, xhr.status, headers);
+	                _this6._onCompleteItem(item, response, xhr.status, headers);
 	            });
 	
 	            form.abort = function () {
@@ -808,15 +824,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                iframe.unbind('load').prop('src', 'javascript:false;');
 	                form.replaceWith(input);
 	
-	                _this5._onCancelItem(item, response, xhr.status, headers);
-	                _this5._onCompleteItem(item, response, xhr.status, headers);
+	                _this6._onCancelItem(item, response, xhr.status, headers);
+	                _this6._onCompleteItem(item, response, xhr.status, headers);
 	            };
 	
 	            input.after(form);
 	            form.append(input).append(iframe);
 	
 	            form[0].submit();
-	            this._render();
 	        };
 	        /**
 	         * Inner callback
@@ -1016,7 +1031,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return FileUploader;
 	}
 	
-	__identity.$inject = ['fileUploaderOptions', '$rootScope', '$http', '$window', 'FileLikeObject', 'FileItem'];
+	__identity.$inject = ['fileUploaderOptions', '$rootScope', '$http', '$window', '$timeout', 'FileLikeObject', 'FileItem'];
 
 /***/ },
 /* 4 */
@@ -1251,7 +1266,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        FileItem.prototype._onBeforeUpload = function _onBeforeUpload() {
 	            this.isReady = true;
-	            this.isUploading = true;
+	            this.isUploading = false;
 	            this.isUploaded = false;
 	            this.isSuccess = false;
 	            this.isCancel = false;

@@ -16,7 +16,7 @@ let {
     } = angular;
 
 
-export default function __identity(fileUploaderOptions, $rootScope, $http, $window, FileLikeObject, FileItem) {
+export default function __identity(fileUploaderOptions, $rootScope, $http, $window, $timeout, FileLikeObject, FileItem) {
     
     
     let {
@@ -115,8 +115,13 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
             item._prepareToUploading();
             if(this.isUploading) return;
 
+            this._onBeforeUploadItem(item);
+            if (item.isCancel) return;
+
+            item.isUploading = true;
             this.isUploading = true;
             this[transport](item);
+            this._render();
         }
         /**
          * Cancels uploading of item from the queue
@@ -126,7 +131,19 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
             var index = this.getIndexOfItem(value);
             var item = this.queue[index];
             var prop = this.isHTML5 ? '_xhr' : '_form';
-            if(item && item.isUploading) item[prop].abort();
+            if (!item) return;
+            item.isCancel = true;
+            if(item.isUploading) {
+                // It will call this._onCancelItem() & this._onCompleteItem() asynchronously
+                item[prop].abort();
+            } else {
+                let dummy = [undefined, 0, {}];
+                let onNextTick = () => {
+                    this._onCancelItem(item, ...dummy);
+                    this._onCompleteItem(item, ...dummy);
+                };
+                $timeout(onNextTick); // Trigger callbacks asynchronously (setImmediate emulation)
+            }
         }
         /**
          * Uploads all not uploaded items of queue
@@ -426,8 +443,6 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
             var xhr = item._xhr = new XMLHttpRequest();
             var sendable;
 
-            this._onBeforeUploadItem(item);
-
             if (!item.disableMultipart) {
                 sendable = new FormData();
                 forEach(item.formData, (obj) => {
@@ -483,7 +498,6 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
             });
 
             xhr.send(sendable);
-            this._render();
         }
         /**
          * The IFrame transport
@@ -497,8 +511,6 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
 
             if(item._form) item._form.replaceWith(input); // remove old form
             item._form = form; // save link to new form
-
-            this._onBeforeUploadItem(item);
 
             input.prop('name', item.alias);
 
@@ -566,7 +578,6 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
             form.append(input).append(iframe);
 
             form[0].submit();
-            this._render();
         }
         /**
          * Inner callback
@@ -744,6 +755,7 @@ __identity.$inject = [
     '$rootScope', 
     '$http', 
     '$window',
+    '$timeout',
     'FileLikeObject',
     'FileItem'
 ];

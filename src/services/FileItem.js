@@ -133,7 +133,7 @@ export default function __identity($compile, FileLikeObject) {
          */
         _onBeforeUpload() {
             this.isReady = true;
-            this.isUploading = true;
+            this.isUploading = false;
             this.isUploaded = false;
             this.isSuccess = false;
             this.isCancel = false;
