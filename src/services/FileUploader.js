@@ -93,6 +93,7 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
             this.queue.splice(index, 1);
             item._destroy();
             this.progress = this._getTotalProgress();
+            this._onRemoveItem(item, index);
         }
         /**
          * Clears the queue
@@ -301,6 +302,11 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
          * Callback
          */
         onCompleteAll() {
+        }
+        /**
+        * Callback
+        */
+        onRemoveItem(item, index) {
         }
         /**********************
          * PRIVATE
@@ -685,6 +691,15 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
             this.onCompleteAll();
             this.progress = this._getTotalProgress();
             this._render();
+        }
+        /**
+         * Inner callback
+         * @param {FileItem} item
+         * @param {Number} index
+         * @private
+         */
+        _onRemoveItem(item, index) {
+            this.onRemoveItem(item, index);
         }
         /**********************
          * STATIC
