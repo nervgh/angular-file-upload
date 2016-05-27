@@ -263,6 +263,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.queue.splice(index, 1);
 	            item._destroy();
 	            this.progress = this._getTotalProgress();
+	            this._onRemoveItem(item, index);
 	        };
 	        /**
 	         * Clears the queue
@@ -523,6 +524,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	        FileUploader.prototype.onCompleteAll = function onCompleteAll() {};
+			/**
+	         * Callback
+	         * @param {FileItem} item
+	         * @param {*} response
+	         * @param {Number} status
+	         * @param {Object} headers
+	         */
+	
+	
+	        FileUploader.prototype.onRemoveItem = function onRemoveItem(item, index) {};
 	        /**********************
 	         * PRIVATE
 	         **********************/
@@ -957,6 +968,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.onCompleteAll();
 	            this.progress = this._getTotalProgress();
 	            this._render();
+	        };
+	        /**
+	         * Inner callback
+	         * @param {FileItem} item
+	         * @param {*} response
+	         * @param {Number} status
+	         * @param {Object} headers
+	         * @private
+	         */
+	
+	
+	        FileUploader.prototype._onRemoveItem = function _onRemoveItem(item, index) {
+	            this.onRemoveItem(item, index);
 	        };
 	        /**********************
 	         * STATIC

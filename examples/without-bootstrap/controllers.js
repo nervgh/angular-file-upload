@@ -56,6 +56,9 @@ angular
         uploader.onCompleteAll = function() {
             console.info('onCompleteAll');
         };
+        uploader.onRemoveItem = function(fileItem, index) {
+            console.info('onRemoveItem', fileItem, index);
+        }
 
         console.info('uploader', uploader);
 
