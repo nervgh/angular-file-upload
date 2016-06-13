@@ -17,7 +17,8 @@ export default function __identity($parse, FileUploader, FileSelect) {
 
             var object = new FileSelect({
                 uploader: uploader,
-                element: element
+                element: element,
+                scope: scope
             });
 
             object.getOptions = $parse(attributes.options).bind(object, scope);

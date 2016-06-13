@@ -1,5 +1,5 @@
 /*
- angular-file-upload v2.3.3
+ angular-file-upload v2.3.4
  https://github.com/nervgh/angular-file-upload
 */
 
@@ -1524,7 +1524,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _angular = angular;
 	var extend = _angular.extend;
-	function __identity(FileDirective) {
+	function __identity($compile, FileDirective) {
 	
 	    return function (_FileDirective) {
 	        _inherits(FileSelect, _FileDirective);
@@ -1593,7 +1593,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.uploader.addToQueue(files, options, filters);
 	            if (this.isEmptyAfterSelection()) {
 	                this.element.prop('value', null);
-	                this.element.replaceWith(this.element = this.element.clone(true)); // IE fix
+	                this.element.replaceWith($compile(this.element.clone())(this.scope)); // IE fix
 	            }
 	        };
 	
@@ -1601,7 +1601,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }(FileDirective);
 	}
 	
-	__identity.$inject = ['FileDirective'];
+	__identity.$inject = ['$compile', 'FileDirective'];
 
 /***/ },
 /* 8 */
@@ -1876,7 +1876,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var object = new FileSelect({
 	                uploader: uploader,
-	                element: element
+	                element: element,
+	                scope: scope
 	            });
 	
 	            object.getOptions = $parse(attributes.options).bind(object, scope);
