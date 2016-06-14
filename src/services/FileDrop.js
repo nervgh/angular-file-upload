@@ -10,7 +10,7 @@ let {
     } = angular;
 
 
-export default (FileDirective) => {
+export default (FileDirective,$timeout) => {
     
     
     class FileDrop extends FileDirective {
@@ -67,13 +67,18 @@ export default (FileDirective) => {
             transfer.dropEffect = 'copy';
             this._preventAndStop(event);
             forEach(this.uploader._directives.over, this._addOverClass, this);
+            $timeout.cancel(this.onDragLeaveTimer);
         }
         /**
          * Event handler
          */
         onDragLeave(event) {
-            this._preventAndStop(event);
-            forEach(this.uploader._directives.over, this._removeOverClass, this);
+            var that = this;
+            $timeout.cancel(that.onDragLeaveTimer);
+            that.onDragLeaveTimer = $timeout(function(){
+                that._preventAndStop(event);
+                forEach(that.uploader._directives.over, that._removeOverClass, that);
+            },50);
         }
         /**
          * Helper
@@ -122,5 +127,6 @@ export default (FileDirective) => {
 
 
 module.exports.$inject = [
-    'FileDirective'
+    'FileDirective',
+    '$timeout'
 ];
