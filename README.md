@@ -48,3 +48,4 @@ You could check out features of target browsers using http://caniuse.com/. For e
 | Iframe transport (only for old browsers) | + | + | + | + | + |
 | XHR transport (multipart,binary) | - | + | + | + | + |
 | An image preview via Canvas (not built-in) | - | + | + | + | + |
+| AJAX headers | - | + | + | + | + |
