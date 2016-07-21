@@ -21,6 +21,16 @@ npm install angular-file-upload
 ```
 You could find this module in npm like [_angular file upload_](https://www.npmjs.com/search?q=angular%20file%20upload).
 
+### Module Dependency
+
+Add `'angular-file-upload'` to your module declaration:
+
+```
+var app = angular.module('my-app', [
+    'angular-file-upload'
+]);
+```
+
 ## Demos
 1. [Simple example](http://nervgh.github.io/pages/angular-file-upload/examples/simple)
 2. [Uploads only images (with canvas preview)](http://nervgh.github.io/pages/angular-file-upload/examples/image-preview)
