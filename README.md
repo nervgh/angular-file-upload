@@ -23,11 +23,11 @@ You could find this module in npm like [_angular file upload_](https://www.npmjs
 
 ### Module Dependency
 
-Add `'angular-file-upload'` to your module declaration:
+Add `'angularFileUpload'` to your module declaration:
 
 ```
 var app = angular.module('my-app', [
-    'angular-file-upload'
+    'angularFileUpload'
 ]);
 ```
 
