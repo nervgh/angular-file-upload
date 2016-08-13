@@ -10,8 +10,8 @@ let descriptor = require('./package.json');
 
 
 let config = new WebpackConfig(descriptor, {
-  src: './src',
-  dist: './dist'
+  src: './src/',
+  dist: './dist/'
 });
 
 
