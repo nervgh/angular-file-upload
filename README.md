@@ -21,6 +21,16 @@ npm install angular-file-upload
 ```
 You could find this module in npm like [_angular file upload_](https://www.npmjs.com/search?q=angular%20file%20upload).
 
+### Module Dependency
+
+Add `'angularFileUpload'` to your module declaration:
+
+```
+var app = angular.module('my-app', [
+    'angularFileUpload'
+]);
+```
+
 ## Demos
 1. [Simple example](http://nervgh.github.io/pages/angular-file-upload/examples/simple)
 2. [Uploads only images (with canvas preview)](http://nervgh.github.io/pages/angular-file-upload/examples/image-preview)
@@ -48,3 +58,4 @@ You could check out features of target browsers using http://caniuse.com/. For e
 | Iframe transport (only for old browsers) | + | + | + | + | + |
 | XHR transport (multipart,binary) | - | + | + | + | + |
 | An image preview via Canvas (not built-in) | - | + | + | + | + |
+| AJAX headers | - | + | + | + | + |
