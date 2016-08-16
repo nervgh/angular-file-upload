@@ -17,14 +17,14 @@ let {
 
 
 export default function __identity(fileUploaderOptions, $rootScope, $http, $window, $timeout, FileLikeObject, FileItem) {
-    
-    
+
+
     let {
         File,
         FormData
         } = $window;
-    
-    
+
+
     class FileUploader {
         /**********************
          * PUBLIC
@@ -36,7 +36,7 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
          */
         constructor(options) {
             var settings = copy(fileUploaderOptions);
-            
+
             extend(this, settings, options, {
                 isUploading: false,
                 _nextIndex: 0,
@@ -493,6 +493,8 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
 
             xhr.withCredentials = item.withCredentials;
 
+            xhr.timeout = this.xhrTimeout;
+
             forEach(item.headers, (value, name) => {
                 xhr.setRequestHeader(name, value);
             });
@@ -745,15 +747,15 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
      */
     FileUploader.isHTML5 = FileUploader.prototype.isHTML5;
 
-    
+
     return FileUploader;
 }
 
 
 __identity.$inject = [
-    'fileUploaderOptions', 
-    '$rootScope', 
-    '$http', 
+    'fileUploaderOptions',
+    '$rootScope',
+    '$http',
     '$window',
     '$timeout',
     'FileLikeObject',
