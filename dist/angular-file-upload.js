@@ -1,5 +1,5 @@
 /*
- angular-file-upload v2.3.4
+ angular-file-upload v2.4.0
  https://github.com/nervgh/angular-file-upload
 */
 
@@ -89,29 +89,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _FileSelect2 = _interopRequireDefault(_FileSelect);
 	
-	var _FileDrop = __webpack_require__(8);
+	var _Pipeline = __webpack_require__(8);
+	
+	var _Pipeline2 = _interopRequireDefault(_Pipeline);
+	
+	var _FileDrop = __webpack_require__(9);
 	
 	var _FileDrop2 = _interopRequireDefault(_FileDrop);
 	
-	var _FileOver = __webpack_require__(9);
+	var _FileOver = __webpack_require__(10);
 	
 	var _FileOver2 = _interopRequireDefault(_FileOver);
 	
-	var _FileSelect3 = __webpack_require__(10);
+	var _FileSelect3 = __webpack_require__(11);
 	
 	var _FileSelect4 = _interopRequireDefault(_FileSelect3);
 	
-	var _FileDrop3 = __webpack_require__(11);
+	var _FileDrop3 = __webpack_require__(12);
 	
 	var _FileDrop4 = _interopRequireDefault(_FileDrop3);
 	
-	var _FileOver3 = __webpack_require__(12);
+	var _FileOver3 = __webpack_require__(13);
 	
 	var _FileOver4 = _interopRequireDefault(_FileOver3);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	angular.module(_config2.default.name, []).value('fileUploaderOptions', _options2.default).factory('FileUploader', _FileUploader2.default).factory('FileLikeObject', _FileLikeObject2.default).factory('FileItem', _FileItem2.default).factory('FileDirective', _FileDirective2.default).factory('FileSelect', _FileSelect2.default).factory('FileDrop', _FileDrop2.default).factory('FileOver', _FileOver2.default).directive('nvFileSelect', _FileSelect4.default).directive('nvFileDrop', _FileDrop4.default).directive('nvFileOver', _FileOver4.default).run(['FileUploader', 'FileLikeObject', 'FileItem', 'FileDirective', 'FileSelect', 'FileDrop', 'FileOver', function (FileUploader, FileLikeObject, FileItem, FileDirective, FileSelect, FileDrop, FileOver) {
+	angular.module(_config2.default.name, []).value('fileUploaderOptions', _options2.default).factory('FileUploader', _FileUploader2.default).factory('FileLikeObject', _FileLikeObject2.default).factory('FileItem', _FileItem2.default).factory('FileDirective', _FileDirective2.default).factory('FileSelect', _FileSelect2.default).factory('FileDrop', _FileDrop2.default).factory('FileOver', _FileOver2.default).factory('Pipeline', _Pipeline2.default).directive('nvFileSelect', _FileSelect4.default).directive('nvFileDrop', _FileDrop4.default).directive('nvFileOver', _FileOver4.default).run(['FileUploader', 'FileLikeObject', 'FileItem', 'FileDirective', 'FileSelect', 'FileDrop', 'FileOver', 'Pipeline', function (FileUploader, FileLikeObject, FileItem, FileDirective, FileSelect, FileDrop, FileOver, Pipeline) {
 	    // only for compatibility
 	    FileUploader.FileLikeObject = FileLikeObject;
 	    FileUploader.FileItem = FileItem;
@@ -119,6 +123,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    FileUploader.FileSelect = FileSelect;
 	    FileUploader.FileDrop = FileDrop;
 	    FileUploader.FileOver = FileOver;
+	    FileUploader.Pipeline = Pipeline;
 	}]);
 
 /***/ },
@@ -163,6 +168,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+	
 	exports.default = __identity;
 	
 	var _config = __webpack_require__(1);
@@ -174,6 +182,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var _angular = angular;
+	var bind = _angular.bind;
 	var copy = _angular.copy;
 	var extend = _angular.extend;
 	var forEach = _angular.forEach;
@@ -181,8 +190,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var isNumber = _angular.isNumber;
 	var isDefined = _angular.isDefined;
 	var isArray = _angular.isArray;
+	var isUndefined = _angular.isUndefined;
 	var element = _angular.element;
-	function __identity(fileUploaderOptions, $rootScope, $http, $window, $timeout, FileLikeObject, FileItem) {
+	function __identity(fileUploaderOptions, $rootScope, $http, $window, $timeout, FileLikeObject, FileItem, Pipeline) {
 	    var File = $window.File;
 	    var FormData = $window.FormData;
 	
@@ -204,7 +214,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            extend(this, settings, options, {
 	                isUploading: false,
 	                _nextIndex: 0,
-	                _failFilterIndex: -1,
 	                _directives: { select: [], drop: [], over: [] }
 	            });
 	
@@ -223,32 +232,55 @@ return /******/ (function(modules) { // webpackBootstrap
 	        FileUploader.prototype.addToQueue = function addToQueue(files, options, filters) {
 	            var _this = this;
 	
-	            var list = this.isArrayLikeObject(files) ? files : [files];
+	            var incomingQueue = this.isArrayLikeObject(files) ? Array.prototype.slice.call(files) : [files];
 	            var arrayOfFilters = this._getFilters(filters);
 	            var count = this.queue.length;
 	            var addedFileItems = [];
 	
-	            forEach(list, function (some /*{File|HTMLInputElement|Object}*/) {
-	                var temp = new FileLikeObject(some);
+	            var next = function next() {
+	                var something = incomingQueue.shift();
 	
-	                if (_this._isValidFile(temp, arrayOfFilters, options)) {
-	                    var fileItem = new FileItem(_this, some, options);
+	                if (isUndefined(something)) {
+	                    return done();
+	                }
+	
+	                var fileLikeObject = _this.isFile(something) ? something : new FileLikeObject(something);
+	                var pipes = _this._convertFiltersToPipes(arrayOfFilters);
+	                var pipeline = new Pipeline(pipes);
+	                var onThrown = function onThrown(err) {
+	                    var originalFilter = err.pipe.originalFilter;
+	
+	                    var _err$args = _slicedToArray(err.args, 2);
+	
+	                    var fileLikeObject = _err$args[0];
+	                    var options = _err$args[1];
+	
+	                    _this._onWhenAddingFileFailed(fileLikeObject, originalFilter, options);
+	                    next();
+	                };
+	                var onSuccessful = function onSuccessful(fileLikeObject, options) {
+	                    var fileItem = new FileItem(_this, fileLikeObject, options);
 	                    addedFileItems.push(fileItem);
 	                    _this.queue.push(fileItem);
 	                    _this._onAfterAddingFile(fileItem);
-	                } else {
-	                    var filter = arrayOfFilters[_this._failFilterIndex];
-	                    _this._onWhenAddingFileFailed(temp, filter, options);
+	                    next();
+	                };
+	                pipeline.onThrown = onThrown;
+	                pipeline.onSuccessful = onSuccessful;
+	                pipeline.exec(fileLikeObject, options);
+	            };
+	
+	            var done = function done() {
+	                if (_this.queue.length !== count) {
+	                    _this._onAfterAddingAll(addedFileItems);
+	                    _this.progress = _this._getTotalProgress();
 	                }
-	            });
 	
-	            if (this.queue.length !== count) {
-	                this._onAfterAddingAll(addedFileItems);
-	                this.progress = this._getTotalProgress();
-	            }
+	                _this._render();
+	                if (_this.autoUpload) _this.uploadAll();
+	            };
 	
-	            this._render();
-	            if (this.autoUpload) this.uploadAll();
+	            next();
 	        };
 	        /**
 	         * Remove items from the queue. Remove last: index = -1
@@ -561,6 +593,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	        };
 	        /**
+	        * @param {Array<Function>} filters
+	        * @returns {Array<Function>}
+	        * @private
+	        */
+	
+	
+	        FileUploader.prototype._convertFiltersToPipes = function _convertFiltersToPipes(filters) {
+	            var _this4 = this;
+	
+	            return filters.map(function (filter) {
+	                var fn = bind(_this4, filter.fn);
+	                fn.isAsync = filter.fn.length === 3;
+	                fn.originalFilter = filter;
+	                return fn;
+	            });
+	        };
+	        /**
 	         * Updates html
 	         * @private
 	         */
@@ -589,25 +638,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        FileUploader.prototype._queueLimitFilter = function _queueLimitFilter() {
 	            return this.queue.length < this.queueLimit;
-	        };
-	        /**
-	         * Returns "true" if file pass all filters
-	         * @param {File|Object} file
-	         * @param {Array<Function>} filters
-	         * @param {Object} options
-	         * @returns {Boolean}
-	         * @private
-	         */
-	
-	
-	        FileUploader.prototype._isValidFile = function _isValidFile(file, filters, options) {
-	            var _this4 = this;
-	
-	            this._failFilterIndex = -1;
-	            return !filters.length ? true : filters.every(function (filter) {
-	                _this4._failFilterIndex++;
-	                return filter.fn.call(_this4, file, options);
-	            });
 	        };
 	        /**
 	         * Checks whether upload successful
@@ -1031,7 +1061,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return FileUploader;
 	}
 	
-	__identity.$inject = ['fileUploaderOptions', '$rootScope', '$http', '$window', '$timeout', 'FileLikeObject', 'FileItem'];
+	__identity.$inject = ['fileUploaderOptions', '$rootScope', '$http', '$window', '$timeout', 'FileLikeObject', 'FileItem', 'Pipeline'];
 
 /***/ },
 /* 4 */
@@ -1605,6 +1635,82 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 8 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = __identity;
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _angular = angular;
+	var bind = _angular.bind;
+	var isUndefined = _angular.isUndefined;
+	function __identity($q) {
+	
+	  return function () {
+	    /**
+	     * @param {Array<Function>} pipes
+	     */
+	
+	    function Pipeline() {
+	      var pipes = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+	
+	      _classCallCheck(this, Pipeline);
+	
+	      this.pipes = pipes;
+	    }
+	
+	    Pipeline.prototype.next = function next(args) {
+	      var pipe = this.pipes.shift();
+	      if (isUndefined(pipe)) {
+	        this.onSuccessful.apply(this, _toConsumableArray(args));
+	        return;
+	      }
+	      var err = new Error('The filter has not passed');
+	      err.pipe = pipe;
+	      err.args = args;
+	      if (pipe.isAsync) {
+	        var deferred = $q.defer();
+	        var onFulfilled = bind(this, this.next, args);
+	        var onRejected = bind(this, this.onThrown, err);
+	        deferred.promise.then(onFulfilled, onRejected);
+	        pipe.apply(undefined, _toConsumableArray(args).concat([deferred]));
+	      } else {
+	        var isDone = Boolean(pipe.apply(undefined, _toConsumableArray(args)));
+	        if (isDone) {
+	          this.next(args);
+	        } else {
+	          this.onThrown(err);
+	        }
+	      }
+	    };
+	
+	    Pipeline.prototype.exec = function exec() {
+	      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	        args[_key] = arguments[_key];
+	      }
+	
+	      this.next(args);
+	    };
+	
+	    Pipeline.prototype.onThrown = function onThrown(err) {};
+	
+	    Pipeline.prototype.onSuccessful = function onSuccessful() {};
+	
+	    return Pipeline;
+	  }();
+	}
+	
+	__identity.$inject = ['$q'];
+
+/***/ },
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1764,7 +1870,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	__identity.$inject = ['FileDirective'];
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1848,7 +1954,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	__identity.$inject = ['FileDirective'];
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1891,7 +1997,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	__identity.$inject = ['$parse', 'FileUploader', 'FileSelect'];
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1935,7 +2041,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	__identity.$inject = ['$parse', 'FileUploader', 'FileDrop'];
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

@@ -5,6 +5,7 @@ import CONFIG from './../config.json';
 
 
 let {
+    bind,
     copy,
     extend,
     forEach,
@@ -12,11 +13,12 @@ let {
     isNumber,
     isDefined,
     isArray,
+    isUndefined,
     element
     } = angular;
 
 
-export default function __identity(fileUploaderOptions, $rootScope, $http, $window, $timeout, FileLikeObject, FileItem) {
+export default function __identity(fileUploaderOptions, $rootScope, $http, $window, $timeout, FileLikeObject, FileItem, Pipeline) {
     
     
     let {
@@ -40,7 +42,6 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
             extend(this, settings, options, {
                 isUploading: false,
                 _nextIndex: 0,
-                _failFilterIndex: -1,
                 _directives: {select: [], drop: [], over: []}
             });
 
@@ -55,32 +56,50 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
          * @param {Array<Function>|String} filters
          */
         addToQueue(files, options, filters) {
-            var list = this.isArrayLikeObject(files) ? files: [files];
+            let incomingQueue = this.isArrayLikeObject(files) ? Array.prototype.slice.call(files): [files];
             var arrayOfFilters = this._getFilters(filters);
             var count = this.queue.length;
             var addedFileItems = [];
 
-            forEach(list, (some /*{File|HTMLInputElement|Object}*/) => {
-                var temp = new FileLikeObject(some);
-
-                if (this._isValidFile(temp, arrayOfFilters, options)) {
-                    var fileItem = new FileItem(this, some, options);
+            let next = () => {
+                let something = incomingQueue.shift();
+                
+                if (isUndefined(something)) {
+                    return done();
+                }
+                
+                let fileLikeObject = this.isFile(something) ? something : new FileLikeObject(something);
+                let pipes = this._convertFiltersToPipes(arrayOfFilters);
+                let pipeline = new Pipeline(pipes);
+                let onThrown = (err) => {
+                    let {originalFilter} = err.pipe;
+                    let [fileLikeObject, options] = err.args;
+                    this._onWhenAddingFileFailed(fileLikeObject, originalFilter, options);
+                    next();
+                };
+                let onSuccessful = (fileLikeObject, options) => {
+                    let fileItem = new FileItem(this, fileLikeObject, options);
                     addedFileItems.push(fileItem);
                     this.queue.push(fileItem);
                     this._onAfterAddingFile(fileItem);
-                } else {
-                    var filter = arrayOfFilters[this._failFilterIndex];
-                    this._onWhenAddingFileFailed(temp, filter, options);
+                    next();
+                };
+                pipeline.onThrown = onThrown;
+                pipeline.onSuccessful = onSuccessful;
+                pipeline.exec(fileLikeObject, options);
+            };
+                
+            let done = () => {
+                if(this.queue.length !== count) {
+                    this._onAfterAddingAll(addedFileItems);
+                    this.progress = this._getTotalProgress();
                 }
-            });
 
-            if(this.queue.length !== count) {
-                this._onAfterAddingAll(addedFileItems);
-                this.progress = this._getTotalProgress();
-            }
-
-            this._render();
-            if (this.autoUpload) this.uploadAll();
+                this._render();
+                if (this.autoUpload) this.uploadAll();
+            };
+            
+            next();
         }
         /**
          * Remove items from the queue. Remove last: index = -1
@@ -334,6 +353,20 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
             return this.filters
                 .filter(filter => names.indexOf(filter.name) !== -1);
         }
+       /**
+       * @param {Array<Function>} filters
+       * @returns {Array<Function>}
+       * @private
+       */
+       _convertFiltersToPipes(filters) {
+            return filters
+                .map(filter => {
+                    let fn = bind(this, filter.fn);
+                    fn.isAsync = filter.fn.length === 3;
+                    fn.originalFilter = filter;
+                    return fn;
+                });
+        }
         /**
          * Updates html
          * @private
@@ -357,21 +390,6 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
          */
         _queueLimitFilter() {
             return this.queue.length < this.queueLimit;
-        }
-        /**
-         * Returns "true" if file pass all filters
-         * @param {File|Object} file
-         * @param {Array<Function>} filters
-         * @param {Object} options
-         * @returns {Boolean}
-         * @private
-         */
-        _isValidFile(file, filters, options) {
-            this._failFilterIndex = -1;
-            return !filters.length ? true : filters.every((filter) => {
-                this._failFilterIndex++;
-                return filter.fn.call(this, file, options);
-            });
         }
         /**
          * Checks whether upload successful
@@ -757,5 +775,6 @@ __identity.$inject = [
     '$window',
     '$timeout',
     'FileLikeObject',
-    'FileItem'
+    'FileItem',
+    'Pipeline'
 ];
