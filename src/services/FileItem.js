@@ -48,7 +48,7 @@ export default function __identity($compile, FileLikeObject) {
                 isError: false,
                 progress: 0,
                 index: null,
-                _file: file,
+                _file: (file instanceof Blob) ? file : new Blob([file]),
                 _input: input
             });
 
