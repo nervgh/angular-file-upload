@@ -35,6 +35,7 @@ export default function __identity($compile, FileLikeObject) {
                 formData: copy(uploader.formData),
                 removeAfterUpload: uploader.removeAfterUpload,
                 withCredentials: uploader.withCredentials,
+                responseType: uploader.responseType,
                 disableMultipart: uploader.disableMultipart,
                 method: uploader.method
             }, options, {

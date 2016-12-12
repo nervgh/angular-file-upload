@@ -510,6 +510,7 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
             xhr.open(item.method, item.url, true);
 
             xhr.withCredentials = item.withCredentials;
+            xhr.responseType = item.responseType;
 
             forEach(item.headers, (value, name) => {
                 xhr.setRequestHeader(name, value);
