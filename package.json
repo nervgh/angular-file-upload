@@ -1,6 +1,6 @@
 {
   "name": "angular-file-upload",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "homepage": "https://github.com/nervgh/angular-file-upload",
   "description": "Angular File Upload is a module for the AngularJS framework",
   "author": {
@@ -11,7 +11,7 @@
     "type": "git",
     "url": "https://github.com/nervgh/angular-file-upload.git"
   },
-  "main": "dist/angular-file-upload.min.js",
+  "main": "dist/angular-file-upload.js",
   "engines": {
     "node": ">=4.0.0"
   },
