@@ -64,8 +64,9 @@ export default function __identity($compile, FileLikeObject) {
             try {
                 this.uploader.uploadItem(this);
             } catch(e) {
-                this.uploader._onCompleteItem(this, '', 0, []);
-                this.uploader._onErrorItem(this, '', 0, []);
+                var message = e.name + ':' + e.message;
+                this.uploader._onCompleteItem(this, message, e.code, []);
+                this.uploader._onErrorItem(this, message, e.code, []);
             }
         }
         /**
