@@ -11,8 +11,8 @@ let {
 
 
 export default function __identity(FileDirective) {
-    
-    
+
+
     return class FileDrop extends FileDirective {
         /**
          * Creates instance of {FileDrop} object
@@ -31,7 +31,7 @@ export default function __identity(FileDirective) {
                 // Name of property inside uploader._directive object
                 prop: 'drop'
             });
-            
+
             super(extendedOptions);
         }
         /**
@@ -72,9 +72,12 @@ export default function __identity(FileDirective) {
          * Event handler
          */
         onDragLeave(event) {
-            if(event.currentTarget === this.element[0]) return;
-            this._preventAndStop(event);
-            forEach(this.uploader._directives.over, this._removeOverClass, this);
+            if(event.currentTarget !== this.element[0]) return;
+            var that = this;
+            this.onDragLeaveTimer = setTimeout(function() {
+                that._preventAndStop(event);
+                forEach(that.uploader._directives.over, that._removeOverClass, that);
+            }, 0);
         }
         /**
          * Helper
