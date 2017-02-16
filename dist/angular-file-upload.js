@@ -1746,13 +1746,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    $destroy: 'destroy',
 	                    drop: 'onDrop',
 	                    dragover: 'onDragOver',
-	                    dragleave: 'onDragLeave'
+	                    dragleave: 'onDragLeave',
+	                    dragenter: 'onDragEnter'
 	                },
 	                // Name of property inside uploader._directive object
 	                prop: 'drop'
 	            });
 	
-	            return _possibleConstructorReturn(this, _FileDirective.call(this, extendedOptions));
+	            var _this = _possibleConstructorReturn(this, _FileDirective.call(this, extendedOptions));
+	
+	            _this.dragCount = 0;
+	            return _this;
 	        }
 	        /**
 	         * Returns options
@@ -1776,11 +1780,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        FileDrop.prototype.onDrop = function onDrop(event) {
 	            var transfer = this._getTransfer(event);
 	            if (!transfer) return;
+	            this.dragCount = 0;
 	            var options = this.getOptions();
 	            var filters = this.getFilters();
 	            this._preventAndStop(event);
 	            forEach(this.uploader._directives.over, this._removeOverClass, this);
 	            this.uploader.addToQueue(transfer.files, options, filters);
+	        };
+	
+	        FileDrop.prototype.onDragEnter = function onDragEnter() {
+	            this.dragCount++;
 	        };
 	        /**
 	         * Event handler
@@ -1800,10 +1809,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	        FileDrop.prototype.onDragLeave = function onDragLeave(event) {
+	            this.dragCount--;
 	            if (event.currentTarget !== this.element[0]) return;
-	            //clearTimeout(this.onDragLeaveTimer);
 	            var that = this;
-	            this.onDragLeaveTimer = setTimeout(function () {
+	            clearTimeout(that.onDragLeaveTimer);
+	            that.onDragLeaveTimer = setTimeout(function () {
+	                if (that.dragCount > 0) return;
 	                that._preventAndStop(event);
 	                forEach(that.uploader._directives.over, that._removeOverClass, that);
 	            }, 0);

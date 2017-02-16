@@ -26,13 +26,16 @@ export default function __identity(FileDirective) {
                     $destroy: 'destroy',
                     drop: 'onDrop',
                     dragover: 'onDragOver',
-                    dragleave: 'onDragLeave'
+                    dragleave: 'onDragLeave',
+                    dragenter: 'onDragEnter'
                 },
                 // Name of property inside uploader._directive object
                 prop: 'drop'
             });
 
             super(extendedOptions);
+
+            this.dragCount = 0;
         }
         /**
          * Returns options
@@ -52,11 +55,15 @@ export default function __identity(FileDirective) {
         onDrop(event) {
             var transfer = this._getTransfer(event);
             if(!transfer) return;
+            this.dragCount = 0;
             var options = this.getOptions();
             var filters = this.getFilters();
             this._preventAndStop(event);
             forEach(this.uploader._directives.over, this._removeOverClass, this);
             this.uploader.addToQueue(transfer.files, options, filters);
+        }
+        onDragEnter() {
+            this.dragCount++;
         }
         /**
          * Event handler
@@ -72,9 +79,12 @@ export default function __identity(FileDirective) {
          * Event handler
          */
         onDragLeave(event) {
-            if(event.currentTarget !== this.element[0]) return;
+            this.dragCount--;
+            if (event.currentTarget !== this.element[0]) return;
             var that = this;
-            this.onDragLeaveTimer = setTimeout(function() {
+            clearTimeout(that.onDragLeaveTimer);
+            that.onDragLeaveTimer = setTimeout(function(){
+                if (that.dragCount > 0) return;
                 that._preventAndStop(event);
                 forEach(that.uploader._directives.over, that._removeOverClass, that);
             }, 0);
