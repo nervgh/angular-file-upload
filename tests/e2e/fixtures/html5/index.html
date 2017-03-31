@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Html5 Fixture</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="http://code.angularjs.org/1.3.20/angular.js"></script>
+  <script src="/dist/angular-file-upload.js"></script>
+  <script src="script.js"></script>
+</head>
+<body>
+  <div ng-app="app">
+    <div ng-controller="AppController" uploader="uploader">
+      <div ng-show="uploader.isHTML5">
+        <input type="file" nv-file-select="" uploader="uploader" multiple />
+
+        <h2>The queue. Length: <span ng-bind="uploader.queue.length"></span></h2>
+        <ul>
+          <li ng-repeat="item in uploader.queue">
+            <div>Name: <span ng-bind="item.file.name"></span></div>
+            <div>Size: <span ng-bind="item.file.size/1024/1024|number:2"></span> Mb</div>
+            <div ng-show="uploader.isHTML5">
+              Progress: <span ng-bind="item.progress"></span>
+              <div class="item-progress-box">
+                <div class="item-progress" ng-style="{ 'width': item.progress + '%' }"></div>
+              </div>
+            </div>
+            <div>
+              <button ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">Upload</button>
+              <button ng-click="item.cancel()" ng-disabled="!item.isUploading">Cancel</button>
+              <button ng-click="item.remove()">Remove</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

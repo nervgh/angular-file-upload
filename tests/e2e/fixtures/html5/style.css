@@ -1,0 +1,103 @@
+html, body {
+    height: 100%;
+}
+
+h1, h2 {
+    background-color: steelblue;
+    font-family: Tahoma, serif;
+    color: white;
+    padding: 10px;
+    letter-spacing: 1px;
+}
+
+h1 {
+    font-size: 1.3em;
+}
+
+h2 {
+    font-size: 1.2em;
+}
+
+canvas {
+    background-color: #f3f3f3;
+    -webkit-box-shadow: 3px 3px 3px 0 #e3e3e3;
+    -moz-box-shadow: 3px 3px 3px 0 #e3e3e3;
+    box-shadow: 3px 3px 3px 0 #e3e3e3;
+    border: 1px solid #c3c3c3;
+    height: 100px;
+    margin: 6px 0 0 6px;
+}
+
+.nv-file-over {
+    background-color: #FFBEA3;
+}
+
+.other-drop-zone {
+    border: 2px dashed burlywood;
+    padding: 4px;
+    height: 100px;
+}
+
+.other-over-zone {
+    background-color: moccasin;
+}
+
+.bg {
+    background-color: lightgreen;
+}
+
+.over-zone {
+    border: 2px dashed lavender;
+    height: 100px;
+    padding: 4px;
+}
+
+.item-progress-box {
+    height: 20px;
+    margin-top: -20px;
+    margin-left: 60px;
+    margin-right: 10px;
+}
+
+.item-progress {
+    background-color: #90B8DA;
+    height: 100%;
+    width: 0;
+}
+
+.total-progress-box {
+    height: 20px;
+    margin-top: -20px;
+    margin-left: 90px;
+    margin-right: 10px;
+}
+
+.total-progress {
+    background-color: #90B8DA;
+    height: 100%;
+    width: 0;
+}
+
+.box {
+    margin: 20px;
+}
+
+.progress {
+    background-color: mediumpurple;
+    height: 20px;
+}
+
+.uploaded {
+    background-color: lightgreen;
+    height: 20px;
+    width: 100px;
+}
+
+ul > li:nth-child(odd) {
+    background-color: #f5f5f5;
+    margin: 2px;
+}
+
+.zone {
+    width: 49%;
+}
