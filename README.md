@@ -59,3 +59,23 @@ You could check out features of target browsers using http://caniuse.com/. For e
 | XHR transport (multipart,binary) | - | + | + | + | + |
 | An image preview via Canvas (not built-in) | - | + | + | + | + |
 | AJAX headers | - | + | + | + | + |
+
+## Tests
+Follow next steps for running tests:
+
+1. install `proctactor`, `koa`, `koa-static` and other dependencies
+```bash
+npm install
+```
+2. update selenium-web-driver (more info see [there](http://www.protractortest.org/#/tutorial#setup)) 
+```bash
+npm run tests/webdriver/update
+```
+3. start static-server (it should work when you will run tests)
+```bash
+npm run tests/server/start
+```
+4. open another terminal window and run tests
+```bash
+npm run tests/test
+```

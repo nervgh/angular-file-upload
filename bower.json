@@ -2,7 +2,15 @@
     "name": "angular-file-upload",
     "main": "dist/angular-file-upload.min.js",
     "homepage": "https://github.com/nervgh/angular-file-upload",
-    "ignore": ["examples"],
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "tests",
+        "examples",
+        "gulpfile.js",
+        "WebpackConfig.js"
+    ],
     "dependencies": {
         "angular": "^1.1.5"
     },

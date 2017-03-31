@@ -13,15 +13,30 @@
   },
   "main": "dist/angular-file-upload.js",
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=6.9.x"
+  },
+  "scripts": {
+    "tests/webdriver/update": "node_modules/.bin/webdriver-manager update",
+    "tests/server/start": "node tests/server.js",
+    "tests/test": "node_modules/.bin/protractor ./tests/protractor.config.js"
   },
   "devDependencies": {
     "babel-core": "~6.8.0",
     "babel-loader": "~6.2.4",
     "babel-preset-es2015": "~6.6.0",
     "gulp": "~3.9.1",
+    "koa": "~2.2.0",
+    "koa-static": "~3.0.0",
     "json-loader": "~0.5.4",
+    "protractor": "5.1.1",
     "raw-loader": "~0.5.1",
     "webpack-stream": "~3.2.0"
-  }
+  },
+  "files": [
+    "dist",
+    "src",
+    "license.txt",
+    "package.json",
+    "README.md"
+  ]
 }
