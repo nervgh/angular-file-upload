@@ -59,3 +59,18 @@ You could check out features of target browsers using http://caniuse.com/. For e
 | XHR transport (multipart,binary) | - | + | + | + | + |
 | An image preview via Canvas (not built-in) | - | + | + | + | + |
 | AJAX headers | - | + | + | + | + |
+
+
+## How to ask a question
+
+### A right way to ask a question
+If you have a question, please, follow next steps:
+- Try to find an answer to your question using [search](https://github.com/nervgh/angular-file-upload/issues?utf8=%E2%9C%93&q=)
+- If you have not found an answer, create [new issue](https://github.com/nervgh/angular-file-upload/issues/new) on issue-tracker
+
+### Why email a question is a bad way?
+When you emal me a question:
+- You lose an opportunity to get an answer from other team members or users (devs)
+- It requires from me to answer on same questions again and again
+- It is not a rational way. For example, if everybody who use code of this project will have emailed me a question then I will be receiving ~700 emails each day =)
+- It is a very slow way. I have not time for it.
