@@ -74,3 +74,4 @@ When you emal me a question:
 - It requires from me to answer on same questions again and again
 - It is not a rational way. For example, if everybody who use code of this project will have emailed me a question then I will be receiving ~700 emails each day =)
 - It is a very slow way. I have not time for it.
+- Anyone else having the same question will not benefit from you and might repeat all of above!
