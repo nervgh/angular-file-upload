@@ -13,13 +13,13 @@ When files are selected or dropped into the component, one or more filters are a
 ```
 bower install angular-file-upload
 ```
-You could find this module in bower like [_angular file upload_](http://bower.io/search/?q=angular%20file%20upload).
+You could find this module in bower like [_angular file upload_](http://bower.io/search/?q=angular-file-upload).
 
 ### NPM
 ```
 npm install angular-file-upload
 ```
-You could find this module in npm like [_angular file upload_](https://www.npmjs.com/search?q=angular%20file%20upload).
+You could find this module in npm like [_angular file upload_](https://www.npmjs.com/search?q=angular-file-upload).
 
 ### Module Dependency
 
