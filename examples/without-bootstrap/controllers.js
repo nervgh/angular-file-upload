@@ -1,5 +1,7 @@
 'use strict';
 
+if (!window.console) window.console = {};
+if (!window.console.info) window.console.info = function () { };
 
 angular
 
