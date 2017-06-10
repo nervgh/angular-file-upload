@@ -27,6 +27,12 @@ yarn add --exact angular-file-upload
 ```
 You could find this module in yarn like [_angular file upload_](https://yarnpkg.com/en/packages?q=angular-file-upload).
 
+### Nuget
+```
+Install-Package AngularFileUpload
+```
+You could find this module in Nuget like [_angular file upload_](https://www.nuget.org/packages?q=AngularFileUpload).
+
 ### Module Dependency
 
 Add `'angularFileUpload'` to your module declaration:
