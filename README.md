@@ -1,5 +1,7 @@
 # Angular File Upload
 
+> compatible with AngularJS v1.x
+
 ---
 
 ## About
