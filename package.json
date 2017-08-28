@@ -3,6 +3,7 @@
   "version": "2.5.0",
   "homepage": "https://github.com/nervgh/angular-file-upload",
   "description": "Angular File Upload is a module for the AngularJS framework",
+  "license": "MIT",
   "author": {
     "name": "nerv",
     "url": "https://github.com/nervgh"
