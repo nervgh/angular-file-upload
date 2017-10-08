@@ -17,23 +17,23 @@ bower install angular-file-upload
 ```
 You could find this module in bower like [_angular file upload_](http://bower.io/search/?q=angular-file-upload).
 
-### NPM [![npm](https://img.shields.io/npm/v/angular-file-upload.svg)](https://www.npmjs.com/search?q=angular-file-upload)
+### NPM [![npm](https://img.shields.io/npm/v/angular-file-upload.svg)](https://www.npmjs.com/package/angular-file-upload)
 ```
 npm install angular-file-upload
 ```
-You could find this module in npm like [_angular file upload_](https://www.npmjs.com/search?q=angular-file-upload).
+You could find this module in npm like [_angular file upload_](https://www.npmjs.com/package/angular-file-upload).
 
-### Yarn [![npm](https://img.shields.io/npm/v/angular-file-upload.svg)](https://www.npmjs.com/search?q=angular-file-upload)
+### Yarn [![npm](https://img.shields.io/npm/v/angular-file-upload.svg)](https://www.npmjs.com/package/angular-file-upload)
 ```
 yarn add --exact angular-file-upload
 ```
-You could find this module in yarn like [_angular file upload_](https://yarnpkg.com/en/packages?q=angular-file-upload).
+You could find this module in yarn like [_angular file upload_](https://yarnpkg.com/en/package/angular-file-upload).
 
 ### Nuget
 ```
 Install-Package AngularFileUpload
 ```
-You could find this module in Nuget like [_angular file upload_](https://www.nuget.org/packages?q=AngularFileUpload).
+You could find this module in Nuget like [_angular file upload_](https://www.nuget.org/packages/AngularFileUpload/).
 
 ### Module Dependency
 
