@@ -12,8 +12,8 @@ let {
 
 
 export default function __identity() {
-    
-    
+
+
     return class FileLikeObject {
         /**
          * Creates an instance of FileLikeObject
@@ -33,7 +33,7 @@ export default function __identity() {
          * @private
          */
         _createFromFakePath(path) {
-            this.lastModifiedDate = null;
+            this.lastModified = null;
             this.size = null;
             this.type = 'like/' + path.slice(path.lastIndexOf('.') + 1).toLowerCase();
             this.name = path.slice(path.lastIndexOf('/') + path.lastIndexOf('\\') + 2);
@@ -44,7 +44,7 @@ export default function __identity() {
          * @private
          */
         _createFromObject(object) {
-            this.lastModifiedDate = copy(object.lastModifiedDate);
+            this.lastModified = copy(object.lastModified);
             this.size = object.size;
             this.type = object.type;
             this.name = object.name;
