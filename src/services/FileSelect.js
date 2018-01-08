@@ -9,10 +9,10 @@ let {
     } = angular;
 
 
-export default ($compile, FileDirective) => {
+export default function __identity($compile, FileDirective) {
     
     
-    class FileSelect extends FileDirective {
+    return class FileSelect extends FileDirective {
         /**
          * Creates instance of {FileSelect} object
          * @param {Object} options
@@ -67,17 +67,14 @@ export default ($compile, FileDirective) => {
             this.uploader.addToQueue(files, options, filters);
             if(this.isEmptyAfterSelection()) {
                 this.element.prop('value', null);
-                this.element.replaceWith( $compile(this.element.clone())(this.scope) ); // IE fix
+                this.element.replaceWith($compile(this.element.clone())(this.scope)); // IE fix
             }
         }
     }
-    
-    
-    return FileSelect;
 }
 
 
-module.exports.$inject = [
+__identity.$inject = [
     '$compile',
     'FileDirective'
 ];

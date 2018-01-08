@@ -12,10 +12,10 @@ let {
     } = angular;
 
 
-export default ($compile, FileLikeObject) => {
+export default function __identity($compile, FileLikeObject) {
     
     
-    class FileItem {
+    return class FileItem {
         /**
          * Creates an instance of FileItem
          * @param {FileUploader} uploader
@@ -35,6 +35,7 @@ export default ($compile, FileLikeObject) => {
                 formData: copy(uploader.formData),
                 removeAfterUpload: uploader.removeAfterUpload,
                 withCredentials: uploader.withCredentials,
+                disableMultipart: uploader.disableMultipart,
                 method: uploader.method
             }, options, {
                 uploader: uploader,
@@ -63,8 +64,9 @@ export default ($compile, FileLikeObject) => {
             try {
                 this.uploader.uploadItem(this);
             } catch(e) {
-                this.uploader._onCompleteItem(this, '', 0, []);
-                this.uploader._onErrorItem(this, '', 0, []);
+                var message = e.name + ':' + e.message;
+                this.uploader._onCompleteItem(this, message, e.code, []);
+                this.uploader._onErrorItem(this, message, e.code, []);
             }
         }
         /**
@@ -132,7 +134,7 @@ export default ($compile, FileLikeObject) => {
          */
         _onBeforeUpload() {
             this.isReady = true;
-            this.isUploading = true;
+            this.isUploading = false;
             this.isUploaded = false;
             this.isSuccess = false;
             this.isCancel = false;
@@ -242,15 +244,11 @@ export default ($compile, FileLikeObject) => {
             input.css('display', 'none');
             input.after(clone); // remove jquery dependency
         }
-
     }
-    
-    
-    return FileItem;
 }
 
 
-module.exports.$inject = [
+__identity.$inject = [
     '$compile',
     'FileLikeObject'
 ];

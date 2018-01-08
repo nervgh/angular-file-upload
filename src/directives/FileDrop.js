@@ -4,7 +4,7 @@
 import CONFIG from './../config.json';
 
 
-export default ($parse, FileUploader, FileDrop) => {
+export default function __identity($parse, FileUploader, FileDrop) {
 
 
     return {
@@ -31,7 +31,7 @@ export default ($parse, FileUploader, FileDrop) => {
 }
 
 
-module.exports.$inject = [
+__identity.$inject = [
     '$parse',
     'FileUploader',
     'FileDrop'

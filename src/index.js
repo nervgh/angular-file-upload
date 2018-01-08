@@ -12,6 +12,7 @@ import serviceFileLikeObject from './services/FileLikeObject';
 import serviceFileItem from './services/FileItem';
 import serviceFileDirective from './services/FileDirective';
 import serviceFileSelect from './services/FileSelect';
+import servicePipeline from './services/Pipeline';
 import serviceFileDrop from './services/FileDrop';
 import serviceFileOver from './services/FileOver';
 
@@ -31,6 +32,7 @@ angular
     .factory('FileSelect', serviceFileSelect)
     .factory('FileDrop', serviceFileDrop)
     .factory('FileOver', serviceFileOver)
+    .factory('Pipeline', servicePipeline)
     .directive('nvFileSelect', directiveFileSelect)
     .directive('nvFileDrop', directiveFileDrop)
     .directive('nvFileOver', directiveFileOver)
@@ -42,7 +44,8 @@ angular
         'FileSelect',
         'FileDrop',
         'FileOver',
-        function(FileUploader, FileLikeObject, FileItem, FileDirective, FileSelect, FileDrop, FileOver) {
+        'Pipeline',
+        function(FileUploader, FileLikeObject, FileItem, FileDirective, FileSelect, FileDrop, FileOver, Pipeline) {
             // only for compatibility
             FileUploader.FileLikeObject = FileLikeObject;
             FileUploader.FileItem = FileItem;
@@ -50,5 +53,6 @@ angular
             FileUploader.FileSelect = FileSelect;
             FileUploader.FileDrop = FileDrop;
             FileUploader.FileOver = FileOver;
+            FileUploader.Pipeline = Pipeline;
         }
     ]);

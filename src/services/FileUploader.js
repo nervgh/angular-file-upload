@@ -5,6 +5,7 @@ import CONFIG from './../config.json';
 
 
 let {
+    bind,
     copy,
     extend,
     forEach,
@@ -12,11 +13,12 @@ let {
     isNumber,
     isDefined,
     isArray,
+    isUndefined,
     element
     } = angular;
 
 
-export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject, FileItem) => {
+export default function __identity(fileUploaderOptions, $rootScope, $http, $window, $timeout, FileLikeObject, FileItem, Pipeline) {
     
     
     let {
@@ -40,7 +42,6 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             extend(this, settings, options, {
                 isUploading: false,
                 _nextIndex: 0,
-                _failFilterIndex: -1,
                 _directives: {select: [], drop: [], over: []}
             });
 
@@ -55,32 +56,50 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
          * @param {Array<Function>|String} filters
          */
         addToQueue(files, options, filters) {
-            var list = this.isArrayLikeObject(files) ? files: [files];
+            let incomingQueue = this.isArrayLikeObject(files) ? Array.prototype.slice.call(files): [files];
             var arrayOfFilters = this._getFilters(filters);
             var count = this.queue.length;
             var addedFileItems = [];
 
-            forEach(list, (some /*{File|HTMLInputElement|Object}*/) => {
-                var temp = new FileLikeObject(some);
-
-                if (this._isValidFile(temp, arrayOfFilters, options)) {
-                    var fileItem = new FileItem(this, some, options);
+            let next = () => {
+                let something = incomingQueue.shift();
+                
+                if (isUndefined(something)) {
+                    return done();
+                }
+                
+                let fileLikeObject = this.isFile(something) ? something : new FileLikeObject(something);
+                let pipes = this._convertFiltersToPipes(arrayOfFilters);
+                let pipeline = new Pipeline(pipes);
+                let onThrown = (err) => {
+                    let {originalFilter} = err.pipe;
+                    let [fileLikeObject, options] = err.args;
+                    this._onWhenAddingFileFailed(fileLikeObject, originalFilter, options);
+                    next();
+                };
+                let onSuccessful = (fileLikeObject, options) => {
+                    let fileItem = new FileItem(this, fileLikeObject, options);
                     addedFileItems.push(fileItem);
                     this.queue.push(fileItem);
                     this._onAfterAddingFile(fileItem);
-                } else {
-                    var filter = arrayOfFilters[this._failFilterIndex];
-                    this._onWhenAddingFileFailed(temp, filter, options);
+                    next();
+                };
+                pipeline.onThrown = onThrown;
+                pipeline.onSuccessful = onSuccessful;
+                pipeline.exec(fileLikeObject, options);
+            };
+                
+            let done = () => {
+                if(this.queue.length !== count) {
+                    this._onAfterAddingAll(addedFileItems);
+                    this.progress = this._getTotalProgress();
                 }
-            });
 
-            if(this.queue.length !== count) {
-                this._onAfterAddingAll(addedFileItems);
-                this.progress = this._getTotalProgress();
-            }
-
-            this._render();
-            if (this.autoUpload) this.uploadAll();
+                this._render();
+                if (this.autoUpload) this.uploadAll();
+            };
+            
+            next();
         }
         /**
          * Remove items from the queue. Remove last: index = -1
@@ -115,8 +134,13 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             item._prepareToUploading();
             if(this.isUploading) return;
 
+            this._onBeforeUploadItem(item);
+            if (item.isCancel) return;
+
+            item.isUploading = true;
             this.isUploading = true;
             this[transport](item);
+            this._render();
         }
         /**
          * Cancels uploading of item from the queue
@@ -126,7 +150,19 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             var index = this.getIndexOfItem(value);
             var item = this.queue[index];
             var prop = this.isHTML5 ? '_xhr' : '_form';
-            if(item && item.isUploading) item[prop].abort();
+            if (!item) return;
+            item.isCancel = true;
+            if(item.isUploading) {
+                // It will call this._onCancelItem() & this._onCompleteItem() asynchronously
+                item[prop].abort();
+            } else {
+                let dummy = [undefined, 0, {}];
+                let onNextTick = () => {
+                    this._onCancelItem(item, ...dummy);
+                    this._onCompleteItem(item, ...dummy);
+                };
+                $timeout(onNextTick); // Trigger callbacks asynchronously (setImmediate emulation)
+            }
         }
         /**
          * Uploads all not uploaded items of queue
@@ -317,6 +353,20 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             return this.filters
                 .filter(filter => names.indexOf(filter.name) !== -1);
         }
+       /**
+       * @param {Array<Function>} filters
+       * @returns {Array<Function>}
+       * @private
+       */
+       _convertFiltersToPipes(filters) {
+            return filters
+                .map(filter => {
+                    let fn = bind(this, filter.fn);
+                    fn.isAsync = filter.fn.length === 3;
+                    fn.originalFilter = filter;
+                    return fn;
+                });
+        }
         /**
          * Updates html
          * @private
@@ -340,21 +390,6 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
          */
         _queueLimitFilter() {
             return this.queue.length < this.queueLimit;
-        }
-        /**
-         * Returns "true" if file pass all filters
-         * @param {File|Object} file
-         * @param {Array<Function>} filters
-         * @param {Object} options
-         * @returns {Boolean}
-         * @private
-         */
-        _isValidFile(file, filters, options) {
-            this._failFilterIndex = -1;
-            return !filters.length ? true : filters.every((filter) => {
-                this._failFilterIndex++;
-                return filter.fn.call(this, file, options);
-            });
         }
         /**
          * Checks whether upload successful
@@ -424,21 +459,25 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
          */
         _xhrTransport(item) {
             var xhr = item._xhr = new XMLHttpRequest();
-            var form = new FormData();
+            var sendable;
 
-            this._onBeforeUploadItem(item);
-
-            forEach(item.formData, (obj) => {
-                forEach(obj, (value, key) => {
-                    form.append(key, value);
+            if (!item.disableMultipart) {
+                sendable = new FormData();
+                forEach(item.formData, (obj) => {
+                    forEach(obj, (value, key) => {
+                        sendable.append(key, value);
+                    });
                 });
-            });
+
+                sendable.append(item.alias, item._file, item.file.name);
+            }
+            else {
+                sendable = item._file;
+            }
 
             if(typeof(item._file.size) != 'number') {
                 throw new TypeError('The file specified is no longer valid');
             }
-
-            form.append(item.alias, item._file, item.file.name);
 
             xhr.upload.onprogress = (event) => {
                 var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
@@ -476,8 +515,7 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
                 xhr.setRequestHeader(name, value);
             });
 
-            xhr.send(form);
-            this._render();
+            xhr.send(sendable);
         }
         /**
          * The IFrame transport
@@ -491,8 +529,6 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
 
             if(item._form) item._form.replaceWith(input); // remove old form
             item._form = form; // save link to new form
-
-            this._onBeforeUploadItem(item);
 
             input.prop('name', item.alias);
 
@@ -560,7 +596,6 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
             form.append(input).append(iframe);
 
             form[0].submit();
-            this._render();
         }
         /**
          * Inner callback
@@ -733,11 +768,13 @@ export default (fileUploaderOptions, $rootScope, $http, $window, FileLikeObject,
 }
 
 
-module.exports.$inject = [
+__identity.$inject = [
     'fileUploaderOptions', 
     '$rootScope', 
     '$http', 
     '$window',
+    '$timeout',
     'FileLikeObject',
-    'FileItem'
+    'FileItem',
+    'Pipeline'
 ];

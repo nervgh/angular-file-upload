@@ -11,10 +11,10 @@ let {
     } = angular;
 
 
-export default () => {
+export default function __identity() {
     
     
-    class FileLikeObject {
+    return class FileLikeObject {
         /**
          * Creates an instance of FileLikeObject
          * @param {File|HTMLInputElement|Object} fileOrInput
@@ -50,11 +50,4 @@ export default () => {
             this.name = object.name;
         }
     }
-    
-    
-    return FileLikeObject;
 }
-
-
-module.exports.$inject = [
-];

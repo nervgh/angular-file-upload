@@ -4,7 +4,7 @@
 import CONFIG from './../config.json';
 
 
-export default (FileUploader, FileOver) => {
+export default function __identity(FileUploader, FileOver) {
 
 
     return {
@@ -28,7 +28,7 @@ export default (FileUploader, FileOver) => {
 }
 
 
-module.exports.$inject = [
+__identity.$inject = [
     'FileUploader',
     'FileOver'
 ];
