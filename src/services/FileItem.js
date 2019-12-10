@@ -24,8 +24,8 @@ export default function __identity($compile, FileLikeObject) {
          * @constructor
          */
         constructor(uploader, some, options) {
-            var isInput = isElement(some);
-            var input = isInput ? element(some) : null;
+            var isInput = !!some.input;
+            var input = isInput ? element(some.input) : null;
             var file = !isInput ? some : null;
 
             extend(this, {
@@ -36,7 +36,8 @@ export default function __identity($compile, FileLikeObject) {
                 removeAfterUpload: uploader.removeAfterUpload,
                 withCredentials: uploader.withCredentials,
                 disableMultipart: uploader.disableMultipart,
-                method: uploader.method
+                method: uploader.method,
+                timeout: uploader.timeout
             }, options, {
                 uploader: uploader,
                 file: new FileLikeObject(some),
@@ -125,6 +126,11 @@ export default function __identity($compile, FileLikeObject) {
          * @param {Object} headers
          */
         onComplete(response, status, headers) {
+        }
+        /**
+         * Callback         
+         */
+        onTimeout() {
         }
         /**********************
          * PRIVATE
@@ -215,6 +221,21 @@ export default function __identity($compile, FileLikeObject) {
         _onComplete(response, status, headers) {
             this.onComplete(response, status, headers);
             if(this.removeAfterUpload) this.remove();
+        }
+        /**
+         * Inner callback         
+         * @private
+         */
+        _onTimeout() {
+            this.isReady = false;
+            this.isUploading = false;
+            this.isUploaded = false;
+            this.isSuccess = false;
+            this.isCancel = false;
+            this.isError = true;
+            this.progress = 0;
+            this.index = null;
+            this.onTimeout();
         }
         /**
          * Destroys a FileItem
