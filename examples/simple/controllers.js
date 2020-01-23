@@ -10,6 +10,7 @@ angular
     .controller('AppController', ['$scope', 'FileUploader', function($scope, FileUploader) {
         var uploader = $scope.uploader = new FileUploader({
             url: 'upload.php'
+            //,timeout: 2000
         });
 
         // FILTERS
@@ -64,6 +65,11 @@ angular
         uploader.onCompleteItem = function(fileItem, response, status, headers) {
             console.info('onCompleteItem', fileItem, response, status, headers);
         };
+
+        uploader.onTimeoutItem = function(fileItem) {
+            console.info('onTimeoutItem', fileItem);
+        };
+
         uploader.onCompleteAll = function() {
             console.info('onCompleteAll');
         };

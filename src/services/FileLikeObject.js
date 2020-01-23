@@ -25,18 +25,19 @@ export default function __identity() {
             var fakePathOrObject = isInput ? fileOrInput.value : fileOrInput;
             var postfix = isString(fakePathOrObject) ? 'FakePath' : 'Object';
             var method = '_createFrom' + postfix;
-            this[method](fakePathOrObject);
+            this[method](fakePathOrObject, fileOrInput);
         }
         /**
          * Creates file like object from fake path string
          * @param {String} path
          * @private
          */
-        _createFromFakePath(path) {
+        _createFromFakePath(path, input) {
             this.lastModifiedDate = null;
             this.size = null;
             this.type = 'like/' + path.slice(path.lastIndexOf('.') + 1).toLowerCase();
             this.name = path.slice(path.lastIndexOf('/') + path.lastIndexOf('\\') + 2);
+            this.input = input;
         }
         /**
          * Creates file like object from object
@@ -48,6 +49,7 @@ export default function __identity() {
             this.size = object.size;
             this.type = object.type;
             this.name = object.name;
+            this.input = object.input;
         }
     }
 }

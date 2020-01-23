@@ -318,6 +318,12 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
         }
         /**
          * Callback
+         * @param {FileItem} item
+         */
+        onTimeoutItem(item) {
+        }
+        /**
+         * Callback
          */
         onCompleteAll() {
         }
@@ -507,6 +513,15 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
                 this._onCompleteItem(item, response, xhr.status, headers);
             };
 
+            xhr.timeout = item.timeout || 0;
+
+            xhr.ontimeout = (e) => {
+                var headers = this._parseHeaders(xhr.getAllResponseHeaders());
+                var response = "Request Timeout.";
+                this._onTimeoutItem(item);
+                this._onCompleteItem(item, response, 408, headers);
+            };
+
             xhr.open(item.method, item.url, true);
 
             xhr.withCredentials = item.withCredentials;
@@ -526,6 +541,10 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
             var form = element('<form style="display: none;" />');
             var iframe = element('<iframe name="iframeTransport' + Date.now() + '">');
             var input = item._input;
+
+            var timeout = 0;
+            var timer = null;
+            var isTimedOut = false;
 
             if(item._form) item._form.replaceWith(input); // remove old form
             item._form = form; // save link to new form
@@ -572,6 +591,15 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
                     status = 500;
                 }
 
+                if (timer) {
+                    clearTimeout(timer);
+                }
+                timer = null;
+
+                if (isTimedOut) {
+                    return false; //throw 'Request Timeout'
+                }
+
                 var xhr = {response: html, status: status, dummy: true};
                 var headers = {};
                 var response = this._transformResponse(xhr.response, headers);
@@ -594,6 +622,26 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
 
             input.after(form);
             form.append(input).append(iframe);
+
+            timeout = item.timeout || 0;
+            timer = null;
+
+            if (timeout) {
+                timer = setTimeout(() => {
+                    isTimedOut = true;
+
+                    item.isCancel = true;
+                    if (item.isUploading) {
+                        iframe.unbind('load').prop('src', 'javascript:false;');
+                        form.replaceWith(input);
+                    }
+
+                    var headers = {};
+                    var response = "Request Timeout.";
+                    this._onTimeoutItem(item);
+                    this._onCompleteItem(item, response, 408, headers);
+                }, timeout);
+            }
 
             form[0].submit();
         }
@@ -703,6 +751,15 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
             this.onCompleteAll();
             this.progress = this._getTotalProgress();
             this._render();
+        }
+        /**
+         * Inner callback
+         * @param {FileItem} item
+         * @private
+         */
+        _onTimeoutItem(item) {
+            item._onTimeout();
+            this.onTimeoutItem(item);
         }
         /**********************
          * STATIC
