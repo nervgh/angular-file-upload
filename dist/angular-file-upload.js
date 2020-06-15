@@ -1,5 +1,5 @@
 /*
- angular-file-upload v2.5.0
+ angular-file-upload v2.6.0
  https://github.com/nervgh/angular-file-upload
 */
 
@@ -57,7 +57,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -126,17 +126,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    FileUploader.Pipeline = Pipeline;
 	}]);
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
-	module.exports = {
-		"name": "angularFileUpload"
-	};
+	module.exports = {"name":"angularFileUpload"}
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -159,9 +157,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    disableMultipart: false
 	};
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -181,20 +179,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var _angular = angular;
-	var bind = _angular.bind;
-	var copy = _angular.copy;
-	var extend = _angular.extend;
-	var forEach = _angular.forEach;
-	var isObject = _angular.isObject;
-	var isNumber = _angular.isNumber;
-	var isDefined = _angular.isDefined;
-	var isArray = _angular.isArray;
-	var isUndefined = _angular.isUndefined;
-	var element = _angular.element;
+	var _angular = angular,
+	    bind = _angular.bind,
+	    copy = _angular.copy,
+	    extend = _angular.extend,
+	    forEach = _angular.forEach,
+	    isObject = _angular.isObject,
+	    isNumber = _angular.isNumber,
+	    isDefined = _angular.isDefined,
+	    isArray = _angular.isArray,
+	    isUndefined = _angular.isUndefined,
+	    element = _angular.element;
 	function __identity(fileUploaderOptions, $rootScope, $http, $window, $timeout, FileLikeObject, FileItem, Pipeline) {
-	    var File = $window.File;
-	    var FormData = $window.FormData;
+	    var File = $window.File,
+	        FormData = $window.FormData;
 	
 	    var FileUploader = function () {
 	        /**********************
@@ -205,7 +203,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @param {Object} [options]
 	         * @constructor
 	         */
-	
 	        function FileUploader(options) {
 	            _classCallCheck(this, FileUploader);
 	
@@ -250,10 +247,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var onThrown = function onThrown(err) {
 	                    var originalFilter = err.pipe.originalFilter;
 	
-	                    var _err$args = _slicedToArray(err.args, 2);
-	
-	                    var fileLikeObject = _err$args[0];
-	                    var options = _err$args[1];
+	                    var _err$args = _slicedToArray(err.args, 2),
+	                        fileLikeObject = _err$args[0],
+	                        options = _err$args[1];
 	
 	                    _this._onWhenAddingFileFailed(fileLikeObject, originalFilter, options);
 	                    next();
@@ -347,14 +343,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                // It will call this._onCancelItem() & this._onCompleteItem() asynchronously
 	                item[prop].abort();
 	            } else {
-	                (function () {
-	                    var dummy = [undefined, 0, {}];
-	                    var onNextTick = function onNextTick() {
-	                        _this2._onCancelItem.apply(_this2, [item].concat(dummy));
-	                        _this2._onCompleteItem.apply(_this2, [item].concat(dummy));
-	                    };
-	                    $timeout(onNextTick); // Trigger callbacks asynchronously (setImmediate emulation)
-	                })();
+	                var dummy = [undefined, 0, {}];
+	                var onNextTick = function onNextTick() {
+	                    _this2._onCancelItem.apply(_this2, [item].concat(dummy));
+	                    _this2._onCompleteItem.apply(_this2, [item].concat(dummy));
+	                };
+	                $timeout(onNextTick); // Trigger callbacks asynchronously (setImmediate emulation)
 	            }
 	        };
 	        /**
@@ -549,6 +543,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	        FileUploader.prototype.onCompleteItem = function onCompleteItem(item, response, status, headers) {};
+	        /**
+	         * Callback
+	         * @param {FileItem} item
+	         */
+	
+	
+	        FileUploader.prototype.onTimeoutItem = function onTimeoutItem(item) {};
 	        /**
 	         * Callback
 	         */
@@ -769,6 +770,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                _this5._onCompleteItem(item, response, xhr.status, headers);
 	            };
 	
+	            xhr.timeout = item.timeout || 0;
+	
+	            xhr.ontimeout = function (e) {
+	                var headers = _this5._parseHeaders(xhr.getAllResponseHeaders());
+	                var response = "Request Timeout.";
+	                _this5._onTimeoutItem(item);
+	                _this5._onCompleteItem(item, response, 408, headers);
+	            };
+	
 	            xhr.open(item.method, item.url, true);
 	
 	            xhr.withCredentials = item.withCredentials;
@@ -792,6 +802,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var form = element('<form style="display: none;" />');
 	            var iframe = element('<iframe name="iframeTransport' + Date.now() + '">');
 	            var input = item._input;
+	
+	            var timeout = 0;
+	            var timer = null;
+	            var isTimedOut = false;
 	
 	            if (item._form) item._form.replaceWith(input); // remove old form
 	            item._form = form; // save link to new form
@@ -838,6 +852,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    status = 500;
 	                }
 	
+	                if (timer) {
+	                    clearTimeout(timer);
+	                }
+	                timer = null;
+	
+	                if (isTimedOut) {
+	                    return false; //throw 'Request Timeout'
+	                }
+	
 	                var xhr = { response: html, status: status, dummy: true };
 	                var headers = {};
 	                var response = _this6._transformResponse(xhr.response, headers);
@@ -860,6 +883,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            input.after(form);
 	            form.append(input).append(iframe);
+	
+	            timeout = item.timeout || 0;
+	            timer = null;
+	
+	            if (timeout) {
+	                timer = setTimeout(function () {
+	                    isTimedOut = true;
+	
+	                    item.isCancel = true;
+	                    if (item.isUploading) {
+	                        iframe.unbind('load').prop('src', 'javascript:false;');
+	                        form.replaceWith(input);
+	                    }
+	
+	                    var headers = {};
+	                    var response = "Request Timeout.";
+	                    _this6._onTimeoutItem(item);
+	                    _this6._onCompleteItem(item, response, 408, headers);
+	                }, timeout);
+	            }
 	
 	            form[0].submit();
 	        };
@@ -988,6 +1031,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.progress = this._getTotalProgress();
 	            this._render();
 	        };
+	        /**
+	         * Inner callback
+	         * @param {FileItem} item
+	         * @private
+	         */
+	
+	
+	        FileUploader.prototype._onTimeoutItem = function _onTimeoutItem(item) {
+	            item._onTimeout();
+	            this.onTimeoutItem(item);
+	        };
 	        /**********************
 	         * STATIC
 	         **********************/
@@ -1063,9 +1117,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	__identity.$inject = ['fileUploaderOptions', '$rootScope', '$http', '$window', '$timeout', 'FileLikeObject', 'FileItem', 'Pipeline'];
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -1082,10 +1136,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var _angular = angular;
-	var copy = _angular.copy;
-	var isElement = _angular.isElement;
-	var isString = _angular.isString;
+	var _angular = angular,
+	    copy = _angular.copy,
+	    isElement = _angular.isElement,
+	    isString = _angular.isString;
 	function __identity() {
 	
 	    return function () {
@@ -1094,7 +1148,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @param {File|HTMLInputElement|Object} fileOrInput
 	         * @constructor
 	         */
-	
 	        function FileLikeObject(fileOrInput) {
 	            _classCallCheck(this, FileLikeObject);
 	
@@ -1102,7 +1155,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var fakePathOrObject = isInput ? fileOrInput.value : fileOrInput;
 	            var postfix = isString(fakePathOrObject) ? 'FakePath' : 'Object';
 	            var method = '_createFrom' + postfix;
-	            this[method](fakePathOrObject);
+	            this[method](fakePathOrObject, fileOrInput);
 	        }
 	        /**
 	         * Creates file like object from fake path string
@@ -1111,11 +1164,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	
 	
-	        FileLikeObject.prototype._createFromFakePath = function _createFromFakePath(path) {
+	        FileLikeObject.prototype._createFromFakePath = function _createFromFakePath(path, input) {
 	            this.lastModifiedDate = null;
 	            this.size = null;
 	            this.type = 'like/' + path.slice(path.lastIndexOf('.') + 1).toLowerCase();
 	            this.name = path.slice(path.lastIndexOf('/') + path.lastIndexOf('\\') + 2);
+	            this.input = input;
 	        };
 	        /**
 	         * Creates file like object from object
@@ -1129,20 +1183,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.size = object.size;
 	            this.type = object.type;
 	            this.name = object.name;
+	            this.input = object.input;
 	        };
 	
 	        return FileLikeObject;
 	    }();
 	}
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
 	exports.default = __identity;
 	
@@ -1154,285 +1209,308 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var _angular = angular;
-	var copy = _angular.copy;
-	var extend = _angular.extend;
-	var element = _angular.element;
-	var isElement = _angular.isElement;
+	var _angular = angular,
+	    copy = _angular.copy,
+	    extend = _angular.extend,
+	    element = _angular.element,
+	    isElement = _angular.isElement;
 	function __identity($compile, FileLikeObject) {
 	
-	    return function () {
-	        /**
-	         * Creates an instance of FileItem
-	         * @param {FileUploader} uploader
-	         * @param {File|HTMLInputElement|Object} some
-	         * @param {Object} options
-	         * @constructor
-	         */
+	  return function () {
+	    /**
+	     * Creates an instance of FileItem
+	     * @param {FileUploader} uploader
+	     * @param {File|HTMLInputElement|Object} some
+	     * @param {Object} options
+	     * @constructor
+	     */
+	    function FileItem(uploader, some, options) {
+	      _classCallCheck(this, FileItem);
 	
-	        function FileItem(uploader, some, options) {
-	            _classCallCheck(this, FileItem);
+	      var isInput = !!some.input;
+	      var input = isInput ? element(some.input) : null;
+	      var file = !isInput ? some : null;
 	
-	            var isInput = isElement(some);
-	            var input = isInput ? element(some) : null;
-	            var file = !isInput ? some : null;
+	      extend(this, {
+	        url: uploader.url,
+	        alias: uploader.alias,
+	        headers: copy(uploader.headers),
+	        formData: copy(uploader.formData),
+	        removeAfterUpload: uploader.removeAfterUpload,
+	        withCredentials: uploader.withCredentials,
+	        disableMultipart: uploader.disableMultipart,
+	        method: uploader.method,
+	        timeout: uploader.timeout
+	      }, options, {
+	        uploader: uploader,
+	        file: new FileLikeObject(some),
+	        isReady: false,
+	        isUploading: false,
+	        isUploaded: false,
+	        isSuccess: false,
+	        isCancel: false,
+	        isError: false,
+	        progress: 0,
+	        index: null,
+	        _file: file,
+	        _input: input
+	      });
 	
-	            extend(this, {
-	                url: uploader.url,
-	                alias: uploader.alias,
-	                headers: copy(uploader.headers),
-	                formData: copy(uploader.formData),
-	                removeAfterUpload: uploader.removeAfterUpload,
-	                withCredentials: uploader.withCredentials,
-	                disableMultipart: uploader.disableMultipart,
-	                method: uploader.method
-	            }, options, {
-	                uploader: uploader,
-	                file: new FileLikeObject(some),
-	                isReady: false,
-	                isUploading: false,
-	                isUploaded: false,
-	                isSuccess: false,
-	                isCancel: false,
-	                isError: false,
-	                progress: 0,
-	                index: null,
-	                _file: file,
-	                _input: input
-	            });
-	
-	            if (input) this._replaceNode(input);
-	        }
-	        /**********************
-	         * PUBLIC
-	         **********************/
-	        /**
-	         * Uploads a FileItem
-	         */
-	
-	
-	        FileItem.prototype.upload = function upload() {
-	            try {
-	                this.uploader.uploadItem(this);
-	            } catch (e) {
-	                var message = e.name + ':' + e.message;
-	                this.uploader._onCompleteItem(this, message, e.code, []);
-	                this.uploader._onErrorItem(this, message, e.code, []);
-	            }
-	        };
-	        /**
-	         * Cancels uploading of FileItem
-	         */
+	      if (input) this._replaceNode(input);
+	    }
+	    /**********************
+	     * PUBLIC
+	     **********************/
+	    /**
+	     * Uploads a FileItem
+	     */
 	
 	
-	        FileItem.prototype.cancel = function cancel() {
-	            this.uploader.cancelItem(this);
-	        };
-	        /**
-	         * Removes a FileItem
-	         */
+	    FileItem.prototype.upload = function upload() {
+	      try {
+	        this.uploader.uploadItem(this);
+	      } catch (e) {
+	        var message = e.name + ':' + e.message;
+	        this.uploader._onCompleteItem(this, message, e.code, []);
+	        this.uploader._onErrorItem(this, message, e.code, []);
+	      }
+	    };
+	    /**
+	     * Cancels uploading of FileItem
+	     */
 	
 	
-	        FileItem.prototype.remove = function remove() {
-	            this.uploader.removeFromQueue(this);
-	        };
-	        /**
-	         * Callback
-	         * @private
-	         */
+	    FileItem.prototype.cancel = function cancel() {
+	      this.uploader.cancelItem(this);
+	    };
+	    /**
+	     * Removes a FileItem
+	     */
 	
 	
-	        FileItem.prototype.onBeforeUpload = function onBeforeUpload() {};
-	        /**
-	         * Callback
-	         * @param {Number} progress
-	         * @private
-	         */
+	    FileItem.prototype.remove = function remove() {
+	      this.uploader.removeFromQueue(this);
+	    };
+	    /**
+	     * Callback
+	     * @private
+	     */
 	
 	
-	        FileItem.prototype.onProgress = function onProgress(progress) {};
-	        /**
-	         * Callback
-	         * @param {*} response
-	         * @param {Number} status
-	         * @param {Object} headers
-	         */
+	    FileItem.prototype.onBeforeUpload = function onBeforeUpload() {};
+	    /**
+	     * Callback
+	     * @param {Number} progress
+	     * @private
+	     */
 	
 	
-	        FileItem.prototype.onSuccess = function onSuccess(response, status, headers) {};
-	        /**
-	         * Callback
-	         * @param {*} response
-	         * @param {Number} status
-	         * @param {Object} headers
-	         */
+	    FileItem.prototype.onProgress = function onProgress(progress) {};
+	    /**
+	     * Callback
+	     * @param {*} response
+	     * @param {Number} status
+	     * @param {Object} headers
+	     */
 	
 	
-	        FileItem.prototype.onError = function onError(response, status, headers) {};
-	        /**
-	         * Callback
-	         * @param {*} response
-	         * @param {Number} status
-	         * @param {Object} headers
-	         */
+	    FileItem.prototype.onSuccess = function onSuccess(response, status, headers) {};
+	    /**
+	     * Callback
+	     * @param {*} response
+	     * @param {Number} status
+	     * @param {Object} headers
+	     */
 	
 	
-	        FileItem.prototype.onCancel = function onCancel(response, status, headers) {};
-	        /**
-	         * Callback
-	         * @param {*} response
-	         * @param {Number} status
-	         * @param {Object} headers
-	         */
+	    FileItem.prototype.onError = function onError(response, status, headers) {};
+	    /**
+	     * Callback
+	     * @param {*} response
+	     * @param {Number} status
+	     * @param {Object} headers
+	     */
 	
 	
-	        FileItem.prototype.onComplete = function onComplete(response, status, headers) {};
-	        /**********************
-	         * PRIVATE
-	         **********************/
-	        /**
-	         * Inner callback
-	         */
+	    FileItem.prototype.onCancel = function onCancel(response, status, headers) {};
+	    /**
+	     * Callback
+	     * @param {*} response
+	     * @param {Number} status
+	     * @param {Object} headers
+	     */
 	
 	
-	        FileItem.prototype._onBeforeUpload = function _onBeforeUpload() {
-	            this.isReady = true;
-	            this.isUploading = false;
-	            this.isUploaded = false;
-	            this.isSuccess = false;
-	            this.isCancel = false;
-	            this.isError = false;
-	            this.progress = 0;
-	            this.onBeforeUpload();
-	        };
-	        /**
-	         * Inner callback
-	         * @param {Number} progress
-	         * @private
-	         */
+	    FileItem.prototype.onComplete = function onComplete(response, status, headers) {};
+	    /**
+	     * Callback         
+	     */
 	
 	
-	        FileItem.prototype._onProgress = function _onProgress(progress) {
-	            this.progress = progress;
-	            this.onProgress(progress);
-	        };
-	        /**
-	         * Inner callback
-	         * @param {*} response
-	         * @param {Number} status
-	         * @param {Object} headers
-	         * @private
-	         */
+	    FileItem.prototype.onTimeout = function onTimeout() {};
+	    /**********************
+	     * PRIVATE
+	     **********************/
+	    /**
+	     * Inner callback
+	     */
 	
 	
-	        FileItem.prototype._onSuccess = function _onSuccess(response, status, headers) {
-	            this.isReady = false;
-	            this.isUploading = false;
-	            this.isUploaded = true;
-	            this.isSuccess = true;
-	            this.isCancel = false;
-	            this.isError = false;
-	            this.progress = 100;
-	            this.index = null;
-	            this.onSuccess(response, status, headers);
-	        };
-	        /**
-	         * Inner callback
-	         * @param {*} response
-	         * @param {Number} status
-	         * @param {Object} headers
-	         * @private
-	         */
+	    FileItem.prototype._onBeforeUpload = function _onBeforeUpload() {
+	      this.isReady = true;
+	      this.isUploading = false;
+	      this.isUploaded = false;
+	      this.isSuccess = false;
+	      this.isCancel = false;
+	      this.isError = false;
+	      this.progress = 0;
+	      this.onBeforeUpload();
+	    };
+	    /**
+	     * Inner callback
+	     * @param {Number} progress
+	     * @private
+	     */
 	
 	
-	        FileItem.prototype._onError = function _onError(response, status, headers) {
-	            this.isReady = false;
-	            this.isUploading = false;
-	            this.isUploaded = true;
-	            this.isSuccess = false;
-	            this.isCancel = false;
-	            this.isError = true;
-	            this.progress = 0;
-	            this.index = null;
-	            this.onError(response, status, headers);
-	        };
-	        /**
-	         * Inner callback
-	         * @param {*} response
-	         * @param {Number} status
-	         * @param {Object} headers
-	         * @private
-	         */
+	    FileItem.prototype._onProgress = function _onProgress(progress) {
+	      this.progress = progress;
+	      this.onProgress(progress);
+	    };
+	    /**
+	     * Inner callback
+	     * @param {*} response
+	     * @param {Number} status
+	     * @param {Object} headers
+	     * @private
+	     */
 	
 	
-	        FileItem.prototype._onCancel = function _onCancel(response, status, headers) {
-	            this.isReady = false;
-	            this.isUploading = false;
-	            this.isUploaded = false;
-	            this.isSuccess = false;
-	            this.isCancel = true;
-	            this.isError = false;
-	            this.progress = 0;
-	            this.index = null;
-	            this.onCancel(response, status, headers);
-	        };
-	        /**
-	         * Inner callback
-	         * @param {*} response
-	         * @param {Number} status
-	         * @param {Object} headers
-	         * @private
-	         */
+	    FileItem.prototype._onSuccess = function _onSuccess(response, status, headers) {
+	      this.isReady = false;
+	      this.isUploading = false;
+	      this.isUploaded = true;
+	      this.isSuccess = true;
+	      this.isCancel = false;
+	      this.isError = false;
+	      this.progress = 100;
+	      this.index = null;
+	      this.onSuccess(response, status, headers);
+	    };
+	    /**
+	     * Inner callback
+	     * @param {*} response
+	     * @param {Number} status
+	     * @param {Object} headers
+	     * @private
+	     */
 	
 	
-	        FileItem.prototype._onComplete = function _onComplete(response, status, headers) {
-	            this.onComplete(response, status, headers);
-	            if (this.removeAfterUpload) this.remove();
-	        };
-	        /**
-	         * Destroys a FileItem
-	         */
+	    FileItem.prototype._onError = function _onError(response, status, headers) {
+	      this.isReady = false;
+	      this.isUploading = false;
+	      this.isUploaded = true;
+	      this.isSuccess = false;
+	      this.isCancel = false;
+	      this.isError = true;
+	      this.progress = 0;
+	      this.index = null;
+	      this.onError(response, status, headers);
+	    };
+	    /**
+	     * Inner callback
+	     * @param {*} response
+	     * @param {Number} status
+	     * @param {Object} headers
+	     * @private
+	     */
 	
 	
-	        FileItem.prototype._destroy = function _destroy() {
-	            if (this._input) this._input.remove();
-	            if (this._form) this._form.remove();
-	            delete this._form;
-	            delete this._input;
-	        };
-	        /**
-	         * Prepares to uploading
-	         * @private
-	         */
+	    FileItem.prototype._onCancel = function _onCancel(response, status, headers) {
+	      this.isReady = false;
+	      this.isUploading = false;
+	      this.isUploaded = false;
+	      this.isSuccess = false;
+	      this.isCancel = true;
+	      this.isError = false;
+	      this.progress = 0;
+	      this.index = null;
+	      this.onCancel(response, status, headers);
+	    };
+	    /**
+	     * Inner callback
+	     * @param {*} response
+	     * @param {Number} status
+	     * @param {Object} headers
+	     * @private
+	     */
 	
 	
-	        FileItem.prototype._prepareToUploading = function _prepareToUploading() {
-	            this.index = this.index || ++this.uploader._nextIndex;
-	            this.isReady = true;
-	        };
-	        /**
-	         * Replaces input element on his clone
-	         * @param {JQLite|jQuery} input
-	         * @private
-	         */
+	    FileItem.prototype._onComplete = function _onComplete(response, status, headers) {
+	      this.onComplete(response, status, headers);
+	      if (this.removeAfterUpload) this.remove();
+	    };
+	    /**
+	     * Inner callback         
+	     * @private
+	     */
 	
 	
-	        FileItem.prototype._replaceNode = function _replaceNode(input) {
-	            var clone = $compile(input.clone())(input.scope());
-	            clone.prop('value', null); // FF fix
-	            input.css('display', 'none');
-	            input.after(clone); // remove jquery dependency
-	        };
+	    FileItem.prototype._onTimeout = function _onTimeout() {
+	      this.isReady = false;
+	      this.isUploading = false;
+	      this.isUploaded = false;
+	      this.isSuccess = false;
+	      this.isCancel = false;
+	      this.isError = true;
+	      this.progress = 0;
+	      this.index = null;
+	      this.onTimeout();
+	    };
+	    /**
+	     * Destroys a FileItem
+	     */
 	
-	        return FileItem;
-	    }();
+	
+	    FileItem.prototype._destroy = function _destroy() {
+	      if (this._input) this._input.remove();
+	      if (this._form) this._form.remove();
+	      delete this._form;
+	      delete this._input;
+	    };
+	    /**
+	     * Prepares to uploading
+	     * @private
+	     */
+	
+	
+	    FileItem.prototype._prepareToUploading = function _prepareToUploading() {
+	      this.index = this.index || ++this.uploader._nextIndex;
+	      this.isReady = true;
+	    };
+	    /**
+	     * Replaces input element on his clone
+	     * @param {JQLite|jQuery} input
+	     * @private
+	     */
+	
+	
+	    FileItem.prototype._replaceNode = function _replaceNode(input) {
+	      var clone = $compile(input.clone())(input.scope());
+	      clone.prop('value', null); // FF fix
+	      input.css('display', 'none');
+	      input.after(clone); // remove jquery dependency
+	    };
+	
+	    return FileItem;
+	  }();
 	}
 	
 	__identity.$inject = ['$compile', 'FileLikeObject'];
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -1449,8 +1527,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var _angular = angular;
-	var extend = _angular.extend;
+	var _angular = angular,
+	    extend = _angular.extend;
 	function __identity() {
 	    var FileDirective = function () {
 	        /**
@@ -1462,7 +1540,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @param {String} options.prop
 	         * @constructor
 	         */
-	
 	        function FileDirective(options) {
 	            _classCallCheck(this, FileDirective);
 	
@@ -1530,9 +1607,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return FileDirective;
 	}
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -1553,8 +1630,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _angular = angular;
-	var extend = _angular.extend;
+	var _angular = angular,
+	    extend = _angular.extend;
 	function __identity($compile, FileDirective) {
 	
 	    return function (_FileDirective) {
@@ -1565,7 +1642,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @param {Object} options
 	         * @constructor
 	         */
-	
 	        function FileSelect(options) {
 	            _classCallCheck(this, FileSelect);
 	
@@ -1634,9 +1710,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	__identity.$inject = ['$compile', 'FileDirective'];
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -1649,18 +1725,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var _angular = angular;
-	var bind = _angular.bind;
-	var isUndefined = _angular.isUndefined;
+	var _angular = angular,
+	    bind = _angular.bind,
+	    isUndefined = _angular.isUndefined;
 	function __identity($q) {
 	
 	  return function () {
 	    /**
 	     * @param {Array<Function>} pipes
 	     */
-	
 	    function Pipeline() {
-	      var pipes = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+	      var pipes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 	
 	      _classCallCheck(this, Pipeline);
 	
@@ -1710,9 +1785,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	__identity.$inject = ['$q'];
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -1733,9 +1808,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _angular = angular;
-	var extend = _angular.extend;
-	var forEach = _angular.forEach;
+	var _angular = angular,
+	    extend = _angular.extend,
+	    forEach = _angular.forEach;
 	function __identity(FileDirective) {
 	
 	    return function (_FileDirective) {
@@ -1746,7 +1821,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @param {Object} options
 	         * @constructor
 	         */
-	
 	        function FileDrop(options) {
 	            _classCallCheck(this, FileDrop);
 	
@@ -1870,9 +1944,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	__identity.$inject = ['FileDirective'];
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -1893,8 +1967,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _angular = angular;
-	var extend = _angular.extend;
+	var _angular = angular,
+	    extend = _angular.extend;
 	function __identity(FileDirective) {
 	
 	    return function (_FileDirective) {
@@ -1905,7 +1979,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @param {Object} options
 	         * @constructor
 	         */
-	
 	        function FileOver(options) {
 	            _classCallCheck(this, FileOver);
 	
@@ -1954,9 +2027,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	__identity.$inject = ['FileDirective'];
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -1997,9 +2070,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	__identity.$inject = ['$parse', 'FileUploader', 'FileSelect'];
 
-/***/ },
+/***/ }),
 /* 12 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -2041,9 +2114,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	__identity.$inject = ['$parse', 'FileUploader', 'FileDrop'];
 
-/***/ },
+/***/ }),
 /* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -2082,7 +2155,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	__identity.$inject = ['FileUploader', 'FileOver'];
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;
