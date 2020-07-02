@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html id="ng-app" ng-app="app"> <!-- id="ng-app" IE<8 -->
+
+    <head>
+        <title>Simple example</title>
+        <!-- Fix for old browsers -->
+        <script src="http://nervgh.github.io/js/es5-shim.min.js"></script>
+        <script src="http://nervgh.github.io/js/es5-sham.min.js"></script>
+        <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+        <script src="../../console-sham.js"></script>
+
+        <!--<script src="../bower_components/angular/angular.js"></script>-->
+        <script src="http://code.angularjs.org/1.2.0/angular.min.js"></script>
+        <script src="../../../dist/angular-file-upload.min.js"></script>
+        <script src="controllers.js"></script>
+        </style>
+
+    </head>
+    <body ng-controller="AppController" uploader="uploader">
+       <a href="javascript:;" class="file_a">
+            <input type="file" name="file1" nv-file-select uploader="uploader"  />
+       </a>
+        <button ng-click="upload()">Upload</button>
+        
+    </body>
+</html>
