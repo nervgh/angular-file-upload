@@ -511,9 +511,7 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
                 var response = this._transformResponse(xhr.response, headers);
                 this._onCancelItem(item, response, xhr.status, headers);
                 this._onCompleteItem(item, response, xhr.status, headers);
-            };
-
-            xhr.timeout = item.timeout || 0;
+            };       
 
             xhr.ontimeout = (e) => {
                 var headers = this._parseHeaders(xhr.getAllResponseHeaders());
@@ -524,6 +522,7 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
 
             xhr.open(item.method, item.url, true);
 
+            xhr.timeout = item.timeout || 0;
             xhr.withCredentials = item.withCredentials;
 
             forEach(item.headers, (value, name) => {
