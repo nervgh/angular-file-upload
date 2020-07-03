@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html id="ng-app" ng-app="app">
+
+<head>
+    <title>Simple example</title>
+</head>
+
+<body>
+    <h1>hello world</h1>
+</body>
+<script>
+    var xhr1 = new XMLHttpRequest();
+
+    // xhr1.timeout = 10000;   // In Internet Explorer, setting xhr.timeout before xhr.open() will report an error
+    xhr1.ontimeout = function (e) {
+        console.log(e);
+    };
+
+    xhr1.open("GET", "http://localhost:8080/test", true);
+    xhr1.timeout = 10000;
+    xhr1.send(null);
+    console.log(xhr1.timeout);
+</script>
+
+</html>
