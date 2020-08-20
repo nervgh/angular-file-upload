@@ -1,5 +1,5 @@
 /*
- angular-file-upload v2.6.0
+ angular-file-upload v2.6.1
  https://github.com/nervgh/angular-file-upload
 */
 
@@ -770,8 +770,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                _this5._onCompleteItem(item, response, xhr.status, headers);
 	            };
 	
-	            xhr.timeout = item.timeout || 0;
-	
 	            xhr.ontimeout = function (e) {
 	                var headers = _this5._parseHeaders(xhr.getAllResponseHeaders());
 	                var response = "Request Timeout.";
@@ -781,6 +779,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            xhr.open(item.method, item.url, true);
 	
+	            xhr.timeout = item.timeout || 0;
 	            xhr.withCredentials = item.withCredentials;
 	
 	            forEach(item.headers, function (value, name) {
