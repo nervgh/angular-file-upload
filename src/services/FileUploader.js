@@ -19,14 +19,14 @@ let {
 
 
 export default function __identity(fileUploaderOptions, $rootScope, $http, $window, $timeout, FileLikeObject, FileItem, Pipeline) {
-    
-    
+
+
     let {
         File,
         FormData
         } = $window;
-    
-    
+
+
     class FileUploader {
         /**********************
          * PUBLIC
@@ -38,7 +38,7 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
          */
         constructor(options) {
             var settings = copy(fileUploaderOptions);
-            
+
             extend(this, settings, options, {
                 isUploading: false,
                 _nextIndex: 0,
@@ -63,11 +63,11 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
 
             let next = () => {
                 let something = incomingQueue.shift();
-                
+
                 if (isUndefined(something)) {
                     return done();
                 }
-                
+
                 let fileLikeObject = this.isFile(something) ? something : new FileLikeObject(something);
                 let pipes = this._convertFiltersToPipes(arrayOfFilters);
                 let pipeline = new Pipeline(pipes);
@@ -88,7 +88,7 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
                 pipeline.onSuccessful = onSuccessful;
                 pipeline.exec(fileLikeObject, options);
             };
-                
+
             let done = () => {
                 if(this.queue.length !== count) {
                     this._onAfterAddingAll(addedFileItems);
@@ -98,7 +98,7 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
                 this._render();
                 if (this.autoUpload) this.uploadAll();
             };
-            
+
             next();
         }
         /**
@@ -770,7 +770,7 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
          * @private
          */
         static isFile(value) {
-            return (File && value instanceof File);
+            return File && (value instanceof File || value.contructor === window.parent.File);
         }
         /**
          * Returns "true" if value an instance of FileLikeObject
@@ -819,15 +819,15 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
      */
     FileUploader.isHTML5 = FileUploader.prototype.isHTML5;
 
-    
+
     return FileUploader;
 }
 
 
 __identity.$inject = [
-    'fileUploaderOptions', 
-    '$rootScope', 
-    '$http', 
+    'fileUploaderOptions',
+    '$rootScope',
+    '$http',
     '$window',
     '$timeout',
     'FileLikeObject',
