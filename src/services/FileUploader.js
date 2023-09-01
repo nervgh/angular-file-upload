@@ -524,6 +524,7 @@ export default function __identity(fileUploaderOptions, $rootScope, $http, $wind
 
             xhr.timeout = item.timeout || 0;
             xhr.withCredentials = item.withCredentials;
+            xhr.responseType = item.responseType;
 
             forEach(item.headers, (value, name) => {
                 xhr.setRequestHeader(name, value);
