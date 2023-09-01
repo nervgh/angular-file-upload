@@ -22,7 +22,7 @@ import directiveFileDrop from './directives/FileDrop';
 import directiveFileOver from './directives/FileOver';
 
 
-angular
+export default angular
     .module(CONFIG.name, [])
     .value('fileUploaderOptions', options)
     .factory('FileUploader', serviceFileUploader)
@@ -55,4 +55,4 @@ angular
             FileUploader.FileOver = FileOver;
             FileUploader.Pipeline = Pipeline;
         }
-    ]);
+    ]).name;
