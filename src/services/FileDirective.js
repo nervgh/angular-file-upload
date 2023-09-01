@@ -42,7 +42,8 @@ export default function __identity() {
          */
         unbind() {
             for(var key in this.events) {
-                this.element.unbind(key, this.events[key]);
+                var prop = this.events[key];
+                this.element.unbind(key, this[prop]);
             }
         }
         /**
